@@ -32,6 +32,7 @@
     tipotesi=magistrale,
     greek,
     evenboxes,
+    english
 ]{toptesi}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Per la codifica d'entratasi può scegliere quella che si vuole,
@@ -47,24 +48,53 @@
 % veramente conforme alle norme per l'archiviabilità.
 
 
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 
 \hypersetup{%
+	pdfauthor={Gabriele Degola},
     pdfpagemode={UseOutlines},
     bookmarksopen,
-    pdfstartview={FitH},
-    colorlinks,
-    linkcolor={blue},
-    citecolor={blue},
-    urlcolor={blue}
+    pdfnewwindow=true,
+    pdfstartview={FitH}
   }
 %
 %%%%%%% Esempio di composizione di tesi di laurea con PDFLATEX 
 %
-%
-% Per scrivere testo fasullo in "latinorum"
 \usepackage{lipsum}
+\usepackage{subcaption}
+\usepackage{biblatex}
+\addbibresource{references.bib}
+\usepackage[acronym]{glossaries}
 %
+
+\makeglossaries
+\newacronym{ai}{AI}{artificial intelligence}
+\newacronym{ilsvrc}{ILSVRC}{ImageNet Large Scale Visual Recognition Challenge}
+\newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{svm}{SVM}{Support Vector Machines}
+\newacronym{ide}{IDE}{Integrated Development Environment}
+\newacronym{iou}{IoU}{Intersection over Union}
+\newacronym{roc}{ROC}{Receiver Operating Characteristic}
+\newacronym{auc}{AUC}{Area Under the Curve}
+\newacronym{ap}{AP}{Average Precision}
+\newacronym{map}{mAP}{mean Average Precision}
+\newacronym{json}{JSON}{JavaScript Object Notation}
+\newacronym{xml}{XML}{Extensible Markup Language}
+\newacronym{voc}{VOC}{Visual Object Classes}
+\newacronym{kitti}{KITTI}{Karlsruhe Institute of Technology and Toyota Technological Institute}
+\newacronym{rcnn}{R-CNN}{region-based Convolutional Neural Network}
+\newacronym[firstplural=Regions of Interest (RoIs)]{roi}{RoI}{Region of Interest}
+\newacronym{rpn}{RPN}{Region Proposal Network}
+\newacronym{fpn}{FPN}{Feature Pyramid Network}
+\newacronym{ssd}{SSD}{Single Shot Detector}
+\newacronym{yolo}{YOLO}{You Only Look Once}
+\newacronym{adda}{ADDA}{Adversarial Discriminative Domain Adaptation}
+\newacronym{dann}{DANN}{Domain Adversarial Neural Network}
+\newacronym{coco}{COCO}{Common Objects in Context}
+\newacronym[firstplural=GPUs]{gpu}{GPU}{Graphics Processing Unit}
+\newacronym{cpu}{CPU}{Central Processing Unit}
+
+\glsdisablehyper
 
 %%%%%%% Definizioni locali
 \newtheorem{osservazione}{Osservazione}% Standard LaTeX
@@ -96,8 +126,9 @@
 \sottotitolo{A data augmentation approach}% per la laurea quinquennale e il dottorato
 %
 %%%%%%% Corso degli studi
-\CorsoDiLaureaIn{Master of Science in}
+\CorsoDiLaureaIn{Master Degree in}
 \corsodilaurea{Data Science and Engineering}% per la laurea
+
 \TesiDiLaurea{Master Degree Thesis}
 
 %%%%%%% L'eventuale numero di matricola va fra parentesi quadre
@@ -130,237 +161,131 @@
 
 \sommario
 
-La pressione barometrica di Giove viene misurata
-mediante un metodo originale,  messo a punto dal candidato, che si basa
-sul rilevamento telescopico della pressione.
+
 
 % \paginavuota % funziona anche senza specificare l'opzione classica
 
 \ringraziamenti
 
-I candidati ringraziano vivamente il Granduca di Toscana per i mezzi
-messi loro a disposizione, ed il signor Von Braun, assistente del
-prof.~Albert Einstein, per le informazioni riservate che egli ha
-gentilmente fornito loro, e per le utili discussioni che hanno permesso
-ai candidati di evitare di riscoprire l'acqua calda.
+
 
 \tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
-\italiano
 \indici
 
 \mainmatter
 
-\chapter{Introduzione generale}
+\chapter*{Introduction}
 
-\section{Principi generali}
-Il problema della determinazione della pressione barometrica dell'atmosfera di
-Giove non ha ricevuto finora una soluzione soddisfacente, per l'elementare
-motivo che il pianeta suddetto si trova ad una distanza tale che i mezzi attuali
-non consentono di eseguire una misura diretta.
+\chapter{Related works}
 
-Conoscendo per\`o con grande precisione le orbite dei satelliti principali di
-Giove, e segnatamente le orbite dei satelliti medicei, \`e possibile eseguire
-delle misure indirette, che fanno ricorso alla nota formula \cite{gal}:
-\[
-\Phi = K\frac{\Xi^2 +\Psi\ped{max}}{1+\gei\Omega}
-\]
-dove le varie grandezze hanno i seguenti significati:
-\begin{enumerate}
-\item
-$\Phi$ angolo di rivoluzione del satellite in radianti se $K=1$, in gradi se
-$K=180/\pi$;
-\item
-$\Xi$ eccentricit\`a dell'orbita del satellite; questa \`e una grandezza priva
-di dimensioni;
-\item
-$\Psi\ped{max}$ rapporto fra il semiasse maggiore ed il semiasse minore
-dell'orbita del satellite, nelle condizioni di massima eccentricit\`a;
-poich\'e le dimensioni di ciascun semiasse sono $[l]=\unit{km}$, la grandezza
-$\Psi\ped{max}$ {\`e} adimensionata;
-\item
-$\Omega$ velocit\`a istantanea di rotazione; si ricorda che \`e $[\Omega]=%
-\unit{rad}\unit{s}^{-1}$;
-\item bisogna ancora ricordarsi che $10^{-6}\unit{m}$ equivalgono a 1\unit{\micro m}.
-\end{enumerate}
-%
+\section{Object detection}
+Object detection methods are able to recognize the objects represented in an image and to highlight their position, returning the associated bounding boxes, rectangular boxes which contain an object. The bounding box format depends on the model and on the dataset. Typically, they are determined by the \textit{x} and \textit{y} coordinates of the upper-left corner
+%, as in \acrshort{coco} (\ref{sec:coco}),
+or of the center
+%, as in \acrshort{yolo} (\ref{sec:yolo}),
+and by the bounding box width and height.
 
-Le grandezze in gioco sono evidenziate nella figura \ref{fig:orbita}.
-\begin{figure}[ht]\centering
-\setlength{\unitlength}{0.01\textwidth}
-\begin{picture}(40,30)(30,0)
-\put(50,15){\circle{20}}
-\put(47,15){\circle*{1}}
-\put(30,0){\line(0,1){30}}
-\put(30,30){\line(1,0){40}}
-\put(70,30){\line(0,-1){30}}
-\put(70,0){\line(-1,0){40}}
-\end{picture}
-\caption{Orbita del generico satellite; si noti l'eccentricit\`a dell'orbita rispetto al pianeta.}\label{fig:orbita}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.5\textwidth]{imgs/yolo_detection.png}
+	\caption{An example of object detection\cite{redmon2016look}}
 \end{figure}
 
-Per misurare le grandezze che compaiono in questa formula \`e necessario
-ricorrere ad un pirometro con una resistenza di 120\unit{M\ohm}, altrimenti gli
-errori di misura sono troppo grandi, ed i risultati completamente falsati.
+Object detection is a fundamental task in modern computer vision, with applications such as autonomous driving, robot vision and human-computer interaction.
 
-\section{I satelliti medicei}
-I satelliti medicei, come noto, sono quattro ed hanno dei periodi di rivoluzione
-attorno al pianeta Giove che vanno dai sette giorni alle tre settimane.
+\subsection{Existing methods}
+An object detection task can be seen as a combination of two main steps: finding image regions that may contain objects, and then independently classifying the objects in those regions. Before deep learning, this was achieved using a sliding-window approach, where an image classifier was applied to different areas of the image and only the predictions with the highest probability were retained. Nowadays, two main families of object detectors can be identified.
 
-Essi furono per la prima volta osservati da uno dei candidati mentre
-sperimentava l'efficacia del tubo occhiale che aveva appena inventato
-rielaborando una idea sentita di seconda mano da un viaggiatore appena arrivato
-dai Paesi Bassi.
+\subsubsection{Two stage object detectors}
+As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image and a \gls{cnn} is evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm} to classify the presence of an object in that region and the bounding box location. Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
+
+
+The main contribution of Faster \acrshort{rcnn} is the introduction of a \gls{rpn}, which integrate some convolutional layers of the image classifier into the region proposal phase. That allows the network to be trained in an end-to-end fashion.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Description of \acrshort{rcnn}\cite{girshick2014rich}}{
+		\includegraphics[width=.6\linewidth]{imgs/rcnn.png}
+	}
+	\subcaptionbox{Description of Faster \acrshort{rcnn}\cite{ren2016faster}}{
+		\includegraphics[width=.3\linewidth]{imgs/fasterrcnn.png}
+	}
+	\caption{Architecture of two stage object detectors}
+	\label{fig:architectures}
+\end{figure}
+
+\subsubsection{One stage object detectors}
+Differently from two stage detectors, one stage object detectors skip the region proposal step and focus on predicting object regions and classes together. This leads to faster predictions with respect to two stage models, making them suitable for real-time applications at the cost of lower prediction quality. The pioneer work for one stage object detection is OverFeat\cite{sermanet2014overfeat}, published in 2014. Here, the last classification layers of a standard \gls{cnn} are replaced by a regression network for each class, in order to predict the object bounding boxes.
+
+\paragraph{YOLO}\label{sec:yolo}
+The \acrfull{yolo} model\cite{redmon2016look} uses pretrained \gls{cnn} for classification and splits each image in cells. If the center of an object falls into a cell, that cell is responsible for detection and should predict the bounding box locations, a confidence score and a class probability for the detected objects. A specific loss function is used to efficiently learn at the same time to predict bounding boxes and object classes.
+
+\paragraph{SSD}
+\acrfull{ssd}\cite{Liu_2016} adds several convolutional layers of decreasing sizes, in order to build a \textit{pyramid representation} of the images and efficiently detect object of different sizes, at each pyramidal layer. Instead of splitting images in cells, anchor boxes are used for faster detection.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.7\linewidth]{imgs/SSD-architecture.png}
+	\caption{\acrshort{ssd}'s pyramid architecture\cite{objdetpart4}}
+	\label{fig:ssd}
+\end{figure}
+
+\paragraph{RetinaNet}
+The main improvements of RetinaNet\cite{lin2018focal} over previous one stage detection model are the use of \textit{feature pyramid network} as part of the backbone and of \textit{focal loss}, which helps to approach the results of two-stage detectors.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.8\linewidth]{imgs/retinanet.png}
+	\caption{RetinaNet architecture\cite{lin2018focal}}
+	\label{fig:retinanet}
+\end{figure}
+
+\subparagraph{Feature pyramid network}
+\glspl{fpn}\cite{lin2017feature} adopt and improve the same approach as \acrshort{ssd}'s pyramid layers. They are composed by a sequence of pyramid levels which correspond to network stages. Each stage is composed by multiple convolutional layers of the same size, divided by two at consecutive stages. In addition to standard feedforward, different stages are linked by a top-down pathway in the opposite direction and lateral connections. This allows the network to construct a rich and multi-scale feature pyramid for each input image.
+
+After their proposal in the context of single-stage detectors, the \glspl{fpn} have also been used as part of the backbone of two-stage detectors, to improve their performance.
+
+\subparagraph{Focal loss}
+One of the main obstacles for the training of  other object detector models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions.
+
+The focal loss, introduced by RetinaNet, is based on the \textit{cross entropy} loss. For binary classification, the cross entropy loss is widely used and defined as:
+\begin{center}
+	$CE(p,y) = \begin{cases}
+		-\log(p) & \text{if $y$ = 1}\\
+		-\log(1-p) & \text{otherwise.}
+	\end{cases}$
+\end{center}
+where $y\in \{\pm 1\}$ is the ground truth class and $p\in\left[0,1\right]$ is the model's probability for class $1$. Defining $p_t$ as:
+\begin{center}
+	$p_t = \begin{cases}
+		p & \text{if $y$ = 1}\\
+		1-p & \text{otherwise.}
+	\end{cases}$
+\end{center}
+cross entropy can be written as $CE(p,y) = CE(p_t) = -\log(p_t)$.
+
+\bigskip
+A balanced version of the cross entropy loss is sometimes used to deal with class imbalance. A numeric factor $\alpha\in\left[0,1\right]$ can be introduced for class $1$, with value $1-\alpha$ for class $-1$. $\alpha_t$ is defined analogously to $p_t$. Therefore, the balanced cross entropy is written as:
+\begin{center}
+	$CE(p,y) = -\alpha_t\log(p_t)$.
+\end{center}
+
+\bigskip
+
+\section{Domain adaptation}
 
 %\blankpagestyle{headings}
 
 %\lipsum[1-2]
 
+\chapter{Method}
 
+\chapter{Experiments and results}
 
-\chapter{Il barometro}
-\section{Generalit\`a}
-\begin{interlinea}{0.87} Il barometro, come dice il nome, serve per
-misurare la pesantezza; pi\`u precisamente la pesantezza dell'aria
-riferita all'unit\`a di superficie.
-\end{interlinea}
+\chapter*{Conclusions}
 
-\begin{interlinea}{2} Studiando il fenomeno fisico si pu\`o concludere
-che in un dato punto grava il peso della colonna d'aria che lo
-sovrasta, e che tale colonna \`e tanto pi\`u grave quanto maggiore
-\`e la superficie della sua base; il rapporto fra il peso e la base
-della colonna si chiama pressione e si misura in once toscane al cubito
-quadrato, \cite{tor1}; nel Ducato di Savoia la misura in once al piede
-quadrato \`e quasi uguale, perch\'e col\`a usano un piede molto
-grande, che \`e simile al nostro cubito.
-\end{interlinea}
-
-\subsection{Forma del barometro}
-Il barometro consta di un tubo di vetro chiuso ad una estremit\`a e
-ripieno di mercurio, capovolto su di un vaso anch'esso ripieno di
-mercurio; mediante un'asta graduata si pu\`o misurare la distanza fra
-il menisco del mercurio dentro il tubo e la superficie del mercurio
-dentro il vaso; tale distanza \`e normalmente di 10 pollici toscani,
-\cite{tor1,tor2}, ma la misura pu\`o variare se si usano dei pollici
-diversi; \`e noto infatti che gl'huomini sogliono avere mani di
-diverse grandezze, talch\'e anche li pollici non sono egualmente
-lunghi.
-\section{Del mercurio}
-Il mercurio \`e un a sostanza che si presenta come un liquido, ma ha il colore
-del metallo. Esso \`e pesantissimo, tanto che un bicchiere, che se fosse pieno
-d'acqua, sarebbe assai leggiero, quando invece fosse ripieno di mercurio,
-sarebbe tanto pesante che con entrambe le mani esso necessiterebbe di essere
-levato in suso.
-
-Esso mercurio non trovasi in natura nello stato nel quale \`e d'uopo che sia
-per la costruzione dei barometri, almeno non trovasi cos\`i abbondante come
-sarebbe necessario.
-
-\setcounter{footnote}{25}
-
-Il Monte Amiata, che \`e locato nel territorio del Ducato%
-\footnote{Naturalmente stiamo parlando del Granducato di Toscana.%
-\ifclassica\NoteWhiteLine\fi
-} del nostro Eccellentissimo et Illustrissimo Signore Granduca di Toscana\footnote{Cosimo IV de' Medici.}, \`e uno dei
-luoghi della terra dove pu\`o rinvenirsi in gran copia un sale rosso, che
-nomasi \emph{cinabro}, dal quale con artifizi alchemici, si estrae il mercurio
-nella forma e nella consistenza che occorre per la costruzione del barometro
-terrestre%
-\ifclassica
-\nota{Nota senza numero\dots
-
-\dots e che va a capo.
-}\fi.
-
-
-La densit\`a del mercurio \`e molto alta e varia con la temperatura come
-pu\`o desumersi dalla tabella \ref{t:1}.
-
-
-Il mercurio gode della sorprendente qualit\`a et propriet\`a, cio\`e che esso
-diventa tanto solido da potersene fare una testa di martello et infiggere
-chiodi aguzzi nel legname.
-\begin{table}[htp]              % crea un floating body col nome Tabella nella
-                                % didascalia
-\centering                      % comando necessario per centrare la tabella
-\begin{tabular}%                % inizio vero e proprio della tabella
-{rrrrrr}                        % parametri di incolonnamento
-\hline\hline                    % filetti orizzontali sopra la tabella
-                                % intestazione della tabella
-\multicolumn{3}{c}{\rule{0pt}{2.5ex}Temperatura} % \rule serve per lasciare
-& \multicolumn{3}{c}{Densit\`a} \\               % un po' di spazio sopra le parole
-    &\unit{\gradi C} & & & $\unit{t/m^3}$ &  \\
-\hline%                         % Filetto orizzontale per separare l'intestazione
-\hspace*{1.3em}& 0  &  & & 13,8 &  \\   % I numeri sono incolonnati % 
-              & 10  &  & & 13,6 &  \\   % a destra; le colonne vuote
-              & 50  &  & & 13,5 &  \\   % servono per centrare le colonne
-              &100  &  & & 13,3 &  \\   % numeriche sotto le intestazioni
-\hline \hline                           % Filetti di fine tabella
-\end{tabular}
-\caption[Densit\`a del mercurio]{Densit\`a del mercurio. Si pu\`o fare molto meglio usando il pacchetto \textsf{booktabs}.} \label{t:1}  % didascalia con label
-\end{table}
-
-%\selectlanguage{italian}
-
-\begin{osservazione}\normalfont
-Questa propriet\`a si manifesta quando esso \`e estremamente freddo, come
-quando lo si immerge nella salamoia di sale e ghiaccio che usano li maestri
-siciliani per confetionare li sorbetti, dei quali sono insuperabili artisti.
-\end{osservazione}
-
-Per nostra fortuna, questo grande freddo, che necessita per la confetione de
-li sorbetti, molto raramente, se non mai, viene a formarsi nelle terre del
-Granduca Eccellentissimo, sicch\'e non vi ha tema che il barometro di mercurio
-possa essere ruinato dal grande gelo e non indichi la pressione giusta, come
-invece deve sempre fare uno strumento di misura, quale \`e quello che \`e
-descritto cost\`i.\cite{duane1964}
-
-\chapter*{Conlusioni}
-E con questo si conclude la tesi d'esempio per una tesi magistrale con un capitolo non  numerato che si trova ancora nella main matter.
-
-Dovrebbe essere evidente che il comando \texttt{\string\chapter*} non dovrebbe mai essere usato nella main matter, tranne eventualmente un capitoletto conclusivo e riassuntivo \emph{non strutturato}. Infatti se esso contenesse al suo interno paragrafi, sottoparagrafi e affini, questi verrebbero numerati erroneamente con il numero del capitolo precedente. 
-
-\appendix
-
-\chapter{Il listato del pacchetto \texttt{topcoman.sty}}
-\listing{topcoman.sty}
-
-\chapter{Seconda appendice}
-Questa è la seconda appendice numerata con una lettera perché questo comando \texttt{\string\chapter} viene dopo il comando \texttt{\string\appendix}.
-
-Le appendici vanno numerate se sono più di una e devono quindi stare nella main matter, perché nella back matter nulla viene numerato.
-
-La bibliografia che segue non è numerata perché l'ambiente \texttt{thebibliography} compone il suo titolo con il comando \texttt{\string\chapter*} e ne manda il titolo nell'indice generale con i suoi propri comandi interni. La definizione di questo ambiente è specifica di questo macro-pacchetto \texttt{TOPtesi}.
-
-Sarebbe meglio inserire la bibliografia dopo un comando \texttt{\string\backmatter} esplicito. La back matter è destina espressamente a una sola appendice non numerata (ci pensa da sola a non numerare le sue sezioni); alla bibliografia, a uno o più indici analitici, a glossari o nomenclature, liste di acronimi, e simili. Nulla è obbligatorio in una back matter, ma una tesi senza bibliografia non sarebbe appropriata, tanto meno una tesi magistrale priva di una bibliografia.
-
-\begin{thebibliography}{9}
-\bibitem{gal} G.~Galilei, {\em Nuovi studii sugli astri medicei}, Manuzio,
-        Venetia, 1612.
-\bibitem{tor1} E.~Torricelli, in ``La pressione barometrica'', {\em Strumenti
-        Moderni}, Il Porcellino, Firenze, 1606.
-\bibitem{tor2} E.~Torricelli e A.~Vasari, in ``Delle misure'', {\em Atti Nuovo
-        Cimento}, vol.~III, n.~2 (feb. 1607), p.~27--31.
-\bibitem{duane1964} Duane J.T., \emph{Learning Curve Approach To Reliability 
-		Monitoring}, IEEE Transactions on Aerospace, Vol. 2, pp. 563-566, 1994
-\end{thebibliography}
-
-
+\backmatter
+\printbibliography[heading=bibintoc]
 
 
 \end{document}
-
-% altri riferimenti da usare come esempi.
-
-\bibitem{chiesa2008} Chiesa S., \emph{Affidabilità, sicurezza e manutenzione 
-		nel progetto dei sistemi}, CLUT, gennaio 2008
-\bibitem{chiesa2}Chiesa S., Fioriti M., Fusaro R., \emph{On Board System 
-		Technological  Level Improvement Effect on UAV MALE}
-\bibitem{bigliano2010} Bigliano M., \emph{Sicurezza nell'installazione di un velivolo 
-		senza pilota MALE; applicazione di metodologia di Zonal Safety 
-		Analysis al velivolo del Progetto SAvE}, Politecnico di Torino, 
-		maggio 2010
-\bibitem{astrid2012} Chiesa S., Di Meo G.A., Fioriti M., Medici G., Viola N.,
-		\emph{ASTRID - Aircraft on board Systems sizing and TRade-off 
-		analysis in Initial Design}, Research Bulletin, Warsaw University 
-		of Technology, Institute of Aeronautics and Applied Mechanics, 
-		p. 1-28, 17-19, ottobre 2012
