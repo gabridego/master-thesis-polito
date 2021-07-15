@@ -26,8 +26,8 @@
  \documentclass[%
     corpo=12pt,
     twoside,
-%    stile=classica,
-    oldstyle,
+    stile=classica,   
+% 	oldstyle,
 %    autoretitolo,
     tipotesi=magistrale,
     greek,
@@ -112,51 +112,25 @@
 \english
 
 \begin{ThesisTitlePage}*
-% Per cambiare la dicitura sopra la lista dei laureandi decommentare
-% la riga seguente, cambiando le 4 parole in modo consistente
-%
-%\TitoloListaCandidati{Studente,Studenti,Studentessa,Studentesse}
-%
-\ateneo{Politecnico di Torino}
-%
-% Non tutte le università hanno un nome proprio
-\nomeateneo{Dipartimento di Automatica e Informatica}
-%
-\titolo{Domain Adaptation for Object Detection}% per la laurea quinquennale e il dottorato
-\sottotitolo{A data augmentation approach}% per la laurea quinquennale e il dottorato
-%
-%%%%%%% Corso degli studi
-\CorsoDiLaureaIn{Master Degree in}
+\ateneo{Politecnico di Torino}% nome generico dell'Universita'
+%\nomeateneo{Weiss Turm}% eventuale nome proprio dell'universita'
+\logosede[4.5cm]{logopolito}% logo dell'universita'
+\FacoltaDi{DIPARTIMENTO DI\space}% Etichetta della facolta'
+\facolta{AUTOMATICA E INFORMATICA}% facolta'
+%\Materia{Remote sensing}
+\titolo{Domain Adaptation for Object Detection}% 
+\sottotitolo{A data augmentation approach}% 
+\CorsoDiLaureaIn{Master Degree in\space}
 \corsodilaurea{Data Science and Engineering}% per la laurea
-
-\TesiDiLaurea{Master Degree Thesis}
-
-%%%%%%% L'eventuale numero di matricola va fra parentesi quadre
-%\show\Candidato
-%\def\Candidato{Studente}
-%\show\Candidato
-\CandidateName{Candidate}
-\candidato{Gabriele \textsc{Degola}}
-%\secondocandidato{Evangelista \textsc{Torricelli}}[123457]
-
-%%%%%%% Relatori o supervisori
-%
+\TesiDiLaurea{Master Thesis}
+\def\Candidato{Candidate}
+\candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
 \AdvisorName{Supervisor}
-\relatore{prof.~Paolo \textsc{Garza}}
-% 
-%%%%%%% Per mettere altri relatori consultare toptesi-it.pdf
-
-%%%%%%% Tutore
+\relatore{prof.\ Paolo Garza}% per la laurea e/o il dottorato
 %\tutoreaziendale{dott.\ ing.\ Giovanni Giacosa}
 %\NomeTutoreAziendale{Supervisore aziendale\\Centro Ricerche FIAT}
 
-%%%%%%% Seduta dell'esame
-%\sedutadilaurea{Agosto 1615}
-%%%%%%%% oppure:
-\sedutadilaurea{\textsc{Academic~Year} 2021-2022}% 
-
-%%%%%%% Logo della sede
-\logosede[4cm]{logopolito}% 
+\sedutadilaurea{\textsc{Anno~accademico} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
 
 \sommario
@@ -176,7 +150,7 @@
 
 \chapter*{Introduction}
 
-\chapter{Related works}
+\chapter{Problem definition}
 
 \section{Object detection}
 Object detection methods are able to recognize the objects represented in an image and to highlight their position, returning the associated bounding boxes, rectangular boxes which contain an object. The bounding box format depends on the model and on the dataset. Typically, they are determined by the \textit{x} and \textit{y} coordinates of the upper-left corner
@@ -271,8 +245,98 @@ A balanced version of the cross entropy loss is sometimes used to deal with clas
 \end{center}
 
 \bigskip
+With cross entropy, also easily classified example ($p$ close to $1$ if $y=1$, to $0$ otherwise) produce a non-negligible value for the loss. In focal loss, an additional modulating factor $\left(1-p_t\right)^\gamma$ is added, with tunable focusing parameter $\gamma$. Focal loss is therefore defines as:
+\begin{center}
+	$FL(p_t) = -\left(1-p_t\right)^\gamma \log(p_t)$
+\end{center}
+The contribution of easy detections to the overall loss is more or less important depending on the value of $\gamma$. With a high $\gamma$, well detected objects provide a very little contribution to the total loss.
+
+Considering the strong imbalance between the foreground ($y=1$) and background ($y=-1$) classes, the focal loss balanced by the $\alpha_t$ parameter as previously defined is used in RetinaNet:
+\begin{center}
+	$FL(p_t) = -\alpha_t\left(1-p_t\right)^\gamma \log(p_t)$.
+\end{center}
+
+\subsection{Basic components}
+\subsubsection{Metrics}
+Algorithm evaluation is a fundamental part of machine learning projects and can be performed in different ways, depending on the task and objective. Object detection is a more complex task than traditional classification: a non-fixed number of objects can be present in the same image and the detection model has to accurately predict their position and class. For this reason, dedicated metrics must be introduced and defined.
+
+\paragraph{Precision and recall}
+First, the following concepts must be defined in the context of object detection:
+\begin{itemize}
+	\item \textbf{True positive} (TP): object correctly detected;
+	\item \textbf{False positive} (FP): incorrect detection, an object is detected but is not actually present in the bounding box or only partly;
+	\item \textbf{False negative} (FN): an object present is the image is not detected by the model.
+\end{itemize}
+The concept of true negative (TN) does not make sense in an object detection context, as the missing detection of a non-present object is not relevant. In fact, this would mean that the model has correctly identified the background as not belonging to any class.
+
+\subparagraph{Precision}
+Precision measures how accurate the predictions of the model are, so it returns the percentage or fraction of correct prediction.
+\begin{center}
+	$precision = \frac{TP}{TP+FP}$
+\end{center}
+
+\subparagraph{Recall}
+Recall measures the model detection ability, so it returns the percentage or fraction of correctly detected objects.
+\begin{center}
+	$recall = \frac{TP}{TP+FN}$
+\end{center}
+
+\paragraph{Intersection over union}
+For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify the prediction as true or false positive. For a couple of bounding boxes, it is computed as:
+\begin{center}
+	$IoU = \frac{area\ of\ overlap}{area\ of\ union}$
+\end{center}
+The computed value is then compared to a threshold to classify a prediction as correct or not. Typical values for the threshold are $0.5$, $0.75$ and $0.95$ and that defines how much we want a detection to be precise. Indeed, a detection classified as true positive with a certain threshold may be considered as false positive if a higher value is used.
+
+\paragraph{Mean Average Precision (mAP)}
+\gls{roc} curve is a popular concept in machine learning. There, recall (or true positive rate) and false positive rate are plotted at different classification thresholds. The associated \gls{auc} metric considers the area under the \gls{roc} curve to assess the performances of a model.\cite{roc} It ranges from $ 0 $ to $ 1 $, with $ 0 $ meaning the model's predictions are all wrong and $ 1 $ they are all correct. Ideally, the \gls{auc} score is $ 0.5 $ for a model that returns random predictions.
+
+Similarly, the precision-recall curve shows the trade-off between precision and recall for different thresholds\cite{precrecall}. \gls{ap} is defined as the area under the precision-recall curve. A high area under the curve means both high recall and high precision. The definition of \gls{map} depends on the context. If \gls{ap} is independently computed for each class or for different \gls{iou} thresholds, then \gls{map} is the average of \gls{ap}. In other cases, \gls{map} and \gls{ap} can be used interchangeably.
+
+
+\subsubsection{Datasets}\label{sec:datasets}
+Several datasets have been published to evaluate the performances of object detection algorithms for different use cases.
+
+\paragraph{COCO}\label{sec:coco}
+\acrfull{coco} is a large-scale object detection and object segmentation dataset published by Microsoft, containing over 200000 images for 91 classes, annotated with bounding boxes and at pixel level\cite{lin2015microsoft}. It defines its own annotation format as \acrshort{json} files.
+
+\paragraph{PASCAL VOC}
+PASCAL \acrfull{voc} is a classification and object detection dataset, developed for different machine learning competitions between 2005 and 2012\cite{voc}. Annotations are stored in \acrshort{xml} format, with a file for each image in the dataset. Bounding boxes are determined by the $x$ and $y$ coordinates of the upper left and bottom left corners.
+
+\paragraph{CityScapes}
+CityScapes is an object segmentation dataset containing 5000 street scenes images from 50 different cities, with the aim of training models for autonomous driving\cite{cordts2016cityscapes}. When used for object detection, bounding boxes can be derived from the tightest rectangles containing the segmentation masks.
+
+\paragraph{KITTI}
+The \acrfull{kitti} dataset\cite{Geiger2013IJRR} contains 7481 images captured in a context similar to CityScapes. Bounding box annotations are stored in plain text, with one file per image.
+
+\paragraph{Sim10k}
+Sim10k is a synthetic dataset containing 10000 annotated images for car detection, rendered from the video-game Grand Theft Auto 5, with the objective of training models in a rich virtual world for detection in the real\cite{johnsonroberson2017driving}.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{CityScapes\cite{cordts2016cityscapes}}{
+		\includegraphics[width=.3\linewidth]{imgs/cityscapes.png}
+	}
+	\subcaptionbox{\acrshort{kitti}\cite{Geiger2013IJRR}}{
+		\includegraphics[width=.31\linewidth]{imgs/kitti.png}
+	}
+	\subcaptionbox{Sim10k\cite{johnsonroberson2017driving}}{
+		\includegraphics[width=.31\linewidth]{imgs/sim10k.jpg}
+	}
+	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even if they contain the same categories of objects.}
+	\label{fig:datasets}
+\end{figure}
+
+\subsubsection{Anchor boxes}\label{sec:anchor}
+In most cases, generating a large number of possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars wide anchor boxes can be defined at different scales, to identify both near and far objects.
+
+\subsubsection{Non-maximum suppression}
+Object detection models usually produce more than one detection for each object, which is not desirable. Non-maximum suppression (NMS) is a method to select one of many overlapping bounding boxes. For a set of overlapping boxes, the one predicted with the highest confidence is selected and all remaining boxes with \gls{iou} over a certain threshold are discarded.
+
 
 \section{Domain adaptation}
+For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering softwares, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
+% elencare altri casi di DA
 
 %\blankpagestyle{headings}
 
