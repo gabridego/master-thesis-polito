@@ -23,14 +23,13 @@
 %%%%%%% questo è un esempio per pdfLaTeX.
 %%%%%%%
 
- \documentclass[%
+\documentclass[%
     corpo=12pt,
     twoside,
     stile=classica,   
 % 	oldstyle,
 %    autoretitolo,
     tipotesi=magistrale,
-    greek,
     evenboxes,
     english
 ]{toptesi}
@@ -60,6 +59,7 @@
 %
 %%%%%%% Esempio di composizione di tesi di laurea con PDFLATEX 
 %
+\usepackage{csquotes}
 \usepackage{lipsum}
 \usepackage{subcaption}
 \usepackage{biblatex}
@@ -71,6 +71,7 @@
 \newacronym{ai}{AI}{artificial intelligence}
 \newacronym{ilsvrc}{ILSVRC}{ImageNet Large Scale Visual Recognition Challenge}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{gan}{GAN}{Generative Adversarial Network}
 \newacronym{svm}{SVM}{Support Vector Machines}
 \newacronym{ide}{IDE}{Integrated Development Environment}
 \newacronym{iou}{IoU}{Intersection over Union}
@@ -93,6 +94,7 @@
 \newacronym{coco}{COCO}{Common Objects in Context}
 \newacronym[firstplural=GPUs]{gpu}{GPU}{Graphics Processing Unit}
 \newacronym{cpu}{CPU}{Central Processing Unit}
+\newacronym{mlp}{MLP}{multi-layer perceptron}
 
 \glsdisablehyper
 
@@ -100,7 +102,8 @@
 \newtheorem{osservazione}{Osservazione}% Standard LaTeX
 \ExtendCaptions{english}{Abstract}{Acknowledgements}
 
-\begin{document}\errorcontextlines=9
+\begin{document}
+\english
 %%%%%%% Questi comandi è meglio metterli dentro l'ambiente
 %%%%%%% ThesisTitlePage con o senza asterisco, oppure in un file di
 %%%%%%% configurazione personale. Si veda la documentazione
@@ -108,8 +111,6 @@
 %%%%%%% Comunque i presenti comandi servono per comporre la
 %%%%%%% tesi con i moduli di estensione standard del pacchetto
 %%%%%%% TOPtesi.
-
-\english
 
 \begin{ThesisTitlePage}*
 \ateneo{Politecnico di Torino}% nome generico dell'Universita'
@@ -119,7 +120,7 @@
 \facolta{AUTOMATICA E INFORMATICA}% facolta'
 %\Materia{Remote sensing}
 \titolo{Domain Adaptation for Object Detection}% 
-\sottotitolo{A data augmentation approach}% 
+%\sottotitolo{A data augmentation approach}% 
 \CorsoDiLaureaIn{Master Degree in\space}
 \corsodilaurea{Data Science and Engineering}% per la laurea
 \TesiDiLaurea{Master Thesis}
@@ -143,10 +144,11 @@
 
 
 
-\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
+%\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
 \indici
 
 \mainmatter
+\english
 
 \chapter*{Introduction}
 
@@ -171,6 +173,7 @@ Object detection is a fundamental task in modern computer vision, with applicati
 An object detection task can be seen as a combination of two main steps: finding image regions that may contain objects, and then independently classifying the objects in those regions. Before deep learning, this was achieved using a sliding-window approach, where an image classifier was applied to different areas of the image and only the predictions with the highest probability were retained. Nowadays, two main families of object detectors can be identified.
 
 \subsubsection{Two stage object detectors}
+%% TODO: spiegare meglio
 As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image and a \gls{cnn} is evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm} to classify the presence of an object in that region and the bounding box location. Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
 
 
@@ -336,19 +339,131 @@ Object detection models usually produce more than one detection for each object,
 
 \section{Domain adaptation}
 For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering softwares, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
-% elencare altri casi di DA
+
+Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
+
+Different type of domain adaptation can be identified, based on whether an\-no\-ta\-tions are available or not for the target domain:
+
+\begin{itemize}
+	\item \textbf{unsupervised domain adaptation}: labeled source data and unlabeled target data are available;
+	\item \textbf{semi-supervised domain adaptation}: labeled source data and some labeled target data are available;
+	\item \textbf{supervised domain adaptation}: labeled data are available for both domains.
+\end{itemize}
+
+Moreover, domain adaptation can be classified as \textbf{homogeneous}, if the domains share the same feature space, or \textbf{heterogeneous}, if features differ.
+
+Domain adaptation is mostly studied in the unsupervised and homogeneous scenario, with one source and one target domain.
+
+\subsection{Domain adaptation methods}
+Different approaches to the problem has been proposed in recent years. The most frequent ones are \textit{domain-invariant feature learning} and \textit{domain mapping}.
+
+\subsubsection{Domain-invariant feature learning}
+Several methods try to align source and target domains by creating a domain-invariant feature representation at the level of the feature extractor neural network. Intuitively, if a model performs well on domain-invariant features extracted from the source domain, it should generalize to the target domain since the two distributions are aligned. A schema is reported in Figure~\ref{fig:align}.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Training}{
+		\includegraphics[width=.4\linewidth]{imgs/align_train.png}
+	}
+	\subcaptionbox{Testing}{
+		\includegraphics[width=.4\linewidth]{imgs/align_test.png}
+	}
+	\caption{General schema for domain-invariant feature learning\cite{wilson2020survey}}
+	\label{fig:align}
+\end{figure}
+
+The methods differ in how they align the domains. An adversarial approach, as in \glspl{gan}, is often used through a domain classifier which outputs whether the features extracted by the \gls{cnn} belong to source or target domain. At the same time, the feature extractor is trained with the aim of fooling the domain classifier, so that it is unable to correctly classify from which domain the feature representation originates. The two networks are trained simultaneously and in an adversarial fashion.
+
+\subsubsection{Domain mapping}
+An alternative to creating a domain-invariant feature representation is mapping one domain to the other, making source images similar to the target or vice versa. For example, synthetic images from \textit{Sim10k} can be mapped to the real world, transferring them to the \textit{CityScapes} style. This can be obtained with conditional \glspl{gan} for image-to-image translation that do not take into account the annotations of source images. Therefore, domain adaptation can be accomplished by training a \gls{gan} to map data from source to target and then training a machine learning model on the mapped labeled source images (that now belong to the target domain). At test time, it is used to make predictions on unlabelled target data. A general schema is reported in figure~\ref{fig:gan}. However, \gls{gan} training is challenging and may incur in several problems such as mode collapse, when a generative network is only capable to produce a limited amount of output images.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Training}{
+		\includegraphics[width=.55\linewidth]{imgs/gan_train.png}
+	}
+	\subcaptionbox{Testing}{
+		\includegraphics[width=.3\linewidth]{imgs/gan_test.png}
+	}
+	\caption{General schema for domain mapping\cite{wilson2020survey}}
+	\label{fig:gan}
+\end{figure}
+
+\subsubsection{Previous works}
+This section introduces the main methods proposed in the literature for unsupervised domain adaptation in an image classification scenario.
+
+\paragraph{Domain Adversarial Neural Network}\label{sec:dann}
+\gls{dann}\cite{ganin2015unsupervised} is a classic method for un\-su\-per\-vi\-sed domain adaptation with the objective of learning domain invariant features. The network is composed of a standard feature extractor, a label predictor and a domain classifier. This work introduces the gradient reversal layer: it leaves input unchanged during the forward step and reverses the gradient during backpropagation, multiplying it by a negative factor. The network is trained adversarially, with the aim of minimizing the label predictor’s loss, while seeking feature mapping parameters that maximize domain classifier loss and domain classifier parameters that minimize its loss. The objective is to align the two data distributions, fooling the domain classifier: when alignment is accomplished, the label predictor is capable of correctly classify an image, whether it is taken from the source or the target domain, while the domain classifier can only return random guesses. A network representation is reported in Figure~\ref{fig:dann}.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.7\linewidth]{imgs/dann.png}
+	\caption{\gls{dann} architecture\cite{ganin2015unsupervised}}
+	\label{fig:dann}
+\end{figure}
+
+\paragraph{Adversarial Discriminative Domain Adaptation}\label{sec:adda}
+\acrshort{adda}\cite{tzeng2017adversarial} is an adversarial method like \gls{dann} and is composed by three consecutive phases:
+\begin{itemize}
+	\item A \gls{cnn} is trained on labeled source examples in order to learn a feature representation for the source domain that can be successfully identified by a classifier. The source \gls{cnn} is frozen.
+	\item Adversarial adaptation is then performed. The objective is to train a target feature extractor in a way that a discriminator which receives features extracted from the two domains cannot predict their domain label, in order to align the domain representations. This is done through \textquotedblleft flipped labels\textquotedblright : the training procedure fools the domain discriminator into believing that the features ex\-trac\-ted from the target domain belong to the source domain instead. As a consequence, the target feature extractor is lead to learn features for the target domain that the domain discriminator could misclassify (as belonging to the source domain).
+	\item For inference, target images are mapped to the shared feature space and classified by the source classifier trained at the beginning.
+\end{itemize}
+A method overview is reported in Figure~\ref{fig:adda}.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.8\linewidth]{imgs/adda.png}
+	\caption{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
+	\label{fig:adda}
+\end{figure}
+
+\iffalse
+\paragraph{Asymmetric Tri-Training}
+Differently from the previous mentioned methods, asymmetric tri-training\cite{saito2017asymmetric} performs adaptation through pseudo-labelling. Three networks, sharing the same feature extractor, are used. Two of them include a classifiers trained on source labeled images, with the aim of classifying features extracted from target image. If their predictions are coherent and with high confidence, the predicted pseudo-labels are assigned to those images. The third network is then trained with those pseudo-labels. An additional \gls{loss} is used to force a different point of view for the two source classifiers.
+\fi
+
+\subsection{Domain adaptation for object detection}
+Like classification models, object detectors suffer from domain shifts between different datasets, which can lead to drastic \gls{map} drops and performance degradation. Annotating images for an object detection task is even more expensive and time-consuming than classification, since each image may contain more than one object that needs to be assigned a bounding box and object category. Due to the different nature of the problem, direct translation of domain adaptation methods for classification may not be effective, and ad-hoc methods have been proposed, generally based on existing object detectors.
+
+\subsubsection{Previous works}
+\paragraph{Domain Adaptive Faster R-CNN}\label{sec:dafrcnn}
+DA Faster \acrshort{rcnn}\cite{chen2018domain} is one of the first works to tackle the problem of cross-domain object detection. It uses a Faster \acrshort{rcnn} as base object detector and the network is trained with adaptation with gradient reversal layers at different levels. Indeed, in an object detection scenario the domain shift can occur at high level, such as image style and illumination, and at low level, such as object appearance and bounding box size. The former is referred to as \textit{image level}, while the latter is defined as \textit{instance level}. An additional loss function, referred as \textit{consistency loss}, is used to enforce consistent prediction from the two domain classifiers.
+
+At inference time, the aligned Faster \gls{rcnn} is normally used.
+
+\paragraph{Strong-Weak Distribution Alignment}
+Aligning image level features as in DA Faster \acrshort{rcnn} makes the strong assumption that image components, such as backgrounds and scene layouts, must be similar across domains in addition to object categories. In the case of large domain shifts, that may affect the model performances. Saito \emph{et al.}\cite{saito2019strongweak} propose a weak global alignment (at image level) combined with a strong alignment of local features (such as the texture or the color of the domains), which are most likely to be similar.
+
+For weak alignment between domains, the domain classifier should focus on examples that are hard to classify, so near the boundary between the two distributions. This can be achieved using the focal loss to train the domain classifier, in order to tune the importance to source or target images whose domain is easy to predict.
+
+\paragraph{Progressive Domain Adaptation}
+Hsu \emph{et al.}\cite{hsu2019progressive} introduce an intermediate domain between source and target, exploiting a \gls{gan} to map source images in the target domain. Adaptation is performed in two steps, from source to intermediate and then from intermediate to target, in order to introduce a bridge between source and target domains. That helps to reduce the domain shift and simplify the adaptation process, such that an object detection model can be trained on the intermediate domain. In addition, a weight is assigned to generated data, giving more importance to images that are close to the target distribution.
+
+\paragraph{Domain Adaptive RetinaNet}\label{sec:daretinanet}
+Recently, Pasqualino \emph{et al.}\cite{pasqualino2020unsupervised} proposed an adaptation approach for the RetinaNet model, but that can be applied to any architecture that includes a \gls{fpn} backbone. Different domain discriminators with different architectures are applied at different levels of the ResNet backbone which is used to construct the feature pyramid, with gradient reversal layers. In this way, extracted features are aligned at different levels in the backbone and the representation derived by the \gls{fpn} is coherent and meaningful.
+
+\paragraph{Image statistics matching}\label{sec:kis}
+The method introduced by Abramov \emph{et al.}\cite{abramov2020simple} relies on image transformations at pixel level instead of adversarial techniques or complex architectures. The objective is to transform annotated source images in a way to make them similar to the unlabeled target domain, matching color statistics and histograms. During training, a target image is randomly chosen for each image belonging to the source domain and the mean and covariance of its color channels are aligned and its color histogram are matched accordingly. In this way, a standard detection model can be trained on modified source image with annotations and directly applied on the target domain.
 
 %\blankpagestyle{headings}
 
 %\lipsum[1-2]
 
 \chapter{Method}
+\section{Introduction}
+The purpose of this Master Thesis is to investigate existing popular methods for domain adaptive object detection.
 
-\chapter{Experiments and results}
+A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer} and \textit{Feed-Forward Stack}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
+
+A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? 
+
+\chapter{Experimental results}
 
 \chapter*{Conclusions}
 
 \backmatter
+\english
 \printbibliography[heading=bibintoc]
 
 
