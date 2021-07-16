@@ -134,6 +134,8 @@
 \sedutadilaurea{\textsc{Anno~accademico} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
 
+\pagenumbering{roman}
+
 \sommario
 
 
@@ -149,8 +151,10 @@
 
 \mainmatter
 \english
+\pagenumbering{arabic}
 
 \chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
 
 \chapter{Problem definition}
 
@@ -456,11 +460,11 @@ The purpose of this Master Thesis is to investigate existing popular methods for
 
 A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer} and \textit{Feed-Forward Stack}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
 
-A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? 
+A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are researched and can boost their productivity.
 
 \chapter{Experimental results}
 
-\chapter*{Conclusions}
+\chapter{Conclusions}
 
 \backmatter
 \english
