@@ -127,9 +127,9 @@
 \def\Candidato{Candidate}
 \candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
 \AdvisorName{Supervisor}
-\relatore{prof.\ Paolo Garza}% per la laurea e/o il dottorato
-%\tutoreaziendale{dott.\ ing.\ Giovanni Giacosa}
-%\NomeTutoreAziendale{Supervisore aziendale\\Centro Ricerche FIAT}
+\relatore{prof. Paolo Garza}% per la laurea e/o il dottorato
+\tutoreaziendale{Valérian Gonnot}
+\NomeTutoreAziendale{R\&D Engineer\\Neovision}
 
 \sedutadilaurea{\textsc{Anno~accademico} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
@@ -158,7 +158,7 @@
 
 \chapter{Problem definition}
 
-\section{Object detection}
+\section{Object detection}\label{sec:detection}
 Object detection methods are able to recognize the objects represented in an image and to highlight their position, returning the associated bounding boxes, rectangular boxes which contain an object. The bounding box format depends on the model and on the dataset. Typically, they are determined by the \textit{x} and \textit{y} coordinates of the upper-left corner
 %, as in \acrshort{coco} (\ref{sec:coco}),
 or of the center
@@ -173,7 +173,7 @@ and by the bounding box width and height.
 
 Object detection is a fundamental task in modern computer vision, with applications such as autonomous driving, robot vision and human-computer interaction.
 
-\subsection{Existing methods}
+\subsection{Existing methods}\label{sec:detectors}
 An object detection task can be seen as a combination of two main steps: finding image regions that may contain objects, and then independently classifying the objects in those regions. Before deep learning, this was achieved using a sliding-window approach, where an image classifier was applied to different areas of the image and only the predictions with the highest probability were retained. Nowadays, two main families of object detectors can be identified.
 
 \subsubsection{Two stage object detectors}
@@ -458,9 +458,42 @@ The method introduced by Abramov \emph{et al.}\cite{abramov2020simple} relies on
 \section{Introduction}
 The purpose of this Master Thesis is to investigate existing popular methods for domain adaptive object detection.
 
-A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer} and \textit{Feed-Forward Stack}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
+A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
 
 A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are researched and can boost their productivity.
+
+For the sake of completeness, the studied methods are implemented and tested on two popular object detection models presented in Section~\ref{sec:detection} when they are compatible with both architectures: Faster \gls{rcnn} and RetinaNet.
+
+\section{Data augmentation}
+Data augmentation is a widely used technique to ease the training of deep learning models and improve their generalization capability. In a typical application, different transformations are randomly applied on training images, in order to vary their appearance and virtually introduce new data on which a model can learn.
+
+Data augmentations can modify the orientation of the images or operate at pixel level, transforming their color and appearance. Common transformations include horizontal and vertical flip, rotation, translation and color shift. For object detection, the bounding boxes have to be updated coherently with the applied data augmentation.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.6\linewidth]{imgs/augmentation.png}
+	\caption{Some examples of data augmentation (image source: \url{http://datahacker.rs/tf-data-augmentation/})}
+	\label{fig:augmentation}
+\end{figure}
+
+Therefore, data augmentation techniques can extensively alter the image appearance. If a model is trained with high-impact data augmentation on labeled images from a domain, it can potentially achieve good results on a different domain it has never seen. 
+% parlare di domain randomization, trasformazioni casuali modificano la distribuzione dei dati e permettono di coprire di più dei dati originali, potenzialmente anche il target
+% dire che trasformazioni ho usato, descriverle
+
+\section{Domain Adaptive Faster R-CNN}
+% spiegare come viene fatta l'adaptation su immagine e istanza, training procedure
+
+\section{Adapting the \gls{fpn}}
+%spiegare problemi adapatation su FPN (piramide incoerente)
+\subsection{Implementation on RetinaNet}
+
+\subsection{Implementation on Faster \gls{rcnn}}
+%spiegare i due possibili modi (un solo discriminatore, tre come in daretinanet)
+
+\section{Image statistics matching}
+% spiegare come funzionano le trasformazioni, eventualmente a patch
+
+% retinanet + adda ??
 
 \chapter{Experimental results}
 
