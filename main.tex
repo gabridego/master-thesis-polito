@@ -307,16 +307,16 @@ Similarly, the precision-recall curve shows the trade-off between precision and 
 Several datasets have been published to evaluate the performances of object detection algorithms for different use cases.
 
 \paragraph{COCO}\label{sec:coco}
-\acrfull{coco} is a large-scale object detection and object segmentation dataset published by Microsoft, containing over 200000 images for 91 classes, annotated with bounding boxes and at pixel level\cite{lin2015microsoft}. It defines its own annotation format as \acrshort{json} files.
+\gls{coco} is a large-scale object detection and object segmentation dataset published by Microsoft, containing over 200000 images for 91 classes, annotated with bounding boxes and at pixel level\cite{lin2015microsoft}. It defines its own annotation format as \acrshort{json} files.
 
 \paragraph{PASCAL VOC}
-PASCAL \acrfull{voc} is a classification and object detection dataset, developed for different machine learning competitions between 2005 and 2012\cite{voc}. Annotations are stored in \acrshort{xml} format, with a file for each image in the dataset. Bounding boxes are determined by the $x$ and $y$ coordinates of the upper left and bottom left corners.
+PASCAL \gls{voc} is a classification and object detection dataset, developed for different machine learning competitions between 2005 and 2012\cite{voc}. Annotations are stored in \acrshort{xml} format, with a file for each image in the dataset. Bounding boxes are determined by the $x$ and $y$ coordinates of the upper left and bottom left corners.
 
 \paragraph{CityScapes}
 CityScapes is an object segmentation dataset containing 5000 street scenes images from 50 different cities, with the aim of training models for autonomous driving\cite{cordts2016cityscapes}. When used for object detection, bounding boxes can be derived from the tightest rectangles containing the segmentation masks.
 
 \paragraph{KITTI}
-The \acrfull{kitti} dataset\cite{Geiger2013IJRR} contains 7481 images captured in a context similar to CityScapes. Bounding box annotations are stored in plain text, with one file per image.
+The \gls{kitti} dataset\cite{Geiger2013IJRR} contains 7481 images captured in a context similar to CityScapes. Bounding box annotations are stored in plain text, with one file per image.
 
 \paragraph{Sim10k}
 Sim10k is a synthetic dataset containing 10000 annotated images for car detection, rendered from the video-game Grand Theft Auto 5, with the objective of training models in a rich virtual world for detection in the real\cite{johnsonroberson2017driving}.
@@ -556,7 +556,14 @@ Pasqualino \textit{et al.} perform adaptation through three different domain cla
 Labeled source images are used to train the whole network, while unlabeled target images only train the three domain classifiers. At test phase, the domain classifiers are plugged off and the adapted RetinaNet is normally used.
 
 \subsection{Implementation on Faster \gls{rcnn}}
-%spiegare i due possibili modi (un solo discriminatore, tre come in daretinanet)
+The addition of a \gls{fpn} component to the backbone of a Faster \gls{rcnn} model improves the detection performances by 3.7 \gls{ap} points on the \gls{coco} dataset\cite{lin2017feature}. The \gls{rpn} receives a rich feature representation at different resolutions and is able to better identify high-quality possible \glspl{roi}. As it can achieve better results than the standard architecture without \gls{fpn} at a negligible price, Faster \gls{rcnn} with \gls{fpn} backbone is commonly used. 
+
+If the base detector includes a \gls{fpn} component, adaptation at image level for the Domain Adaptive Faster \gls{rcnn} method has to be reconsidered. Two possible solutions can be identified in order to align the feature representations between different domains:
+\begin{itemize}
+	\item Adaptation can be directly performed on features extracted by the \gls{fpn}. Different levels of the feature pyramid can be forwarded, on at a time, to a domain classifier through gradient reversal layer. The resulting domain losses can be summed or averaged across all levels. This way, the objective is to push the ResNet backbone to extract feature representations that can be used to build a feature pyramid which is independent of the domain of each input image.
+	\item Similarly to what is done by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, it is possible to directly align the ResNet features that serve as input for the \gls{fpn}: if they are not dependent from the domain, neither the resulting pyramid representation will be. Differently from RetinaNet, the last four ResNet layers are used to build the feature pyramid, so they are forwarded to four different domain classifiers with different architectures, through gradient reversal layers for adversarial alignment.
+\end{itemize}
+The presence or absence of the \gls{fpn} in the backbone has no impact on adaptation at instance level, as \gls{rpn} returns \glspl{roi} in the same format. If different domain classifiers are used, the consistency regularization loss is independently computed for each ResNet layer between the domain prediction and the prediction at instance level, unique at each iteration. Otherwise, training proceeds as previously described.
 
 \section{Image statistics matching}
 % spiegare come funzionano le trasformazioni, eventualmente a patch
