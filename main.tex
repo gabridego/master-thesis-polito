@@ -475,7 +475,7 @@ Data augmentations can modify the orientation of the images or operate at pixel 
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{imgs/augmentation.png}
+	\includegraphics[width=0.7\linewidth]{imgs/augmentation.png}
 	\caption{Some examples of data augmentation (image source: \url{http://datahacker.rs/tf-data-augmentation/})}
 	\label{fig:augmentation}
 \end{figure}
@@ -580,8 +580,20 @@ A detection model is therefore trained on labeled mapped images that share image
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=\linewidth]{imgs/kis.jpeg}
-	\caption{Results obtained through Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.\cite{abramov2020simple}}
+	% \includegraphics[width=\linewidth]{imgs/kis.jpeg}
+	\subcaptionbox{Source image}{
+		\includegraphics[width=.4\linewidth]{imgs/src.png}
+	}
+	\subcaptionbox{Target image}{
+		\includegraphics[width=.4\linewidth]{imgs/tgt.png}
+	}\\
+	\subcaptionbox{Feature Distribution Matching}{
+		\includegraphics[width=.4\linewidth]{imgs/fdm.png}
+	}
+	\subcaptionbox{Histogram Matching}{
+		\includegraphics[width=.4\linewidth]{imgs/hm.png}
+	}
+	\caption{Results obtained through Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:kis}
 \end{figure}
 
