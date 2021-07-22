@@ -178,7 +178,7 @@ Object detection is a fundamental task in modern computer vision, with applicati
 An object detection task can be seen as a combination of two main steps: finding image regions that may contain objects, and then independently classifying the objects in those regions. Before deep learning, this was achieved using a sliding-window approach, where an image classifier was applied to different areas of the image and only the predictions with the highest probability were retained. Nowadays, two main families of object detectors can be identified.
 
 \subsubsection{Two stage object detectors}
-%% TODO: spiegare meglio
+% TODO: spiegare meglio
 As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image and a \gls{cnn} is evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm} to classify the presence of an object in that region and the bounding box location. Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
 
 
@@ -408,7 +408,7 @@ This section introduces the main methods proposed in the literature for unsuperv
 	\label{fig:dann}
 \end{figure}
 
-%% TODO: formula dann con gamma, parametri ripresi più avanti
+% TODO: formula dann con gamma, parametri ripresi più avanti
 
 \paragraph{Adversarial Discriminative Domain Adaptation}\label{sec:adda}
 \acrshort{adda}\cite{tzeng2017adversarial} is an adversarial method like \gls{dann} and is composed by three consecutive phases:
@@ -496,7 +496,8 @@ In this work, instead, randomization is introduced through the combination of co
 	\item Horizontal flip: geometric transformation that horizontally mirrors the image.
 	\item Rotation: geometric transformation that rotates image and bounding boxes of a degree value sampled from a provided interval.
 	\item Translation: geometric transformation that horizontally and vertically translates image and bounding boxes of a number of pixels sampled from a provided interval.
-	\item Color jitter: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each properties are sampled from the provided intervals.
+	\item Shearing: geometric transformation that deforms the image in parallelogram shape, according to horizontal or vertical axis. Each pixel of the image is translated in the same direction, by a magnitude proportional to its distance from the image origin. The amount of shearing is sampled from a provided interval.
+	\item Color jitter: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each properties are sampled from provided intervals.
 	\item Solarization: color-level transformation that, for an image, inverts the color of all pixels whose value is above a threshold. The threshold is sampled from a provided interval.
 	\item Equalization: color-level transformation that equalizes the color histogram of the image.
 \end{itemize}
@@ -516,6 +517,8 @@ The operations can be easily implemented and used in most popular deep learning 
 	\caption{Comparison between original and augmented images. As an example, here \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:augs}
 \end{figure}
+
+% TODO: autoaugment: problems in geometric operations on small objects (no more present in boxes) and on background only (image modified, objects covered and no more in boxes)
 
 \section{Domain Adaptive Faster R-CNN}
 Domain Adaptive Faster \acrshort{rcnn}\cite{chen2018domain}, presented in Section~\ref{sec:dafrcnn}, is without any doubt the most popular method designed to attain successful object detection in different domains. Since its introduction, the paper has been cited hundreds of times and several methods based on it have been proposed. It is therefore a good adaptation method to be used as baseline and for comparison with more advanced architectures.
@@ -597,7 +600,7 @@ A detection model is therefore trained on labeled mapped images that share image
 	\label{fig:kis}
 \end{figure}
 
-%% TODO: trasformazioni a patch
+% TODO: trasformazioni a patch
 
 % retinanet + adda ??
 
@@ -635,11 +638,15 @@ The results obtained with RetinaNet-based methods are reported in Table~\ref{tab
 		\hline
 		Baseline (HFlip + rotation + translation + color jitter + solarize + equalize)      &   52.7   \\
 		\hline
+		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   ??.?   \\
+		\hline
 		Image statistics matching (HFlip)  &   48.2    \\
 		\hline
 		Image statistics matching (HFlip + rotation + translation)  &   52.0    \\
 		\hline
 		DA RetinaNet (HFlip)   &   52.8    \\
+		\hline\hline
+		Oracle (HFlip) &   68.7    \\
 		\hline
 	\end{tabularx}
 	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}.}
@@ -664,8 +671,8 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 		DA Faster R-CNN (w/o FPN, HFlip)    & 36.3     \\
 		\hline
 		DA Faster R-CNN (w/ FPN, HFlip)    & 45.0     \\
-% 		\hline
-% 		DA Faster R-CNN (different discriminators on FPN, HFlip)     &   46.8    \\
+ 		\hline
+ 		DA Faster R-CNN (different discriminators on FPN, HFlip)     &   46.8    \\
 		\hline
 		Image statistics matching (w/ FPN, HFlip)  &   55.0    \\
 		\hline
