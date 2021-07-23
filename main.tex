@@ -325,13 +325,13 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{CityScapes\cite{cordts2016cityscapes}}{
-		\includegraphics[width=.3\linewidth]{imgs/cityscapes.png}
+		\includegraphics[width=.60\linewidth]{imgs/cityscapes.png}
 	}
 	\subcaptionbox{\acrshort{kitti}\cite{Geiger2013IJRR}}{
-		\includegraphics[width=.31\linewidth]{imgs/kitti.png}
+		\includegraphics[width=.60\linewidth]{imgs/kitti.png}
 	}
 	\subcaptionbox{Sim10k\cite{johnsonroberson2017driving}}{
-		\includegraphics[width=.31\linewidth]{imgs/sim10k.jpg}
+		\includegraphics[width=.60\linewidth]{imgs/sim10k.jpg}
 	}
 	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even if they contain the same categories of objects.}
 	\label{fig:datasets}
@@ -341,10 +341,25 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 In most cases, generating a large number of possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars wide anchor boxes can be defined at different scales, to identify both near and far objects.
 
 \subsubsection{Non-maximum suppression}
-Object detection models usually produce more than one detection for each object, which is not desirable. Non-maximum suppression (NMS) is a method to select one of many overlapping bounding boxes. For a set of overlapping boxes, the one predicted with the highest confidence is selected and all remaining boxes with \gls{iou} over a certain threshold are discarded.
+Object detection models usually produce more than one detection for each object, which is not desirable. Non-maximum suppression (NMS) is a method to select one of many overlapping bounding boxes. For a set of overlapping boxes, the one predicted with the highest confidence is selected and all remaining boxes whose \gls{iou} with the chosen bounding box is over a certain threshold are discarded. In this way, only the most probable detection is kept for each object.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Before NMS}{
+		\includegraphics[width=.70\linewidth]{imgs/no_nms.png}
+	}
+	\subcaptionbox{After NMS}{
+		\includegraphics[width=.70\linewidth]{imgs/nms.png}
+	}
+	\caption{Example of application of non-maximum suppression}
+	\label{fig:nms}
+\end{figure}
 
 
 \section{Domain adaptation}
+
+% TODO: add randomization
+
 For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering softwares, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
 
 Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
@@ -403,7 +418,7 @@ This section introduces the main methods proposed in the literature for unsuperv
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.7\linewidth]{imgs/dann.png}
+	\includegraphics[width=0.8\linewidth]{imgs/dann.png}
 	\caption{\gls{dann} architecture\cite{ganin2015unsupervised}}
 	\label{fig:dann}
 \end{figure}
@@ -421,7 +436,7 @@ A method overview is reported in Figure~\ref{fig:adda}.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/adda.png}
+	\includegraphics[width=0.9\linewidth]{imgs/adda.png}
 	\caption{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
 	\label{fig:adda}
 \end{figure}
@@ -506,17 +521,19 @@ The operations can be easily implemented and used in most popular deep learning 
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{\textit{Sim10k} without augmentations}{
-		\includegraphics[width=.3\linewidth]{imgs/sim10korig.png}
+		\includegraphics[width=.47\linewidth]{imgs/sim10korig.png}
 	}
 	\subcaptionbox{\textit{Sim10k} with augmentations}{
-		\includegraphics[width=.31\linewidth]{imgs/sim10kaug.png}
+		\includegraphics[width=.47\linewidth]{imgs/sim10kaug.png}
 	}
 	\subcaptionbox{\textit{CityScapes} without augmentations}{
-		\includegraphics[width=.31\linewidth]{imgs/cityscapesorig.png}
+		\includegraphics[width=.47\linewidth]{imgs/cityscapesorig.png}
 	}
 	\caption{Comparison between original and augmented images. As an example, here \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:augs}
 \end{figure}
+
+% TODO: red bounding boxes
 
 % TODO: autoaugment: problems in geometric operations on small objects (no more present in boxes) and on background only (image modified, objects covered and no more in boxes)
 
@@ -626,6 +643,8 @@ The following parameters are used for each data augmentation technique:
 \section{RetinaNet}
 The results obtained with RetinaNet-based methods are reported in Table~\ref{table:retinanet}.
 
+% TODO: maybe separate between randomization and direct adaptation
+
 \begin{table}[ht!]
 	\centering
 	\begin{tabularx}{\linewidth}{|X|c|}
@@ -667,6 +686,8 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 		Baseline (w/ FPN, HFlip)       &   46.3   \\
 		\hline
 		Baseline (w/ FPN, HFlip + rotation + translation + color jitter + solarize + equalize)       &   57.9   \\
+		\hline
+		Baseline (w/ FPN, HFlip + rotation + translation + shearing + color jitter + solarize + equalize)       &   ??.?   \\
 		\hline
 		DA Faster R-CNN (w/o FPN, HFlip)    & 36.3     \\
 		\hline
