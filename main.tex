@@ -179,7 +179,10 @@ An object detection task can be seen as a combination of two main steps: finding
 
 \subsubsection{Two stage object detectors}
 % TODO: spiegare meglio
-As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image and a \gls{cnn} is evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm} to classify the presence of an object in that region and the bounding box location. Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
+As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image. A \gls{cnn} is then evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm}
+%to classify the presence of an object in that region and the bounding box location.
+to determine if an object is present in this bounding box (classification task) as well as its location to match that of the object (regression task).
+Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
 
 
 The main contribution of Faster \acrshort{rcnn} is the introduction of a \gls{rpn}, which integrate some convolutional layers of the image classifier into the region proposal phase. That allows the network to be trained in an end-to-end fashion.
@@ -230,8 +233,9 @@ The main improvements of RetinaNet\cite{lin2018focal} over previous one stage de
 After their proposal in the context of single-stage detectors, \glspl{fpn} have also been used as part of the backbone of two-stage detectors, to improve their performance.
 
 \subparagraph{Focal loss}
-One of the main obstacles for the training of  other object detector models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions.
+One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions. Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem. In this case, a specific loss function can be used to encourage the network to focus on important regions in the images.
 
+\bigskip
 The focal loss, introduced by RetinaNet, is based on the \textit{cross entropy} loss. For binary classification, the cross entropy loss is widely used and defined as:
 \begin{center}
 	$CE(p,y) = \begin{cases}
@@ -292,7 +296,7 @@ Recall measures the model detection ability, so it returns the percentage or fra
 \end{center}
 
 \paragraph{Intersection over union}
-For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify the prediction as true or false positive. For a couple of bounding boxes, it is computed as:
+For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify the prediction as true or false positive. For a couple of bounding boxes, \gls{iou} is computed as:
 \begin{center}
 	$IoU = \frac{area\ of\ overlap}{area\ of\ union}$
 \end{center}
@@ -360,9 +364,9 @@ Object detection models usually produce more than one detection for each object,
 
 % TODO: add randomization
 
-For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering softwares, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
+For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
 
-Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
+Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, among other cases they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
 
 Different type of domain adaptation can be identified, based on whether an\-no\-ta\-tions are available or not for the target domain:
 
@@ -428,7 +432,7 @@ This section introduces the main methods proposed in the literature for unsuperv
 % TODO: formula dann con gamma, parametri ripresi più avanti
 
 \paragraph{Adversarial Discriminative Domain Adaptation}\label{sec:adda}
-\acrshort{adda}\cite{tzeng2017adversarial} is an adversarial method like \gls{dann} and is composed by three consecutive phases:
+\gls{adda}\cite{tzeng2017adversarial} is an adversarial method like \gls{dann}, but is composed by three consecutive phases:
 \begin{enumerate}
 	\item A \gls{cnn} is trained on labeled source examples in order to learn a feature representation for the source domain that can be successfully identified by a classifier. The source \gls{cnn} is frozen.
 	\item Adversarial adaptation is then performed. The objective is to train a target feature extractor in a way that a discriminator which receives features extracted from the two domains cannot predict their domain label, in order to align the domain representations. This is done through \textquotedblleft flipped labels\textquotedblright : the training procedure fools the domain discriminator into believing that the features ex\-trac\-ted from the target domain belong to the source domain instead. As a consequence, the target feature extractor is lead to learn features for the target domain that the domain discriminator could misclassify (as belonging to the source domain).
