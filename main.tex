@@ -513,31 +513,35 @@ In this work, instead, randomization is introduced through the combination of co
 	\item Horizontal flip: geometric transformation that horizontally mirrors the image.
 	\item Rotation: geometric transformation that rotates image and bounding boxes of a degree value sampled from a provided interval.
 	\item Translation: geometric transformation that horizontally and vertically translates image and bounding boxes of a number of pixels sampled from a provided interval.
-	\item Shearing: geometric transformation that deforms the image in parallelogram shape, according to horizontal or vertical axis. Each pixel of the image is translated in the same direction, by a magnitude proportional to its distance from the image origin. The amount of shearing is sampled from a provided interval.
 	\item Color jitter: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each properties are sampled from provided intervals.
 	\item Solarization: color-level transformation that, for an image, inverts the color of all pixels whose value is above a threshold. The threshold is sampled from a provided interval.
 	\item Equalization: color-level transformation that equalizes the color histogram of the image.
 \end{itemize}
 The operations can be easily implemented and used in most popular deep learning frameworks.
 
+Many other operations are often used for data augmentation, but are not included in the performed experiments due to time constraints and since the possible combinations of the aforementioned operations are already numerous. Examples are shearing, a geometric transformation that deforms the image in parallelogram shape according to horizontal or vertical axis,
+%. Each pixel of the image is translated in the same direction, by a magnitude proportional to its distance from the image origin. The amount of shearing is sampled from a provided interval.
+and cutout, which randomly masks regions of the training images in order to improve networks' robustness.
+
 \begin{figure}[ht]
 	\centering
-	\subcaptionbox{\textit{Sim10k} without augmentations}{
+	\subcaptionbox{Original \textit{Sim10k} image}{
 		\includegraphics[width=.47\linewidth]{imgs/sim10korig.png}
 	}
-	\subcaptionbox{\textit{Sim10k} with augmentations}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kaug.png}
+	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kaug1.png}
 	}
-	\subcaptionbox{\textit{CityScapes} without augmentations}{
-		\includegraphics[width=.47\linewidth]{imgs/cityscapesorig.png}
+	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kaug2.png}
 	}
-	\caption{Comparison between original and augmented images. As an example, here \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
+	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kaug3.png}
+	}
+	\caption{Comparison between original and transformed images}
 	\label{fig:augs}
 \end{figure}
 
-% TODO: red bounding boxes
-
-% TODO: autoaugment: problems in geometric operations on small objects (no more present in boxes) and on background only (image modified, objects covered and no more in boxes)
+% TODO: autoaugment: problems in geometric operations on small objects (not in boxes anymore) and on background only (image modified, objects covered and not in boxes anymore)
 
 \section{Domain Adaptive Faster R-CNN}
 Domain Adaptive Faster \acrshort{rcnn}\cite{chen2018domain}, presented in Section~\ref{sec:dafrcnn}, is without any doubt the most popular method designed to attain successful object detection in different domains. Since its introduction, the paper has been cited hundreds of times and several methods based on it have been proposed. It is therefore a good adaptation method to be used as baseline and for comparison with more advanced architectures.
@@ -604,16 +608,16 @@ A detection model is therefore trained on labeled mapped images that share image
 	\centering
 	% \includegraphics[width=\linewidth]{imgs/kis.jpeg}
 	\subcaptionbox{Source image}{
-		\includegraphics[width=.4\linewidth]{imgs/src.png}
+		\includegraphics[width=.47\linewidth]{imgs/src.png}
 	}
 	\subcaptionbox{Target image}{
-		\includegraphics[width=.4\linewidth]{imgs/tgt.png}
+		\includegraphics[width=.47\linewidth]{imgs/tgt.png}
 	}\\
 	\subcaptionbox{Feature Distribution Matching}{
-		\includegraphics[width=.4\linewidth]{imgs/fdm.png}
+		\includegraphics[width=.47\linewidth]{imgs/fdm.png}
 	}
 	\subcaptionbox{Histogram Matching}{
-		\includegraphics[width=.4\linewidth]{imgs/hm.png}
+		\includegraphics[width=.47\linewidth]{imgs/hm.png}
 	}
 	\caption{Results obtained through Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:kis}
@@ -653,19 +657,44 @@ The results obtained with RetinaNet-based methods are reported in Table~\ref{tab
 		\hline
 		Method  &   mAP@0.5 \\
 		\hline\hline
+		Baseline (HFlip + rotation + translation + shearing)      &   39.2   \\
+		\hline
+		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   49.8   \\
+		\hline
+		Baseline (HFlip + rotation + translation + shearing + box translation + box equalize + equalize)      &   21.0   \\
+		\hline
+		Baseline (HFlip + box shearing + background color jitter + box equalize)      &   29.1   \\
+		\hline
+	\end{tabularx}
+	\caption{Extra experiments}
+	\label{table:extra}
+\end{table}
+
+\begin{table}[ht!]
+	\centering
+	\begin{tabularx}{\linewidth}{|X|c|}
+		\hline
+		Method  &   mAP@0.5 \\
+		\hline\hline
 		Baseline (HFlip)       &   30.4   \\
 		\hline
 		Baseline (HFlip + rotation + translation)      &   37.6   \\
 		\hline
-		Baseline (HFlip + rotation + translation + color jitter + solarize + equalize)      &   52.7   \\
+		Baseline (HFlip + rotation + translation + color jitter)      &   ??.?   \\
 		\hline
-		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   ??.?   \\
+		Baseline (HFlip + rotation + translation + color jitter + solarize + equalize)      &   52.7   \\
 		\hline
 		Image statistics matching (HFlip)  &   48.2    \\
 		\hline
 		Image statistics matching (HFlip + rotation + translation)  &   52.0    \\
 		\hline
+		Image statistics matching (HFlip + rotation + translation + color jitter)  &   ??.?    \\
+		\hline
 		DA RetinaNet (HFlip)   &   52.8    \\
+		\hline
+		DA RetinaNet (HFlip + rotation + translation)   &   ??.?    \\
+		\hline
+		DA RetinaNet (HFlip + rotation + translation + color jitter)   &   ??.?    \\
 		\hline\hline
 		Oracle (HFlip) &   68.7    \\
 		\hline
@@ -687,9 +716,11 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 		\hline
 		Baseline (w/ FPN, HFlip)       &   46.3   \\
 		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation + color jitter + solarize + equalize)       &   57.9   \\
+		Baseline (w/ FPN, HFlip + rotation + translation)       &   ??.?   \\
 		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation + shearing + color jitter + solarize + equalize)       &   ??.?   \\
+		Baseline (w/ FPN, HFlip + rotation + translation + color jitter)       &   ??.?   \\
+		\hline
+		Baseline (w/ FPN, HFlip + rotation + translation + color jitter + solarize + equalize)       &   57.9   \\
 		\hline
 		DA Faster R-CNN (w/o FPN, HFlip)    & 36.3     \\
 		\hline
@@ -699,9 +730,9 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 		\hline
 		Image statistics matching (w/ FPN, HFlip)  &   55.0    \\
 		\hline
-		Image statistics matching (w/ FPN, HFlip + rotation + translate) &   62.0    \\
+		Image statistics matching (w/ FPN, HFlip + rotation + translation) &   62.0    \\
 		\hline
-		Image statistics matching (w/ FPN, HFlip + rotation + translate + color jitter) &   62.5    \\
+		Image statistics matching (w/ FPN, HFlip + rotation + translation + color jitter) &   62.5    \\
 		\hline\hline
 		Oracle (w/ FPN, HFlip) &   76.3    \\
 		\hline
