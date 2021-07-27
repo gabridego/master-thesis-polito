@@ -154,6 +154,7 @@
 \english
 \pagenumbering{arabic}
 
+\phantomsection
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
@@ -501,7 +502,7 @@ Data augmentations can modify the orientation of the images or operate at pixel 
 	\label{fig:augmentation}
 \end{figure}
 
-Therefore, data augmentation techniques can extensively alter the image appearance. If a model is trained with high-impact data augmentation on labeled images from a domain, it can potentially achieve good results on a different domain it has never seen. That falls in the case of \textbf{domain randomization}: training images are drawn from a data distribution which is way larger than the original one and the model can learn to generalize to different domains. In some ways, the network is \textquotedblleft overwhelmed\textquotedblright with different versions of the same images, in order to recognize their contents in different conditions. For domain adaptation, the resulting data distribution can possibly include the target domain or intermediates domains that are closer to the target domain than the source domain.
+Therefore, data augmentation techniques can extensively alter the image appearance. If a model is trained with high-impact data augmentation on labeled images from a domain, it can potentially achieve good results on a different domain it has never seen. That falls in the case of \textbf{domain randomization}: training images are drawn from a data distribution which is way larger than the original one and the model can learn to generalize to different domains. In some ways, the network is \textquotedblleft overwhelmed\textquotedblright~with different versions of the same images, in order to recognize their contents in different conditions. For domain adaptation, the resulting data distribution can possibly include the target domain or intermediates domains that are closer to the target domain than the source domain.
 
 Most works that investigate domain randomization focus on \textit{sim2real} knowledge transfer and address the problem generating a large variety of synthetic training images. The famous one by Tobin \textit{et al.}\cite{tobin2017domain} defines different randomization parameters that control, inter alia, position, number and type of the objects present in an image, lighting conditions and camera conditions. An interval of values is defined for each parameter and, for generating an image, each parameter is uniformly sampled within its range and used to control the generator. A detection model is then trained on the generated synthetic images and should be able to generalize to real images containing the same kind of objects.
 
@@ -721,7 +722,7 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 		\hline
 		Baseline (w/ FPN, HFlip)       &   46.3   \\
 		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation)       &   ??.?   \\
+		Baseline (w/ FPN, HFlip + rotation + translation)       &   48.8   \\
 		\hline
 		Baseline (w/ FPN, HFlip + rotation + translation + color jitter)       &   ??.?   \\
 		\hline
