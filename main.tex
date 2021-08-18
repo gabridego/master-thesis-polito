@@ -28,10 +28,12 @@
     twoside,
     stile=classica,   
 % 	oldstyle,
-%    autoretitolo,
+%   autoretitolo,
     tipotesi=magistrale,
     evenboxes,
-    english
+    english,
+%   cucitura=7mm,
+	numerazioneromana,
 ]{toptesi}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Per la codifica d'entratasi può scegliere quella che si vuole,
@@ -135,7 +137,7 @@
 \sedutadilaurea{\textsc{Anno~accademico} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
 
-\pagenumbering{roman}
+%\pagenumbering{roman}
 
 \sommario
 
@@ -152,7 +154,7 @@
 
 \mainmatter
 \english
-\pagenumbering{arabic}
+%\pagenumbering{arabic}
 
 \phantomsection
 \chapter*{Introduction}
@@ -698,9 +700,11 @@ The results obtained with RetinaNet-based methods are reported in Table~\ref{tab
 		\hline
 		DA RetinaNet (HFlip)   &   52.8    \\
 		\hline
-		DA RetinaNet (HFlip + rotation + translation)   &   ??.?    \\
+		DA RetinaNet (HFlip + rotation + translation)   &   54.2    \\
+		%54.237
 		\hline
-		DA RetinaNet (HFlip + rotation + translation + color jitter)   &   ??.?    \\
+		DA RetinaNet (HFlip + rotation + translation + color jitter)   &   54.8    \\
+		%54.788
 		\hline\hline
 		Oracle (HFlip) &   68.7    \\
 		\hline
