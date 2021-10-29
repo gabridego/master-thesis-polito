@@ -162,6 +162,33 @@
 
 \chapter{Problem definition}
 
+\section{Computer vision}
+Thanks to their achievements in computer vision, deep learning methods based on \glspl{cnn} have aroused a lot of interest over the last decade and have been used in many other branches of artificial intelligence. \Glspl{cnn} are a class of artificial neural networks, designed for the processing of structured arrays of data such as images. By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted. These methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms such as \gls{svm} and K-Nearest Neighbors, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by CNNs in computer vision.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.7\textwidth]{imgs/ILSVRC.png}
+	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}\cite{russakovsky2015imagenet}. Source: \cite{hanqing2020research}.
+	\label{fig:imagenet}}
+\end{figure}
+
+Three main tasks in computer vision can be identified, all of which have benefited from the development of deep neural network architectures:
+
+\begin{itemize}
+	\item \textbf{Image classification}, whose objective is to predict the class label for an image.
+	\item \textbf{Object detection}, whose objective is to predict the position and the class label for all the objects that appear in an image, which may belong to different classes. The position of an object is represented by means of a bounding box.
+	\item \textbf{Semantic segmentation}, whose objective is to predict a class label for each pixel in an image. A possible extension is \textit{instance segmentation}, which identifies the object instance for each pixel, distinguishing different objects belonging to the same class.
+\end{itemize}
+
+A summary is presented in Figure~\ref{fig:classdetseg}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.8\textwidth]{imgs/classification_detection_segmentaion.jpeg}
+	\caption[Comparison between classification, object detection and semantic segmentation]{Comparison between classification, object detection and semantic segmentation. Source: \url{http://ronny.rest/tutorials/module/seg_01/segmentation_01_intro/}}
+	\label{fig:classdetseg}
+\end{figure}
+
 \section{Object detection}\label{sec:detection}
 Object detection methods are able to recognize the objects represented in an image and to highlight their position, returning the associated bounding boxes, rectangular boxes which contain an object. The bounding box format depends on the model and on the dataset. Typically, they are determined by the \textit{x} and \textit{y} coordinates of the upper-left corner
 %, as in \acrshort{coco} (\ref{sec:coco}),
@@ -184,11 +211,12 @@ An object detection task can be seen as a combination of two main steps: finding
 % TODO: spiegare meglio
 As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image. A \gls{cnn} is then evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm}
 %to classify the presence of an object in that region and the bounding box location.
-to determine if an object is present in this bounding box (classification task) as well as its location to match that of the object (regression task).
+to determine if an object is present in this bounding box (classification task) as well as its location to match that of the object (regression task). As \gls{svm} is a binary classification algorithm, as many \glspl{svm} as classes are used for the classification task.
 Fast \acrshort{rcnn}\cite{girshick2015fast} and Faster \acrshort{rcnn}\cite{ren2016faster} improved the region selection algorithm, analysing only interesting \glspl{roi} and exponentially reducing the inference time. Because of its good performances and speed, Faster \acrshort{rcnn} is widely used for benchmarking and as base for several derived works.
 
-
 The main contribution of Faster \acrshort{rcnn} is the introduction of a \gls{rpn}, which integrate some convolutional layers of the image classifier into the region proposal phase. That allows the network to be trained in an end-to-end fashion.
+
+Examples of typical architectures are reported in Figure~\ref{fig:architectures}.
 
 \begin{figure}[ht]
 	\centering
@@ -233,7 +261,7 @@ The main improvements of RetinaNet\cite{lin2018focal} over previous one stage de
 \subparagraph{Feature Pyramid Network}
 \glspl{fpn}\cite{lin2017feature} adopt and improve the same approach as \acrshort{ssd}'s pyramid layers. They are composed by a sequence of pyramid levels which correspond to network stages. Each stage is composed by multiple convolutional layers of the same size, divided by two at consecutive stages. In addition to standard feedforward, different stages are linked by a top-down pathway in the opposite direction and lateral connections. This allows the network to construct a rich and multi-scale feature pyramid for each input image.
 
-After their proposal in the context of single-stage detectors, \glspl{fpn} have also been used as part of the backbone of two-stage detectors, to improve their performance.
+After their proposal in the context of single-stage detectors, \glspl{fpn} have also been used as part of the backbone of two-stage detectors, aiming at improving their performances.
 
 \subparagraph{Focal loss}
 One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions. Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem. In this case, a specific loss function can be used to encourage the network to focus on important regions in the images.
@@ -602,7 +630,7 @@ The presence or absence of the \gls{fpn} in the backbone has no impact on adapta
 \section{Image statistics matching}
 As discussed in Section~\ref{sec:dataaug}, data augmentation techniques that significantly modify the appearance of images from a domain extend their data distribution, possibly covering several domains. A model can be trained on transformed images from the source domain without any architectural modification, possibly performing well on images drawn from a target data distribution.
 
-Likewise, domain mapping methods transform images from a source domain in a way that a model can confused them with images from the target domain: they focus on accurate modifications of images rather than upgrading base architectures. That is typically attained with \glspl{gan} for style transfer, but training of adversarial networks is complicated and time-consuming. Instead, the method one introduced by Abramov \textit{et al.}\cite{abramov2020simple} try to \textquotedblleft keep it simple\textquotedblright performing easy but effective operations at image level, with the objective of matching some statistics between source and target images.
+Likewise, domain mapping methods transform images from a source domain in a way that a model can confused them with images from the target domain: they focus on accurate modifications of images rather than upgrading base architectures. That is typically attained with \glspl{gan} for style transfer, but training of adversarial networks is complicated and time-consuming. Instead, the method introduced by Abramov \textit{et al.}\cite{abramov2020simple} try to \textquotedblleft keep it simple\textquotedblright performing easy but effective operations at image level, with the objective of matching some statistics between source and target images.
 
 More precisely, for each labeled source image an unlabeled target image is randomly selected and two transformation are applied one after the other:
 \begin{enumerate}
