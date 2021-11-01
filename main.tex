@@ -68,6 +68,7 @@
 \addbibresource{references.bib}
 \usepackage[acronym]{glossaries}
 \usepackage{tabularx}
+\usepackage{xurl}
 %
 
 \makeglossaries
@@ -246,12 +247,12 @@ The \acrfull{yolo} model\cite{redmon2016look} uses pretrained \gls{cnn} for clas
 	\label{fig:ssd}
 \end{figure}
 
-After their proposal, both \gls{yolo} and \gls{ssd} have been extensively studied and improved by the community. The last versions of the two families are architecturally close and work in very similar ways.
+After their proposal, \gls{yolo} and \gls{ssd} have both been extensively studied and improved by the community. The last versions of the two families are architecturally close and work in very similar ways.
 
 \paragraph{RetinaNet}
 The main improvements of RetinaNet\cite{lin2018focal} over previous one stage detection model are the use of \textit{\acrfull{fpn}} as part of the backbone and of \textit{focal loss}, which helps to approach the results of two-stage detectors.
 
-\begin{figure}[ht!]
+\begin{figure}[b]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/retinanet.png}
 	\caption{RetinaNet architecture\cite{lin2018focal}}
@@ -264,44 +265,50 @@ The main improvements of RetinaNet\cite{lin2018focal} over previous one stage de
 After their proposal in the context of single-stage detectors, \glspl{fpn} have also been used as part of the backbone of two-stage detectors, aiming at improving their performances.
 
 \subparagraph{Focal loss}
-One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions. Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem. In this case, a specific loss function can be used to encourage the network to focus on important regions in the images.
+One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions. Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem. In this case, a specific loss function can be used to encourage the network to focus on regions of the images that actually contain objects.
 
 \bigskip
-The focal loss, introduced by RetinaNet, is based on the \textit{cross entropy} loss. For binary classification, the cross entropy loss is widely used and defined as:
-\begin{center}
-	$CE(p,y) = \begin{cases}
+The \textit{focal loss}, introduced by RetinaNet, is based on the \textit{cross entropy} loss. For binary classification, the cross entropy loss is widely used and defined as:
+\begin{equation}
+	CE(p,y) = \begin{cases}
 		-\log(p) & \text{if $y$ = 1}\\
 		-\log(1-p) & \text{otherwise.}
-	\end{cases}$
-\end{center}
-where $y\in \{\pm 1\}$ is the ground truth class and $p\in\left[0,1\right]$ is the model's probability for class $1$. Defining $p_t$ as:
-\begin{center}
-	$p_t = \begin{cases}
+	\end{cases}
+\end{equation}
+where $y\in \{\pm 1\}$ is the ground truth class and $p\in\left[0,1\right]$ is the model's probability for class $1$. In this context, $y=1$ and $y=-1$ represent the foreground and background classes respectively. Defining $p_t$ as:
+\begin{equation}
+	p_t = \begin{cases}
 		p & \text{if $y$ = 1}\\
 		1-p & \text{otherwise.}
-	\end{cases}$
-\end{center}
+	\end{cases}
+\end{equation}
 cross entropy can be written as $CE(p,y) = CE(p_t) = -\log(p_t)$.
 
 \bigskip
-A balanced version of the cross entropy loss is sometimes used to deal with class imbalance. A numeric factor $\alpha\in\left[0,1\right]$ can be introduced for class $1$, with value $1-\alpha$ for class $-1$. $\alpha_t$ is defined analogously to $p_t$. Therefore, the balanced cross entropy is written as:
-\begin{center}
-	$CE(p,y) = -\alpha_t\log(p_t)$.
-\end{center}
+A balanced version of the cross entropy loss is sometimes used to deal with class imbalance. A numeric factor $\alpha\in\left[0,1\right]$ can be introduced for class $1$, with value $1-\alpha$ for class $-1$. $\alpha_t$ is defined analogously to $p_t$. Therefore, the cross entropy loss, balanced by $\alpha_t$, is written as:
+\begin{equation}
+	CE(p,y) = -\alpha_t\log(p_t).
+\end{equation}
 
 \bigskip
-With cross entropy, also easily classified example ($p$ close to $1$ if $y=1$, to $0$ otherwise) produce a non-negligible value for the loss. In focal loss, an additional modulating factor $\left(1-p_t\right)^\gamma$ is added, with tunable focusing parameter $\gamma$. Focal loss is therefore defines as:
-\begin{center}
-	$FL(p_t) = -\left(1-p_t\right)^\gamma \log(p_t)$
-\end{center}
+With cross entropy, also easily classified example ($p$ close to $1$ if $y=1$, to $0$ otherwise) produce a non-negligible value for the loss.
+
+In focal loss, an additional modulating factor $\left(1-p_t\right)^\gamma$ is introduced, with tunable focusing parameter $\gamma$. Focal loss is therefore defines as:
+\begin{equation}
+	FL(p_t) = -\left(1-p_t\right)^\gamma \log(p_t)
+\end{equation}
 The contribution of easy detections to the overall loss is more or less important depending on the value of $\gamma$. With a high $\gamma$, well detected objects provide a very little contribution to the total loss.
 
-Considering the strong imbalance between the foreground ($y=1$) and background ($y=-1$) classes, the focal loss balanced by the $\alpha_t$ parameter as previously defined is used in RetinaNet:
-\begin{center}
-	$FL(p_t) = -\alpha_t\left(1-p_t\right)^\gamma \log(p_t)$.
-\end{center}
+Considering the strong imbalance between the foreground ($y=1$) and background ($y=-1$) classes, the focal loss, balanced by the $\alpha_t$ parameter as previously defined, is used in RetinaNet:
+\begin{equation}
+	FL(p_t) = -\alpha_t\left(1-p_t\right)^\gamma \log(p_t).
+	\label{eq:focalloss}
+\end{equation}
 
 \subsection{Basic components}
+
+This section introduces some basic aspects of object detection models. They are necessary to understand the following sections and the subsequent work.
+
 \subsubsection{Metrics}
 Algorithm evaluation is a fundamental part of machine learning projects and can be performed in different ways, depending on the task and objective. Object detection is a more complex task than traditional classification: a non-fixed number of objects can be present in the same image and the detection model has to accurately predict their position and class. For this reason, dedicated metrics must be introduced and defined.
 
@@ -316,31 +323,38 @@ The concept of true negative (TN) does not make sense in an object detection con
 
 \subparagraph{Precision}
 Precision measures how accurate the predictions of the model are, so it returns the percentage or fraction of correct prediction.
-\begin{center}
-	$precision = \frac{TP}{TP+FP}$
-\end{center}
+\begin{equation}
+	precision = \frac{TP}{TP+FP}
+\end{equation}
 
 \subparagraph{Recall}
 Recall measures the model detection ability, so it returns the percentage or fraction of correctly detected objects.
-\begin{center}
-	$recall = \frac{TP}{TP+FN}$
-\end{center}
+\begin{equation}
+	recall = \frac{TP}{TP+FN}
+\end{equation}
 
 \paragraph{Intersection over union}
 For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify the prediction as true or false positive. For a couple of bounding boxes, \gls{iou} is computed as:
-\begin{center}
-	$IoU = \frac{area\ of\ overlap}{area\ of\ union}$
-\end{center}
+\begin{equation}
+	IoU = \frac{area\ of\ overlap}{area\ of\ union}
+\end{equation}
 The computed value is then compared to a threshold to classify a prediction as correct or not. Typical values for the threshold are $0.5$, $0.75$ and $0.95$ and that defines how much we want a detection to be precise. Indeed, a detection classified as true positive with a certain threshold may be considered as false positive if a higher value is used.
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=.95\linewidth]{imgs/precision_recall_iou.jpg}
+	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}. Source: \url{https://datascience.stackexchange.com/questions/25119/how-to-calculate-map-for-detection-task-for-the-pascal-voc-challenge}}
+	\label{fig:iou}
+\end{figure}
+
 \paragraph{Mean Average Precision (mAP)}
-\gls{roc} curve is a popular concept in machine learning. There, recall (or true positive rate) and false positive rate are plotted at different classification thresholds. The associated \gls{auc} metric considers the area under the \gls{roc} curve to assess the performances of a model.\cite{roc} It ranges from $ 0 $ to $ 1 $, with $ 0 $ meaning the model's predictions are all wrong and $ 1 $ they are all correct. Ideally, the \gls{auc} score is $ 0.5 $ for a model that returns random predictions.
+\gls{roc} curve is a popular concept in machine learning. There, recall (or true positive rate) and false positive rate are plotted at different classification thresholds. The associated \gls{auc} metric considers the area under the \gls{roc} curve to assess the performances of a model.\cite{roc} It ranges from $ 0 $ to $ 1 $, with $ 0 $ meaning the model's predictions are all wrong and $ 1 $ they are all correct. Ideally, the \gls{auc} score is $ 0.5 $ for a model that always returns random predictions.
 
 Similarly, the precision-recall curve shows the trade-off between precision and recall for different thresholds\cite{precrecall}. \gls{ap} is defined as the area under the precision-recall curve. A high area under the curve means both high recall and high precision. The definition of \gls{map} depends on the context. If \gls{ap} is independently computed for each class or for different \gls{iou} thresholds, then \gls{map} is the average of \gls{ap}. In other cases, \gls{map} and \gls{ap} can be used interchangeably.
 
 
 \subsubsection{Datasets}\label{sec:datasets}
-Several datasets have been published to evaluate the performances of object detection algorithms for different use cases.
+Several datasets have been published in the last years, with the purpose of training and evaluating the performances of object detection algorithms for different use cases.
 
 \paragraph{COCO}\label{sec:coco}
 \gls{coco} is a large-scale object detection and object segmentation dataset published by Microsoft, containing over 200000 images for 91 classes, annotated with bounding boxes and at pixel level\cite{lin2015microsoft}. It defines its own annotation format as \acrshort{json} files.
@@ -373,10 +387,10 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 \end{figure}
 
 \subsubsection{Anchor boxes}\label{sec:anchor}
-In most cases, generating a large number of possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars wide anchor boxes can be defined at different scales, to identify both near and far objects.
+In most cases, generating a large number of possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars, wide \textit{anchor boxes} can be defined at different scales, to identify both near and far objects.
 
 \subsubsection{Non-maximum suppression}
-Object detection models usually produce more than one detection for each object, which is not desirable. Non-maximum suppression (NMS) is a method to select one of many overlapping bounding boxes. For a set of overlapping boxes, the one predicted with the highest confidence is selected and all remaining boxes whose \gls{iou} with the chosen bounding box is over a certain threshold are discarded. In this way, only the most probable detection is kept for each object.
+Object detection models usually produce more than one detection for each object, which is not desirable. \textit{Non-maximum suppression} (NMS) is a method to select one of many overlapping bounding boxes. For a set of overlapping boxes, the one predicted with the highest confidence is selected and all remaining boxes whose \gls{iou} with the chosen bounding box is over a certain threshold are discarded. In this way, only the most probable detection is kept for each object. An example is reported in Figure~\ref{fig:nms}.
 
 \begin{figure}[ht]
 	\centering
@@ -386,20 +400,18 @@ Object detection models usually produce more than one detection for each object,
 	\subcaptionbox{After NMS}{
 		\includegraphics[width=.70\linewidth]{imgs/nms.png}
 	}
-	\caption{Example of application of non-maximum suppression}
+	\caption{Example of application of \textit{non-maximum suppression}}
 	\label{fig:nms}
 \end{figure}
 
 
 \section{Domain adaptation}
 
-% TODO: add randomization
-
-For most cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
+For most use cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remains the same, while the domain differs.
 
 Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, among other cases they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
 
-Different type of domain adaptation can be identified, based on whether an\-no\-ta\-tions are available or not for the target domain:
+Different types of domain adaptation can be identified, based on whether annotations are available or not for the target domain:
 
 \begin{itemize}
 	\item \textbf{unsupervised domain adaptation}: labeled source data and unlabeled target data are available;
@@ -419,10 +431,10 @@ Several methods try to align source and target domains by creating a domain-inva
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Training}{
-		\includegraphics[width=.4\linewidth]{imgs/align_train.png}
+		\includegraphics[width=.47\linewidth]{imgs/align_train.png}
 	}
 	\subcaptionbox{Testing}{
-		\includegraphics[width=.4\linewidth]{imgs/align_test.png}
+		\includegraphics[width=.47\linewidth]{imgs/align_test.png}
 	}
 	\caption{General schema for domain-invariant feature learning\cite{wilson2020survey}}
 	\label{fig:align}
@@ -431,15 +443,15 @@ Several methods try to align source and target domains by creating a domain-inva
 The methods differ in how they align the domains. An adversarial approach, as in \glspl{gan}, is often used through a domain classifier which outputs whether the features extracted by the \gls{cnn} belong to source or target domain. At the same time, the feature extractor is trained with the aim of fooling the domain classifier, so that it is unable to correctly classify from which domain the feature representation originates. The two networks are trained simultaneously and in an adversarial fashion.
 
 \subsubsection{Domain mapping}
-An alternative to creating a domain-invariant feature representation is mapping one domain to the other, making source images similar to the target or vice versa. For example, synthetic images from \textit{Sim10k} can be mapped to the real world, transferring them to the \textit{CityScapes} style. This can be obtained with conditional \glspl{gan} for image-to-image translation that do not take into account the annotations of source images. Therefore, domain adaptation can be accomplished by training a \gls{gan} to map data from source to target and then training a machine learning model on the mapped labeled source images (that now belong to the target domain). At test time, the model is used to make predictions on unlabeled target data. A general schema is reported in figure~\ref{fig:gan}. However, \gls{gan} training is challenging and may incur in several problems such as mode collapse, when a generative network is only capable to produce a limited amount of output images.
+An alternative to creating a domain-invariant feature representation is mapping one domain to the other, making source images similar to the target or vice versa. For example, synthetic images from \textit{Sim10k} can be mapped to the real world, transferring them to the \textit{CityScapes} style. This can be obtained with conditional \glspl{gan} for image-to-image translation that do not take into account the annotations of source images. Therefore, domain adaptation can be accomplished by training a \gls{gan} to map data from source to target and then training a machine learning model on the mapped labeled source images (that now belong to the target domain). At test time, the model is used to make predictions on unlabeled target data. A general schema is reported in figure~\ref{fig:gan}. However, \gls{gan} training is challenging and may incur in several problems such as mode collapse, when a generative network learns to only produce a limited amount of output images.
 
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Training}{
-		\includegraphics[width=.55\linewidth]{imgs/gan_train.png}
+		\includegraphics[width=.605\linewidth]{imgs/gan_train.png}
 	}
 	\subcaptionbox{Testing}{
-		\includegraphics[width=.3\linewidth]{imgs/gan_test.png}
+		\includegraphics[width=.335\linewidth]{imgs/gan_test.png}
 	}
 	\caption{General schema for domain mapping\cite{wilson2020survey}}
 	\label{fig:gan}
@@ -448,32 +460,56 @@ An alternative to creating a domain-invariant feature representation is mapping 
 % TODO: mention enhancing photorelism enhancement
 
 \subsubsection{Previous works}
-This section introduces the main methods proposed in the literature for unsupervised domain adaptation in an image classification scenario.
+Several fundamental domain adaptation methods can be identified in the case of image classification. These methods have laid the foundation for much subsequent work.
 
 \paragraph{Domain Adversarial Neural Network}\label{sec:dann}
-\gls{dann}\cite{ganin2015unsupervised} is a classic method for un\-su\-per\-vi\-sed domain adaptation with the objective of learning domain invariant features. The network is composed of a standard feature extractor, a label predictor and a domain classifier. This work introduces the gradient reversal layer: it leaves input unchanged during the forward step and reverses the gradient during backpropagation, multiplying it by a negative factor. The network is trained adversarially, with the aim of minimizing the label predictor’s loss, while seeking feature mapping parameters that maximize domain classifier loss and domain classifier parameters that minimize its loss. The objective is to align the two data distributions, fooling the domain classifier: when alignment is accomplished, the label predictor is capable of correctly classify an image, whether it is taken from the source or the target domain, while the domain classifier can only return random guesses. A network representation is reported in Figure~\ref{fig:dann}.
+\gls{dann}\cite{ganin2015unsupervised} is a classic method for unsupervised domain adaptation with the objective of learning domain invariant features. The network is composed of a standard feature extractor, a label predictor and a domain classifier: without this last component, it consists of a standard model for image classification.
+
+The alignment between domains is achieved through the gradient reversal layer, introduced in this work: it leaves input unchanged during the forward step and reverses the gradient during backpropagation, multiplying it by a negative factor $-\lambda$. The network is trained adversarially, with the aim of minimizing the label predictor’s loss. 
+At the same time, it also seeks the backbone parameters that maximize the domain classifier loss and the domain classifier parameters that minimize its own loss.
+The objective is to align the two data distributions, fooling the domain classifier: when alignment is accomplished, the label predictor is capable of correctly classify an image, whether it is taken from the source or the target domain, while the domain classifier can only return random guesses. A network representation is reported in Figure~\ref{fig:dann}.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/dann.png}
+	\includegraphics[width=0.9\linewidth]{imgs/dann.png}
 	\caption{\gls{dann} architecture\cite{ganin2015unsupervised}}
 	\label{fig:dann}
 \end{figure}
 
-% TODO: formula dann con gamma, parametri ripresi più avanti
+More formally and using the same notation as in Figure~\ref{fig:dann}, the aim is to find the values of the parameters $\theta_f$, $\theta_y$ and $\theta_d$ that minimize the following function:
+\begin{equation}
+	E(\theta_f, \theta_y, \theta_d) = \sum_{
+		\substack{i=1\ldots N\\d_i=0}
+	}L^{i}_{y}\left(\theta_f, \theta_y\right) - 
+	\lambda \sum_{i=1\ldots N}L^{i}_{d}\left(\theta_f, \theta_d\right).
+	\label{eq:dann}
+\end{equation}
+In Equation~\ref{eq:dann}, $L_y$ and $L_d$ are the objective functions for label and domain prediction respectively: $L^{i}_{y}$ and $L^{i}_{d}$ are computed for the $i$-th training image. By mapping the source and target domains to $0$ and $1$ respectively, the condition $d_i=0$ in the first sum implies that the label classifier is trained only if the network receives annotated images from the source domain.
+
+$\lambda$ is therefore the only additional hyperparameter with respect to the training of a standard classification model and its value is to be fixed a priori. To increase the stability of the training and to foster good learning of the domain classifier at the beginning of the training procedure, $\lambda$ is sometimes set dynamically. The following expression can be used to change its value from $0$ (at the beginning of the procedure) to $1$ (at the end) according to the training progress represented by $p$ (in turn between $0$ and $1$):
+\begin{equation}
+	\lambda_p = \frac{2}{1 + \exp{\left(-\gamma\cdot p\right)}} - 1.
+\end{equation}
+This avoids the need to seek the optimal value for $\lambda$, but introduces the new hyperparameter $\gamma$ (which represents the speed at which the value of $\lambda_p$ converges to 1).
 
 \paragraph{Adversarial Discriminative Domain Adaptation}\label{sec:adda}
 \gls{adda}\cite{tzeng2017adversarial} is an adversarial method like \gls{dann}, but is composed by three consecutive phases:
 \begin{enumerate}
-	\item A \gls{cnn} is trained on labeled source examples in order to learn a feature representation for the source domain that can be successfully identified by a classifier. The source \gls{cnn} is frozen.
-	\item Adversarial adaptation is then performed. The objective is to train a target feature extractor in a way that a discriminator which receives features extracted from the two domains cannot predict their domain label, in order to align the domain representations. This is done through \textquotedblleft flipped labels\textquotedblright : the training procedure fools the domain discriminator into believing that the features ex\-trac\-ted from the target domain belong to the source domain instead. As a consequence, the target feature extractor is lead to learn features for the target domain that the domain discriminator could misclassify (as belonging to the source domain).
-	\item For inference, target images are mapped to the shared feature space and classified by the source classifier trained at the beginning.
+	\item \label{item:adda1} A \gls{cnn} is trained on labeled source examples in order to learn a feature representation for the source domain that can be successfully identified by a classifier. This source \gls{cnn} is frozen.
+	
+	\item \label{item:adda2} Adversarial adaptation is then performed.
+	The objective is to train a feature extractor for the target domain: features extracted from the target domain have to be aligned to the ones extracted by the feature extractor trained at step~\ref{item:adda1} from images belonging to the source domain. A domain discriminator that receives features extracted by the aligned feature extractor from an image belonging to the target domain should therefore state that these features are extracted from an image of the source domain instead.
+	%The objective is to train a target feature extractor in a way that a discriminator which receives features extracted from the two domains cannot predict their domain label, in order to align the domain representations.
+	
+	This is done through \textquotedblleft flipped labels\textquotedblright : the training procedure fools the domain discriminator into believing that the features extracted from the target domain belong to the source domain instead. As a consequence, the target feature extractor is lead to learn features for the target domain that the domain discriminator could misclassify (as belonging to the source domain).
+	
+	\item For inference on images belonging to target domain, the aligned feature extractor (trained at step~\ref{item:adda2}) is used to extract features that now belong to the shared feature space. These features are then classified by the classifier trained at step~\ref{item:adda1} on the source domain.
 \end{enumerate}
 A method overview is reported in Figure~\ref{fig:adda}.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.9\linewidth]{imgs/adda.png}
+	\includegraphics[width=\linewidth]{imgs/adda.png}
 	\caption{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
 	\label{fig:adda}
 \end{figure}
