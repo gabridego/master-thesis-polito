@@ -120,8 +120,8 @@
 \ateneo{Politecnico di Torino}% nome generico dell'Universita'
 %\nomeateneo{Weiss Turm}% eventuale nome proprio dell'universita'
 \logosede[4.5cm]{logopolito}% logo dell'universita'
-\FacoltaDi{DIPARTIMENTO DI\space}% Etichetta della facolta'
-\facolta{AUTOMATICA E INFORMATICA}% facolta'
+\FacoltaDi{DEPARTMENT OF\space}% Etichetta della facolta'
+\facolta{CONTROL AND COMPUTER ENGINEERING}% facolta'
 %\Materia{Remote sensing}
 \titolo{Domain Adaptation for Object Detection}% 
 %\sottotitolo{A data augmentation approach}% 
@@ -135,7 +135,7 @@
 %\tutoreaziendale{Valérian Gonnot}
 %\NomeTutoreAziendale{Company advisor\\Neovision}
 
-\sedutadilaurea{\textsc{Anno~accademico} 2021-2022}% per la laurea magistrale
+\sedutadilaurea{\textsc{Academic~year} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
 
 %\pagenumbering{roman}
@@ -168,8 +168,8 @@ Thanks to their achievements in computer vision, deep learning methods based on 
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.7\textwidth]{imgs/ILSVRC.png}
-	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}\cite{russakovsky2015imagenet}. Source: \cite{hanqing2020research}.
+	\includegraphics[width=.8\textwidth]{imgs/ILSVRC.png}
+	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}\cite{russakovsky2015imagenet}. Image source: \cite{hanqing2020research}.
 	\label{fig:imagenet}}
 \end{figure}
 
@@ -185,8 +185,8 @@ A summary is presented in Figure~\ref{fig:classdetseg}.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=.8\textwidth]{imgs/classification_detection_segmentaion.jpeg}
-	\caption[Comparison between classification, object detection and semantic segmentation]{Comparison between classification, object detection and semantic segmentation. Source: \url{http://ronny.rest/tutorials/module/seg_01/segmentation_01_intro/}}
+	\includegraphics[width=.9\textwidth]{imgs/classification_detection_segmentaion.jpeg}
+	\caption[Comparison between classification, object detection and semantic segmentation]{Comparison between classification, object detection and semantic segmentation. Image source: \url{http://ronny.rest/tutorials/module/seg_01/segmentation_01_intro/}}
 	\label{fig:classdetseg}
 \end{figure}
 
@@ -199,7 +199,7 @@ and by the bounding box width and height.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.5\textwidth]{imgs/yolo_detection.png}
+	\includegraphics[width=.7\textwidth]{imgs/yolo_detection.png}
 	\caption{An example of object detection\cite{redmon2016look}}
 \end{figure}
 
@@ -222,10 +222,10 @@ Examples of typical architectures are reported in Figure~\ref{fig:architectures}
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Description of \acrshort{rcnn}\cite{girshick2014rich}}{
-		\includegraphics[width=.6\linewidth]{imgs/rcnn.png}
+		\includegraphics[width=.63\linewidth]{imgs/rcnn.png}
 	}
 	\subcaptionbox{Description of Faster \acrshort{rcnn}\cite{ren2016faster}}{
-		\includegraphics[width=.3\linewidth]{imgs/fasterrcnn.png}
+		\includegraphics[width=.31\linewidth]{imgs/fasterrcnn.png}
 	}
 	\caption{Architecture of two stage object detectors}
 	\label{fig:architectures}
@@ -242,7 +242,7 @@ The \acrfull{yolo} model\cite{redmon2016look} uses pretrained \gls{cnn} for clas
 
 \begin{figure}
 	\centering
-	\includegraphics[width=.7\linewidth]{imgs/SSD-architecture.png}
+	\includegraphics[width=.9\linewidth]{imgs/SSD-architecture.png}
 	\caption{\acrshort{ssd}'s pyramid architecture\cite{objdetpart4}}
 	\label{fig:ssd}
 \end{figure}
@@ -254,7 +254,7 @@ The main improvements of RetinaNet\cite{lin2018focal} over previous one stage de
 
 \begin{figure}[b]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/retinanet.png}
+	\includegraphics[width=\linewidth]{imgs/retinanet.png}
 	\caption{RetinaNet architecture\cite{lin2018focal}}
 	\label{fig:retinanet}
 \end{figure}
@@ -343,7 +343,7 @@ The computed value is then compared to a threshold to classify a prediction as c
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=.95\linewidth]{imgs/precision_recall_iou.jpg}
-	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}. Source: \url{https://datascience.stackexchange.com/questions/25119/how-to-calculate-map-for-detection-task-for-the-pascal-voc-challenge}}
+	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}. Image source: \url{https://datascience.stackexchange.com/questions/25119/how-to-calculate-map-for-detection-task-for-the-pascal-voc-challenge}}
 	\label{fig:iou}
 \end{figure}
 
@@ -374,13 +374,13 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{CityScapes\cite{cordts2016cityscapes}}{
-		\includegraphics[width=.60\linewidth]{imgs/cityscapes.png}
+		\includegraphics[width=.7\linewidth]{imgs/cityscapes.png}
 	}
 	\subcaptionbox{\acrshort{kitti}\cite{Geiger2013IJRR}}{
-		\includegraphics[width=.60\linewidth]{imgs/kitti.png}
+		\includegraphics[width=.7\linewidth]{imgs/kitti.png}
 	}
 	\subcaptionbox{Sim10k\cite{johnsonroberson2017driving}}{
-		\includegraphics[width=.60\linewidth]{imgs/sim10k.jpg}
+		\includegraphics[width=.7\linewidth]{imgs/sim10k.jpg}
 	}
 	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even if they contain the same categories of objects.}
 	\label{fig:datasets}
@@ -507,10 +507,10 @@ This avoids the need to seek the optimal value for $\lambda$, but introduces the
 \end{enumerate}
 A method overview is reported in Figure~\ref{fig:adda}.
 
-\begin{figure}[ht!]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=\linewidth]{imgs/adda.png}
-	\caption{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
+	\caption[\acrshort{adda} working schema]{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
 	\label{fig:adda}
 \end{figure}
 
@@ -520,7 +520,7 @@ Differently from the previous mentioned methods, asymmetric tri-training\cite{sa
 \fi
 
 \subsection{Domain adaptation for object detection}
-Like classification models, object detectors suffer from domain shifts between different datasets, which can lead to drastic \gls{map} drops and performance degradation. Annotating images for an object detection task is even more expensive and time-consuming than classification, since each image may contain more than one object that needs to be assigned a bounding box and object category. Due to the different nature of the problem, direct translation of domain adaptation methods for classification may not be effective, and ad-hoc methods have been proposed, generally based on existing object detectors.
+Like classification models, object detectors suffer from domain shifts between different datasets, which can lead to drastic performance degradation. Annotating images for an object detection task is even more expensive and time-consuming than classification, since each image may contain more than one object that needs to be assigned a bounding box and object category. Due to the different nature of the problem, direct translation of domain adaptation methods for classification may not be effective, and ad-hoc methods have been proposed, generally based on existing object detectors.
 
 \subsubsection{Previous works}
 \paragraph{Domain Adaptive Faster R-CNN}\label{sec:dafrcnn}
@@ -529,12 +529,14 @@ DA Faster \acrshort{rcnn}\cite{chen2018domain} is one of the first works to tack
 At inference time, the aligned Faster \gls{rcnn} is normally used.
 
 \paragraph{Strong-Weak Distribution Alignment}
-Aligning image level features as in DA Faster \acrshort{rcnn} makes the strong assumption that image components, such as backgrounds and scene layouts, must be similar across domains in addition to object categories. In the case of large domain shifts, that may affect the model performances. Saito \emph{et al.}\cite{saito2019strongweak} propose a weak global alignment (at image level) combined with a strong alignment of local features (such as the texture or the color of the domains), which are most likely to be similar.
+Aligning image level features as in DA Faster \acrshort{rcnn} makes the strong assumption that image components, such as backgrounds and scene layouts, must be similar across domains in addition to object categories. In the case of large domain shifts, that may affect the model performances. Saito \emph{et al.}\cite{saito2019strongweak} propose a weak global alignment (at image level) combined with a strong alignment of local features (such as texture or color of the objects in the two domains), which are most likely to be similar.
 
 For weak alignment between domains, the domain classifier should focus on examples that are hard to classify, so near the boundary between the two distributions. This can be achieved using the focal loss to train the domain classifier, in order to tune the importance to source or target images whose domain is easy to predict.
 
 \paragraph{Progressive Domain Adaptation}
-Hsu \emph{et al.}\cite{hsu2019progressive} introduce an intermediate domain between source and target, exploiting a \gls{gan} to map source images in the target domain. Adaptation is performed in two steps, from source to intermediate and then from intermediate to target, in order to introduce a bridge between source and target domains. That helps to reduce the domain shift and simplify the adaptation process, such that an object detection model can be trained on the intermediate domain. In addition, a weight is assigned to generated data, giving more importance to images that are close to the target distribution.
+Hsu \emph{et al.}\cite{hsu2019progressive} introduce an intermediate domain between source and target, exploiting a \gls{gan} to map source images in the target domain. Adaptation is performed in two steps, from source to intermediate and then from intermediate to target, in order to introduce a bridge between source and target domains. That helps to reduce the domain shift and simplifies the adaptation process, such that an object detection model can be trained on the intermediate domain. In addition, a weight is assigned to generated data, giving more importance to images that are close to the target distribution.
+
+When adaptation from the intermediate to the source domain is complete, the aligned model can be used for inference on unlabeled images from the target domain.
 
 \paragraph{Domain Adaptive RetinaNet}\label{sec:daretinanet}
 Recently, Pasqualino \emph{et al.}\cite{pasqualino2020unsupervised} proposed an adaptation approach for the RetinaNet model, but that can be applied to any architecture that includes a \gls{fpn} backbone. Different domain discriminators with different architectures are applied at different levels of the ResNet backbone which is used to construct the feature pyramid, with gradient reversal layers. In this way, extracted features are aligned at different levels in the backbone and the representation derived by the \gls{fpn} is coherent and meaningful.
@@ -542,51 +544,53 @@ Recently, Pasqualino \emph{et al.}\cite{pasqualino2020unsupervised} proposed an 
 \paragraph{Image statistics matching}\label{sec:kis}
 The method introduced by Abramov \emph{et al.}\cite{abramov2020simple} relies on image transformations at pixel level instead of adversarial techniques or complex architectures. The objective is to transform annotated source images in a way to make them similar to the unlabeled target domain, matching color statistics and histograms. During training, a target image is randomly chosen for each image belonging to the source domain and the mean and covariance of its color channels are aligned and its color histogram are matched accordingly. In this way, a standard detection model can be trained on modified source image with annotations and directly applied on the target domain.
 
+Similar approaches are commonly used in networks for style transfer, but in these cases the correspondence between source and target images is performed at the level of extracted features and not at image level.
+
 %\blankpagestyle{headings}
 
 %\lipsum[1-2]
 
 \chapter{Method}
 \section{Introduction}
-The purpose of this Master Thesis is to investigate existing popular methods for domain adaptive object detection.
+The purpose of this Master Thesis is the investigation of common approaches for domain adaptive object detection, in order to identify and correct possible critical points and propose appropriate actions for improvement.
 
 A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
 
 A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are researched and can boost their productivity.
 
-For the sake of completeness, the studied methods are implemented and tested on two popular object detection models presented in Section~\ref{sec:detection} when they are compatible with both architectures: Faster \gls{rcnn} and RetinaNet.
+For the sake of completeness, the studied methods are implemented and tested on two popular object detection models presented in Section~\ref{sec:detection}, if they are compatible with both architectures: Faster \gls{rcnn} and RetinaNet.
 
-\section{Data augmentation}\label{sec:dataaug}
+\section{Data augmentation for domain randomization}\label{sec:dataaug}
 Data augmentation is a widely used technique to ease the training of deep learning models and improve their generalization capability. In a typical application, different transformations are randomly applied on training images, in order to vary their appearance and virtually introduce new data on which a model can learn.
 
 Data augmentations can modify the orientation of the images or operate at pixel level, transforming their color and appearance. Those operations can be geometric, if they geometrically distort the image keeping without modifying its content, or color-based, if they distort color channels without modifying the position of the pixels. Common transformations include horizontal and vertical flip, rotation, translation and color shift. For object detection, the bounding boxes have to be updated coherently with the applied geometric data augmentation.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.7\linewidth]{imgs/augmentation.png}
+	\includegraphics[width=0.8\linewidth]{imgs/augmentation.png}
 	\caption{Some examples of data augmentation (image source: \url{http://datahacker.rs/tf-data-augmentation/})}
 	\label{fig:augmentation}
 \end{figure}
 
-Therefore, data augmentation techniques can extensively alter the image appearance. If a model is trained with high-impact data augmentation on labeled images from a domain, it can potentially achieve good results on a different domain it has never seen. That falls in the case of \textbf{domain randomization}: training images are drawn from a data distribution which is way larger than the original one and the model can learn to generalize to different domains. In some ways, the network is \textquotedblleft overwhelmed\textquotedblright~with different versions of the same images, in order to recognize their contents in different conditions. For domain adaptation, the resulting data distribution can possibly include the target domain or intermediates domains that are closer to the target domain than the source domain.
+Therefore, data augmentation techniques can extensively alter the image appearance. If a model is trained with high-impact data augmentation on labeled images from a domain, it can potentially achieve good results on a different domain it has never seen. That falls in the case of \textbf{domain randomization}: training images are drawn from a data distribution which is way larger than the original one and the model can learn to generalize to different domains. In some ways, the network is \textquotedblleft overwhelmed\textquotedblright~with different versions of the same images, in order to recognize their contents in different conditions. For domain adaptation, the resulting data distribution can possibly include the target domain or intermediates domains that are closer to the target domain than the source domain. Intuitively, performances on non-augmented images drawn from the source domain decrease as the data distribution gets larger, while the generalization capability to remote target domains increases.
 
 Most works that investigate domain randomization focus on \textit{sim2real} knowledge transfer and address the problem generating a large variety of synthetic training images. The famous one by Tobin \textit{et al.}\cite{tobin2017domain} defines different randomization parameters that control, inter alia, position, number and type of the objects present in an image, lighting conditions and camera conditions. An interval of values is defined for each parameter and, for generating an image, each parameter is uniformly sampled within its range and used to control the generator. A detection model is then trained on the generated synthetic images and should be able to generalize to real images containing the same kind of objects.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{imgs/randomization.png}
+	\includegraphics[width=0.8\linewidth]{imgs/randomization.png}
 	\caption{Randomization in generating training images\cite{tobin2017domain}}
 	\label{fig:randomization}
 \end{figure}
 
 In this work, instead, randomization is introduced through the combination of commonly used data augmentation operations, both geometric and color-based:
 \begin{itemize}
-	\item Horizontal flip: geometric transformation that horizontally mirrors the image.
-	\item Rotation: geometric transformation that rotates image and bounding boxes of a degree value sampled from a provided interval.
-	\item Translation: geometric transformation that horizontally and vertically translates image and bounding boxes of a number of pixels sampled from a provided interval.
-	\item Color jitter: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each properties are sampled from provided intervals.
-	\item Solarization: color-level transformation that, for an image, inverts the color of all pixels whose value is above a threshold. The threshold is sampled from a provided interval.
-	\item Equalization: color-level transformation that equalizes the color histogram of the image.
+	\item \textit{Horizontal flip}: geometric transformation that horizontally mirrors the image.
+	\item \textit{Rotation}: geometric transformation that rotates image and bounding boxes of a degree value sampled from a provided interval.
+	\item \textit{Translation}: geometric transformation that horizontally and vertically translates image and bounding boxes of a number of pixels sampled from a provided interval.
+	\item \textit{Color jitter}: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each properties are sampled from provided intervals.
+	\item \textit{Solarization}: color-level transformation that, for an image, inverts the color of all pixels whose value is above a threshold. The threshold is sampled from a provided interval.
+	\item \textit{Equalization}: color-level transformation that equalizes the color histogram of the image.
 \end{itemize}
 The operations can be easily implemented and used in most popular deep learning frameworks.
 
@@ -594,18 +598,21 @@ Many other operations are often used for data augmentation, but are not included
 %. Each pixel of the image is translated in the same direction, by a magnitude proportional to its distance from the image origin. The amount of shearing is sampled from a provided interval.
 and cutout, which randomly masks regions of the training images in order to improve networks' robustness.
 
+\bigskip
+More advanced data augmentation techniques, first introduced by Zoph \textit{et al.}\cite{zoph2019learning}, take into account the bounding boxes and only apply data augmentation operations to the objects they contain or to the background. The original work aims at finding the best combination of data augmentation operators for given task and training data. This combination is sought with reinforcement learning and should lead to the best performances when training a model for image classification or object detection. For data randomization, the data augmentation operators presented in this work can be used to increase the variability of training images and widen the source domain data distribution.
+
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Original \textit{Sim10k} image}{
 		\includegraphics[width=.47\linewidth]{imgs/sim10korig.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
 		\includegraphics[width=.47\linewidth]{imgs/sim10kaug1.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
 		\includegraphics[width=.47\linewidth]{imgs/sim10kaug2.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with augmentations}{
+	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
 		\includegraphics[width=.47\linewidth]{imgs/sim10kaug3.png}
 	}
 	\caption{Comparison between original and transformed images}
@@ -625,9 +632,9 @@ The training process considers annotated images from the source domain and unlab
 \end{itemize}
 In addition, a consistency regularization is added to encourage similar predictions from the two domain classifiers.
 
-\begin{figure}[ht!]
+\begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\linewidth]{imgs/dafasterrcnn.png}
+	\includegraphics[width=\linewidth]{imgs/dafasterrcnn.png}
 	\caption{Overview of the Domain Adaptive Faster \gls{rcnn} model\cite{chen2018domain}}
 	\label{fig:dafasterrcnn}
 \end{figure}
@@ -675,7 +682,7 @@ More precisely, for each labeled source image an unlabeled target image is rando
 \end{enumerate}
 A detection model is therefore trained on labeled mapped images that share image statistics of target images. The model can then be directly used for inference on the target domain without any additional operation.
 
-\begin{figure}[ht!]
+\begin{figure}[ht]
 	\centering
 	% \includegraphics[width=\linewidth]{imgs/kis.jpeg}
 	\subcaptionbox{Source image}{
