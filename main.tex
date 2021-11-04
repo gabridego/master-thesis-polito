@@ -24,7 +24,7 @@
 %%%%%%%
 
 \documentclass[%
-    corpo=12pt,
+    corpo=12.5pt,
     twoside,
     stile=classica,   
 % 	oldstyle,
@@ -47,17 +47,27 @@
 % Vedere la documentazione toptesi-it.pdf per le
 % attenzioni che bisogna usare al fine di ottenere un file
 % veramente conforme alle norme per l'archiviabilità.
+% \usepackage{imakeidx}
+\begin{pdfxmetadata}
+\Title{Domain Adaptation for Object Detection}
+\Author{Gabriele Degola}
+\Publisher{Politecnico di Torino}
+\Keywords{domain adaptation\sep
+object detection\sep
+computer vision\sep
+machine learning}
+\end{pdfxmetadata} 
+\usepackage[a-1b]{pdfx}
 
-
-\usepackage[hidelinks]{hyperref}
+% \usepackage[hidelinks]{hyperref}
 
 \hypersetup{%
-	pdfauthor={Gabriele Degola},
+	hidelinks,
     pdfpagemode={UseOutlines},
     bookmarksopen,
     pdfnewwindow=true,
     pdfstartview={FitH}
-  }
+}
 %
 %%%%%%% Esempio di composizione di tesi di laurea con PDFLATEX 
 %
@@ -665,7 +675,7 @@ In addition, a consistency regularization is added to encourage similar predicti
 A training batch is composed by both source and target images and the training procedure is organized as follows:
 \begin{itemize}
 	\item When the network receives, as input, labeled images from the source domain, they are used to train both the base Faster \gls{rcnn} and the domain adaptation components.
-	\item When the network receives, as input, unlabeled images from the target domain, they are only used to train the domain adaptation components. Indeed, images are not useful for the base detector as object bounding boxes and classes are not available.
+	\item When the network receives, as input, unlabeled images from the target domain, they are only used to train the domain adaptation components. Indeed, unlabeled images are not useful for the base detector as object bounding boxes and classes are not available.
 \end{itemize}
 For inference, additional components are not considered and the standard Faster \gls{rcnn} with learned weights is used.
 
@@ -700,25 +710,28 @@ The addition of a \gls{fpn} component to the backbone of a Faster \gls{rcnn} mod
 If the base detector includes a \gls{fpn} component, adaptation at image level for the Domain Adaptive Faster \gls{rcnn} method has to be reconsidered. Two possible solutions can be identified in order to align the feature representations between different domains:
 \begin{itemize}
 	\item Adaptation can be directly performed on features extracted by the \gls{fpn}. Different levels of the feature pyramid can be forwarded, on at a time, to a domain classifier through gradient reversal layer. The resulting domain losses can be summed or averaged across all levels. This way, the objective is to push the ResNet backbone to extract feature representations that can be used to build a feature pyramid which is independent of the domain of each input image.
-	\item Similarly to what is done by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, it is possible to directly align the ResNet features that serve as input for the \gls{fpn}: if they are not dependent from the domain, neither the resulting pyramid representation will be. The last three ResNet layers are therefore used to build the feature pyramid and are forwarded to three different domain classifiers with different architectures, through gradient reversal layers for adversarial alignment. such an approach has not yet been followed in the academic literature, for two stage object detectors.
+	\item Similarly to what is done by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, it is possible to directly align the ResNet features that serve as input for the \gls{fpn}: if they are not dependent from the domain, neither the resulting pyramid representation will be. The last three ResNet layers are therefore used to build the feature pyramid and are forwarded to three different domain classifiers with different architectures, through gradient reversal layers for adversarial alignment. Such an approach has not yet been followed in the academic literature, for two stage object detectors.
 \end{itemize}
 The presence or absence of the \gls{fpn} in the backbone has no impact on adaptation at instance level, as \gls{rpn} returns \glspl{roi} in the same format. If different domain classifiers are used, the consistency regularization loss is independently computed for each ResNet layer between the domain prediction and the prediction at instance level, unique at each iteration. Otherwise, training proceeds as previously described.
 
 \section{Image statistics matching}
 As discussed in Section~\ref{sec:dataaug}, data augmentation techniques that significantly modify the appearance of images from a domain extend their data distribution, possibly covering several domains. A model can be trained on transformed images from the source domain without any architectural modification, possibly performing well on images drawn from a target data distribution.
 
-Likewise, domain mapping methods transform images from a source domain in a way that a model can confused them with images from the target domain: they focus on accurate modifications of images rather than upgrading base architectures. That is typically attained with \glspl{gan} for style transfer, but training of adversarial networks is complicated and time-consuming. Instead, the method introduced by Abramov \textit{et al.}\cite{abramov2020simple} try to \textquotedblleft keep it simple\textquotedblright performing easy but effective operations at image level, with the objective of matching some statistics between source and target images.
+\bigskip
+Likewise, domain mapping methods transform images from a source domain in a way that a model can confused them with images from the target domain: they focus on accurate modifications of images rather than upgrading base architectures. That is typically attained with \glspl{gan} for style transfer, but training of adversarial networks is complicated and time-consuming. Instead, the method introduced by Abramov \textit{et al.}\cite{abramov2020simple} try to \textquotedblleft keep it simple\textquotedblright, performing easy but effective operations at image level, with the objective of matching some statistics between source and target images.
 
 More precisely, for each labeled source image an unlabeled target image is randomly selected and two transformation are applied one after the other:
 \begin{enumerate}
 	\item Feature Distribution Matching: the first transformation transforms the source image in a way that it obtains the color mean and covariance of the target image, while keeping the image content. It works on each pixel through PCA-Whitening with Singular Value Decomposition.
 	\item Histogram Matching: the second transformation is often used in image processing. It manipulates the pixels of the source image in order to align its color histograms to the ones of the target image.
 \end{enumerate}
-A detection model is therefore trained on labeled mapped images that share image statistics of target images. The model can then be directly used for inference on the target domain without any additional operation.
+
+A sample application of the method is reported in Figure~\ref{fig:kis}.
+
+A detection model is therefore trained on labeled mapped images that share statistics with target images. They can thus be considered as belonging to target domain. The model can then be directly used for inference on the target domain without any additional operation.
 
 \begin{figure}[ht]
 	\centering
-	% \includegraphics[width=\linewidth]{imgs/kis.jpeg}
 	\subcaptionbox{Source image}{
 		\includegraphics[width=.47\linewidth]{imgs/src.png}
 	}
@@ -730,12 +743,34 @@ A detection model is therefore trained on labeled mapped images that share image
 	}
 	\subcaptionbox{Histogram Matching}{
 		\includegraphics[width=.47\linewidth]{imgs/hm.png}
+	}\\
+	\subcaptionbox{Combination of Feature Distribution Matching and Histogram Matching}{
+		\includegraphics[width=.47\linewidth]{imgs/fdm_hm.png}
 	}
 	\caption{Results obtained through Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:kis}
 \end{figure}
 
+Additionally, 
 % TODO: trasformazioni a patch
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Source image}{
+		\includegraphics[width=.47\linewidth]{imgs/src_2x2.png}
+	}
+	\subcaptionbox{Target image}{
+		\includegraphics[width=.47\linewidth]{imgs/tgt_2x2.png}
+	}\\
+	\subcaptionbox{Feature Distribution Matching}{
+		\includegraphics[width=.47\linewidth]{imgs/fdm_2x2.png}
+	}
+	\subcaptionbox{Histogram Matching}{
+		\includegraphics[width=.47\linewidth]{imgs/hm_2x2.png}
+	}
+	\caption{Results obtained through patch-based Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
+	\label{fig:patchkis}
+\end{figure}
 
 % retinanet + adda ??
 
