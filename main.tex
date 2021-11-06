@@ -319,7 +319,7 @@ Considering the strong imbalance between the foreground ($y=1$) and background (
 
 This section introduces some basic aspects of object detection models. They are necessary to understand the following sections and the subsequent work.
 
-\subsubsection{Metrics}
+\subsubsection{Object detection metrics}
 Algorithm evaluation is a fundamental part of machine learning projects and can be performed in different ways, depending on the task and objective. Object detection is a more complex task than traditional classification: a non-fixed number of objects can be present in the same image and the detection model has to accurately predict their position and class. For this reason, dedicated metrics must be introduced and defined.
 
 \paragraph{Precision and recall}
@@ -628,28 +628,34 @@ and cutout, which randomly masks regions of the training images in order to impr
 \end{figure}
 
 \bigskip
-More advanced data augmentation techniques, first introduced by Zoph \textit{et al.}\cite{zoph2019learning}, take into account the bounding boxes and only apply data augmentation operations to the objects they contain or to the background. The original work aims at finding the best combination of data augmentation operators for given task and training data. This combination is sought with reinforcement learning and should lead to the best performances when training a model for image classification or object detection. 
+More advanced data augmentation techniques, first introduced by Zoph \textit{et al.}\cite{zoph2019learning}, take into account the bounding boxes and only apply data augmentation operations to the objects they contain or to the background. The original work aims at finding the best combination of data augmentation operators for given task and training data. This combination is sought with reinforcement learning and should lead to the best performances when training a model for image classification or object detection. A few examples are reported in Figure~\ref{fig:learndataaug}.
 
-In a data randomization scenario, the data augmentation operators presented in this work can be used to increase the variability of training images and widen the source domain data distribution. However, these peculiar transformations have to be used carefully: geometric operations can lead to unintended results if applied to bounding box content or to background only. For example, if the bounding box is small and its content is translated horizontally, the contained object may disappear if it is translated too much. Likewise, if the background (the whole image fixing the content of bounding boxes) is transformed too much, objects can be unintentionally duplicated without associated bounding box. In both cases, this would produce erroneous training images and lead to incorrect training procedures.
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.9\linewidth]{imgs/learndataaug.png}
+	\caption{Examples of data augmentations introduced by Zoph \textit{et al.}\cite{zoph2019learning}}
+	\label{fig:learndataaug}
+\end{figure}
+
+In a data randomization scenario, the data augmentation operators presented in that work can be used to increase the variability of training images and widen the data distribution associated to the source domain. However, these peculiar transformations have to be used carefully: geometric operations can lead to unintended results if applied to bounding box content or to background only. For example, if the bounding box is small and its content is translated horizontally, the contained object may disappear if it is translated too much. Likewise, geometric transformations on background (the whole image except the content of bounding boxes) do not make sense, as it inevitably duplicates objects without associated bounding box. This bad behavior is clear in Figure~\ref{fig:backgroundrottransl}. In both cases, this would produce erroneous training images and lead to incorrect training procedures.
 
 A few images produced by these wrong transformations are reported in Figure~\ref{fig:badaugs}.
 
-% TODO: image for unsuccessful transformations on bounding boxes and background
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Original \textit{Sim10k} image}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10korig.png}
+		\includegraphics[width=.47\linewidth]{imgs/sim10korig2.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kaug1.png}
+	\subcaptionbox{Horizontal translation of objects inside bounding boxes}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug1.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kaug2.png}
+	\subcaptionbox{Rotation of objects inside bounding boxes}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug2.png}
 	}
-	\subcaptionbox{\textit{Sim10k} image with random augmentations}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kaug3.png}
+	\subcaptionbox{Rotation and translation of image background, keeping fixed the objects in the original bounding boxes\label{fig:backgroundrottransl}}{
+		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug3.png}
 	}
-	\caption{Examples of unsuccessful transformations on bounding boxes and image background}
+	\caption{Examples of unsuccessful geometric transformations on bounding boxes or image background}
 	\label{fig:badaugs}
 \end{figure}
 
