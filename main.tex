@@ -24,7 +24,7 @@
 %%%%%%%
 
 \documentclass[%
-    corpo=12.5pt,
+    corpo=12pt,
     twoside,
     stile=classica,   
 % 	oldstyle,
@@ -79,6 +79,8 @@ machine learning}
 \usepackage[acronym]{glossaries}
 \usepackage{tabularx}
 \usepackage{xurl}
+\usepackage{epigraph}
+\setlength{\epigraphrule}{0pt}
 %
 
 \makeglossaries
@@ -108,12 +110,12 @@ machine learning}
 \newacronym{coco}{COCO}{Common Objects in Context}
 \newacronym[firstplural=GPUs]{gpu}{GPU}{Graphics Processing Unit}
 \newacronym{cpu}{CPU}{Central Processing Unit}
-\newacronym{mlp}{MLP}{multi-layer perceptron}
+\newacronym[first=\textit{multi-layer perceptron} (MLP)]{mlp}{MLP}{multi-layer perceptron}
 
 \glsdisablehyper
 
 %%%%%%% Definizioni locali
-\newtheorem{osservazione}{Osservazione}% Standard LaTeX
+%\newtheorem{osservazione}{Osservazione}% Standard LaTeX
 \ExtendCaptions{english}{Abstract}{Acknowledgements}
 
 \begin{document}
@@ -151,14 +153,20 @@ machine learning}
 %\pagenumbering{roman}
 
 \sommario
+Nowadays, computer vision is built almost exclusively on deep learning methods. Research in recent years has improved more and more the performances of convolutional neural networks on several popular key tasks, such as image classification, detection and segmentation. However, these methods require large amounts of annotated data to be trained effectively, which are not always available.
+For this reason, domain adaptation methods have been widely studied and developed. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
 
-
+This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world applications, when it is complex to obtain image annotations.
 
 % \paginavuota % funziona anche senza specificare l'opzione classica
 
 \ringraziamenti
+\lipsum[1-2]
 
-
+\newpage
+\vspace*{1cm}
+\epigraph{\itshape \textquotedblleft Test citazione"}{---Gabriele Degola}
+\paginavuota
 
 %\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
 \indici
@@ -170,11 +178,62 @@ machine learning}
 \phantomsection
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
+\lipsum[1-5]
 
 \chapter{Problem definition}
+\section{Convolutional neural networks and computer vision}
+Thanks to their achievements in computer vision, deep learning methods based on \glspl{cnn} have aroused a lot of interest over the last decade and have been used in many other branches of artificial intelligence. \Glspl{cnn} are a class of artificial neural networks, designed for the processing of structured arrays of data such as images.
 
-\section{Computer vision}
-Thanks to their achievements in computer vision, deep learning methods based on \glspl{cnn} have aroused a lot of interest over the last decade and have been used in many other branches of artificial intelligence. \Glspl{cnn} are a class of artificial neural networks, designed for the processing of structured arrays of data such as images. By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted. These methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms such as \gls{svm} and K-Nearest Neighbors, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by CNNs in computer vision.
+\subsection{Machine learning}
+The goal of machine learning is to extract patterns from raw input data, making a computer program build its own knowledge without relying on any hard-coded expertise. This knowledge is built from some representative data for the task of interest (the \textit{training set}) in order to make predictions or take decisions on new data that may only be available over time (the \textit{test set}). Machine learning approaches are often organized in three broad categories:
+
+\begin{itemize}
+	\item \textbf{Supervised learning}, in which training data are provided as input-output pairs and the goal is to learn a rule that maps inputs to outputs. Common supervised learning problems are classification, when the response variable belongs to a discrete set, and regression, in which the objective is to estimate a continuous function to map inputs and outputs.
+	\item \textbf{Unsupervised learning}, in which patterns and similarities in the data are sought without the need of data labels.
+	\item \textbf{Reinforcement learning}, in which the computer program (called \textit{agent}) interacts with an unknown environment and records the rewards associated to the actions it takes, progressively discovering the environment. The objective is to learn sequences of actions that lead to reward maximization.
+\end{itemize}
+
+Popular supervised machine learning algorithms, such as \gls{svm} and K-Nearest Neighbors, have strong theoretical properties and have matched human performances on numerous tasks.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.4\linewidth]{imgs/svm.png}
+	\caption{\Gls{svm} for binary classification}
+	\label{fig:supervised}
+\end{figure}
+
+%deep learning vs machine learning
+%why we need cnn? images as structured output
+\subsection{Deep learning}
+Performances achieved by traditional machine learning algorithms heavily depend on the representation of the data with which they are fed. Indeed, they cannot analyze the full world, but only some pieces of relevant information are available and used for learning. Each piece of information in the training examples is called a feature. Traditional machine learning algorithms learn from these features, but cannot influence how they are defined and extracted from the real world data.
+
+Plenty of tasks can be solved by designing an appropriate set of features to extract, that will be forwarded to a machine learning algorithm. This requires previous knowledge, which is not always available, and intensive work and research from human actors. In many cases, it is extremely difficult to know a priori which features should be extracted. A clear example is dealing with images: humans can immediately distinguish a dog from a cat, but the difference in, e.g., fur and shape is not easy to describe in mathematical terms. A dog or a cat can take several poses and be pictured in various weather and lightning conditions. In addition, dogs or cat of different breeds can have very different appearance (high \textit{intra-class variation}) and sometimes have common traits with other animals (low \textit{inter-class variation}), but humans have no difficulty in classifying them as dogs or cats nevertheless. This makes the task complicated for machines.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.7\linewidth]{imgs/chairs.png}
+	\caption{A popular example of \textit{intra-class variation}: even though they look different, humans do not have any trouble in saying all the images contain chairs.}
+	\label{fig:intraclass}
+\end{figure}
+
+To solve the problem, it is possible to use machine learning to learn an effective data representation in addition to the mapping from inputs to outputs, an approach known as \textbf{representation learning}. This increases performances with respect to hand-crafted features and enable the algorithm to easily adapt to new tasks. However, not all extracted features may be useful to understand which animal is present in an image, while some of theme can be sound only if considered together with other features.
+
+\bigskip
+\textbf{Deep learning} has been a fundamental milestone in representation learning. In deep learning, representations are expressed in terms of other simpler representations, that were previously extracted from the input data. In the case of dog images, a \textit{deep neural network} can represent the concept of dog in terms of simpler concepts, such as corners and contours, which are in turn defined in terms of edges\cite{goodfellow2016deep}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.8\linewidth]{imgs/mlp.png}
+	\caption{Example of feedforward neural network}
+	\label{fig:mlp}
+\end{figure}
+
+Different network architectures have been proposed for different tasks. The basic model is the \textit{feedforward neural network} or \gls{mlp}, whose schema is reported in Figure~\ref{fig:mlp}. Each node of the directed acyclic graph represents a neuron (from which the name \textit{neural network}): the first network layer is the input layer, with as many neurons as input features, while the last layer is the output layer, with one node for any class the network is designed to predict. The intermediate layers are the hidden layers, in which every neuron computes the value of a linear function of the features in the previous layer, followed by a scalar non-linearity. Each output is connected to all nodes in the next layer. The network learns the weights associated to all network edges.
+
+\bigskip
+By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted.
+
+These methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by CNNs in computer vision.
 
 \begin{figure}[ht]
 	\centering
@@ -183,6 +242,7 @@ Thanks to their achievements in computer vision, deep learning methods based on 
 	\label{fig:imagenet}}
 \end{figure}
 
+\subsection{Computer vision}
 Three main tasks in computer vision can be identified, all of which have benefited from the development of deep neural network architectures:
 
 \begin{itemize}
@@ -320,7 +380,7 @@ Considering the strong imbalance between the foreground ($y=1$) and background (
 This section introduces some basic aspects of object detection models. They are necessary to understand the following sections and the subsequent work.
 
 \subsubsection{Object detection metrics}
-Algorithm evaluation is a fundamental part of machine learning projects and can be performed in different ways, depending on the task and objective. Object detection is a more complex task than traditional classification: a non-fixed number of objects can be present in the same image and the detection model has to accurately predict their position and class. For this reason, dedicated metrics must be introduced and defined.
+Algorithm evaluation is a fundamental part of machine learning projects and can be performed in different ways, depending on the task and objective. Object detection is a more complex task than traditional image classification: a non-fixed number of objects can be present in the same image and the detection model has to accurately predict their position and class. For this reason, dedicated metrics must be introduced and defined.
 
 \paragraph{Precision and recall}
 First, the following concepts must be defined in the context of object detection:
@@ -578,7 +638,7 @@ Data augmentations can modify the orientation of the images or operate at pixel 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/augmentation.png}
-	\caption{Some examples of data augmentation (image source: \url{http://datahacker.rs/tf-data-augmentation/})}
+	\caption[Some examples of data augmentation]{Some examples of data augmentation. Image source: \url{http://datahacker.rs/tf-data-augmentation/}}
 	\label{fig:augmentation}
 \end{figure}
 
@@ -692,7 +752,7 @@ However, \gls{fpn} architecture introduces some problems for adversarial feature
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.7\linewidth]{imgs/fpn.png}
+	\includegraphics[width=.6\linewidth]{imgs/fpn.png}
 	\caption{\Gls{fpn} architecture\cite{chen2018domain}}
 	\label{fig:fpn}
 \end{figure}
@@ -729,7 +789,7 @@ Likewise, domain mapping methods transform images from a source domain in a way 
 More precisely, for each labeled source image an unlabeled target image is randomly selected and two transformation are applied one after the other:
 \begin{enumerate}
 	\item Feature Distribution Matching: the first transformation transforms the source image in a way that it obtains the color mean and covariance of the target image, while keeping the image content. It works on each pixel through PCA-Whitening with Singular Value Decomposition.
-	\item Histogram Matching: the second transformation is often used in image processing. It manipulates the pixels of the source image in order to align its color histograms to the ones of the target image.
+	\item Histogram Matching: the second transformation is commonly used for image processing. It manipulates the pixels of the source image in order to align its color histograms to the ones of the target image.
 \end{enumerate}
 
 A sample application of the method is reported in Figure~\ref{fig:kis}.
@@ -777,8 +837,6 @@ Additionally,
 	\caption{Results obtained through patch-based Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:patchkis}
 \end{figure}
-
-% retinanet + adda ??
 
 \chapter{Experimental results}
 \section{Experimental settings}
@@ -839,7 +897,6 @@ The results obtained with RetinaNet-based methods are reported in Table~\ref{tab
 		\hline
 		Baseline (HFlip + rotation + translation + color jitter + solarize + equalize)      &   52.7   \\
 		\hline
-		% TODO: rifare hflip e hflip + rot + transl se c'è tempo
 		Image statistics matching (HFlip)  &   48.2    \\
 		\hline
 		Image statistics matching (HFlip + rotation + translation)  &   52.0    \\
@@ -906,11 +963,7 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 \end{table}
 
 \chapter{Conclusions}
-Next steps:
-\begin{itemize}
-	\item test additional data augmentation policies
-	\item use patches for statistics matching
-\end{itemize}
+
 
 \backmatter
 \english
