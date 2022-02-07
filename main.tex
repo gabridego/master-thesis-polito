@@ -44,6 +44,8 @@
 \usepackage[T1]{fontenc}%    codifica dei font
 \usepackage{lmodern}%        scelta dei font
 
+\setcounter{tocdepth}{1}
+
 % Vedere la documentazione toptesi-it.pdf per le
 % attenzioni che bisogna usare al fine di ottenere un file
 % veramente conforme alle norme per l'archiviabilità.
@@ -71,6 +73,7 @@ machine learning}
 %
 %%%%%%% Esempio di composizione di tesi di laurea con PDFLATEX 
 %
+\usepackage{amssymb}
 \usepackage{csquotes}
 \usepackage{lipsum}
 \usepackage{subcaption}
@@ -78,9 +81,11 @@ machine learning}
 \addbibresource{references.bib}
 \usepackage[acronym]{glossaries}
 \usepackage{tabularx}
+\usepackage{multirow}
 \usepackage{xurl}
 \usepackage{epigraph}
 \setlength{\epigraphrule}{0pt}
+\usepackage{todonotes}
 %
 
 \makeglossaries
@@ -165,7 +170,7 @@ This work focuses on domain adaptation for an object detection task. It starts f
 
 \newpage
 \vspace*{1cm}
-\epigraph{\itshape \textquotedblleft Test citazione"}{---Gabriele Degola}
+\epigraph{\itshape \textquotedblleft Test citazione\textquotedblright}{---Gabriele Degola}
 \paginavuota
 
 %\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
@@ -178,7 +183,11 @@ This work focuses on domain adaptation for an object detection task. It starts f
 \phantomsection
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-\lipsum[1-5]
+Over the past few decades, machine learning and deep learning techniques have achieved impressive results in a variety of tasks, of which computer vision and language processing are probably the best known. However, they generally assume that the training and inference data are drawn from the same distribution, which is not always the case. Furthermore, data collection and annotation is an expensive and time-consuming task. It may therefore be desirable to apply a model trained on annotated data to another domain for which annotations are not available or only partially available. Several methods have been proposed to reduce the domain shift between the two data distributions. They have been widely studied and are presented in the following sections.
+
+\bigskip
+The starting point of this research work is a six-months internship carried out at Neovision\footnote{\url{https://neovision.fr/}}, an engineering company based in Grenoble, France, and specialized in artificial intelligence. Transferring knowledge from synthetic to real data in an object detection scenario is a captivating but challenging task with applications in a variety of domains of great commercial interest. In addition, the shortage of available annotated data for the use case of interest is often one of the biggest obstacles for machine learning projects: engineers have to spend several hours gathering and possibly annotating related data, rather than focusing on algorithms and optimization. In addition, the tasks at hand can often be similar, but with data collected under different conditions of brightness, light spectrum, camera angle, and more. Previously trained models cannot then be reused and long training processes are required. This is why Neovision wants to tackle the domain adaptation problem, in order to offer the acquired knowledge and methods to its numerous customers. For this reason, the research documented in this Master Thesis proposes and shows that simple approaches for domain adaptation, independent of specific employed network architectures and without introducing complex architecture modifications, can obtain satisfactory results and compete with more challenging methods proposed in the literature.
+
 
 \chapter{Problem definition}
 \section{Convolutional neural networks and computer vision}
@@ -228,10 +237,18 @@ To solve the problem, it is possible to use machine learning to learn an effecti
 	\label{fig:mlp}
 \end{figure}
 
-Different network architectures have been proposed for different tasks. The basic model is the \textit{feedforward neural network} or \gls{mlp}, whose schema is reported in Figure~\ref{fig:mlp}. Each node of the directed acyclic graph represents a neuron (from which the name \textit{neural network}): the first network layer is the input layer, with as many neurons as input features, while the last layer is the output layer, with one node for any class the network is designed to predict. The intermediate layers are the hidden layers, in which every neuron computes the value of a linear function of the features in the previous layer, followed by a scalar non-linearity. Each output is connected to all nodes in the next layer. The network learns the weights associated to all network edges.
+Different network architectures have been proposed for different tasks. The basic model is the \textit{feedforward neural network} or \gls{mlp}, whose schema is reported in Figure~\ref{fig:mlp}. Each node of the directed acyclic graph represents a neuron (from which the name \textit{neural network}): the first network layer is the input layer, with as many neurons as input features, while the last layer is the output layer, with one node for any class the network is designed to predict. The intermediate layers are the hidden layers, in which every neuron computes the value of a linear function of the features in the previous layer, followed by a scalar non-linearity. Each output is connected to all nodes in the next layer. The network learns the weights associated to all connections between neurons of different layers.
+%TODO: training and more details
+\todo{Add training and implementation details}
 
-\bigskip
-By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted.
+\subsection{Convolutional neural networks}
+%TODO: section on CNNs
+\todo{Add a section on CNNs}
+
+\subsection{Computer vision}
+%TODO: traditional CV methods
+\todo{Mention traditional CV methods}
+\glspl{cnn} are a special class of feedworward neural networks, designed to work with inputs that are organized as grids. Hidden units are organized into grids as well. By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted.
 
 These methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by CNNs in computer vision.
 
@@ -239,10 +256,9 @@ These methods have outperformed previous approaches based on manually extracted 
 	\centering
 	\includegraphics[width=.8\textwidth]{imgs/ILSVRC.png}
 	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}\cite{russakovsky2015imagenet}. Image source: \cite{hanqing2020research}.
-	\label{fig:imagenet}}
+		\label{fig:imagenet}}
 \end{figure}
 
-\subsection{Computer vision}
 Three main tasks in computer vision can be identified, all of which have benefited from the development of deep neural network architectures:
 
 \begin{itemize}
@@ -280,6 +296,7 @@ An object detection task can be seen as a combination of two main steps: finding
 
 \subsubsection{Two stage object detectors}
 % TODO: spiegare meglio
+\todo{Add details on how the methods work}
 As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \acrshort{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image. A \gls{cnn} is then evaluated independently on each \acrshort{roi} to extract features that are fed into a \gls{svm}
 %to classify the presence of an object in that region and the bounding box location.
 to determine if an object is present in this bounding box (classification task) as well as its location to match that of the object (regression task). As \gls{svm} is a binary classification algorithm, as many \glspl{svm} as classes are used for the classification task.
@@ -704,18 +721,22 @@ A few images produced by these wrong transformations are reported in Figure~\ref
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Original \textit{Sim10k} image}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10korig2.png}
+		\includegraphics[width=.75\linewidth]{imgs/sim10korig2.png}
 	}
 	\subcaptionbox{Horizontal translation of objects inside bounding boxes}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug1.png}
+		\includegraphics[width=.75\linewidth]{imgs/sim10kbadaug1.png}
 	}
+\caption{Examples of unsuccessful geometric transformations on bounding boxes or image background}
+\end{figure}
+\begin{figure}[ht]\ContinuedFloat
+	\centering
 	\subcaptionbox{Rotation of objects inside bounding boxes}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug2.png}
+		\includegraphics[width=.75\linewidth]{imgs/sim10kbadaug2.png}
 	}
 	\subcaptionbox{Rotation and translation of image background, keeping fixed the objects in the original bounding boxes\label{fig:backgroundrottransl}}{
-		\includegraphics[width=.47\linewidth]{imgs/sim10kbadaug3.png}
+		\includegraphics[width=.75\linewidth]{imgs/sim10kbadaug3.png}
 	}
-	\caption{Examples of unsuccessful geometric transformations on bounding boxes or image background}
+	\caption{Examples of unsuccessful geometric transformations on bounding boxes or image background (cont.)}
 	\label{fig:badaugs}
 \end{figure}
 
@@ -776,7 +797,7 @@ The addition of a \gls{fpn} component to the backbone of a Faster \gls{rcnn} mod
 If the base detector includes a \gls{fpn} component, adaptation at image level for the Domain Adaptive Faster \gls{rcnn} method has to be reconsidered. Two possible solutions can be identified in order to align the feature representations between different domains:
 \begin{itemize}
 	\item Adaptation can be directly performed on features extracted by the \gls{fpn}. Different levels of the feature pyramid can be forwarded, on at a time, to a domain classifier through gradient reversal layer. The resulting domain losses can be summed or averaged across all levels. This way, the objective is to push the ResNet backbone to extract feature representations that can be used to build a feature pyramid which is independent of the domain of each input image.
-	\item Similarly to what is done by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, it is possible to directly align the ResNet features that serve as input for the \gls{fpn}: if they are not dependent from the domain, neither the resulting pyramid representation will be. The last three ResNet layers are therefore used to build the feature pyramid and are forwarded to three different domain classifiers with different architectures, through gradient reversal layers for adversarial alignment. Such an approach has not yet been followed in the academic literature, for two stage object detectors.
+	\item Similarly to what is done by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, it is possible to directly align the ResNet features that serve as input for the \gls{fpn}: if they are not dependent from the domain, neither the resulting pyramid representation will be. The last three ResNet layers are therefore used to build the feature pyramid and are forwarded to three different domain classifiers with different architectures, through gradient reversal layers for adversarial alignment. Such an approach has not yet been followed in the academic literature for two stage object detectors.
 \end{itemize}
 The presence or absence of the \gls{fpn} in the backbone has no impact on adaptation at instance level, as \gls{rpn} returns \glspl{roi} in the same format. If different domain classifiers are used, the consistency regularization loss is independently computed for each ResNet layer between the domain prediction and the prediction at instance level, unique at each iteration. Otherwise, training proceeds as previously described.
 
@@ -817,7 +838,7 @@ A detection model is therefore trained on labeled mapped images that share stati
 	\label{fig:kis}
 \end{figure}
 
-Additionally, 
+Additionally, transformations can be applied on a patch basis, in order to locally match images from source and target domains.
 % TODO: trasformazioni a patch
 
 \begin{figure}[ht]
@@ -834,7 +855,7 @@ Additionally,
 	\subcaptionbox{Histogram Matching}{
 		\includegraphics[width=.47\linewidth]{imgs/hm_2x2.png}
 	}
-	\caption{Results obtained through patch-based Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
+	\caption{Results obtained through 2x2 patch-based Feature Distribution Matching and Histogram Matching on a sample image. \textit{Sim10k} and \textit{CityScapes} are considered as source and target domains respectively.}
 	\label{fig:patchkis}
 \end{figure}
 
@@ -851,38 +872,105 @@ Parameters and training details were used for all experiments as far as possible
 \end{itemize}
 The following parameters are used for each data augmentation technique:
 \begin{itemize}
-	\item random rotation between $ -10 $ and $ 10 $ degrees;
-	\item random translation between $ -100 $ and $ 100 $ pixels, independently chosen for the two axis;
-	\item brightness, contrast, saturation and hue randomly jittered between $ 0.5 $ and $ 1.5 $, independently chosen for each property;
-	\item for solarization, the threshold over which pixels are inverted is randomly chosen between $ 64 $ and $ 192 $ (RGB pixel values going from $ 0 $ to $ 255 $ for each color channel).
+	\item random rotation (\texttt{Rot.}) between $ -10 $ and $ 10 $ degrees;
+	\item random translation (\texttt{Tr.}) between $ -100 $ and $ 100 $ pixels, independently chosen for the two axis;
+	\item brightness, contrast, saturation and hue randomly jittered (\texttt{C.J.}) between $ 0.5 $ and $ 1.5 $, independently chosen for each property;
+	\item for solarization (\texttt{Sol.}), the threshold over which pixels are inverted is randomly chosen between $ 64 $ and $ 192 $ (RGB pixel values going from $ 0 $ to $ 255 $ for each color channel).
 \end{itemize}
 
-\section{RetinaNet}
-The results obtained with RetinaNet-based methods are reported in Table~\ref{table:retinanet}.
+Additional performed data augmentation techniques are horizontal flip (\texttt{HF}, a basic transformation which is always used) and equalization (\texttt{Eq.}).
 
-% TODO: maybe separate between randomization and direct adaptation
+\bigskip
+The models indicated as \textquotedblleft oracle\textquotedblright are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique and represent an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
 
-\begin{table}[ht!]
+\section{Domain randomization}
+Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain the results obtained by RetinaNet and Faster \gls{rcnn} (with \gls{fpn} backbone) respectively, trained on \textit{Sim10k} images with several data augmentation techniques and evaluated on \textit{CityScapes} test images. For each combination of operations, the tables contain the detection \gls{map} on \textit{CityScapes}.
+
+\begin{table}[tb]
 	\centering
-	\begin{tabularx}{\linewidth}{|X|c|}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
 		\hline
-		Method  &   mAP@0.5 \\
+		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\hline\hline
-		Baseline (HFlip + rotation + translation + shearing)      &   39.2   \\
+		\checkmark & & & & & & 30.4   \\
 		\hline
-		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   49.8   \\
+		\checkmark & \checkmark & \checkmark & & & & 37.6   \\
 		\hline
-		Baseline (HFlip + rotation + translation + shearing + box translation + box equalize + equalize)      &   21.0   \\
+		\checkmark & \checkmark & \checkmark & \checkmark & & & 49.4   \\
 		\hline
-		Baseline (HFlip + box shearing + background color jitter + box equalize)      &   29.1   \\
+		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{52.7}   \\
+		\hline\hline
+		\multicolumn{6}{|l|}{Oracle} & 68.7   \\
 		\hline
-		Baseline (HFlip + rotation + translate y box + equalize)      &   34.1   \\
-		\hline
-	\end{tabularx}
-	\caption{Extra experiments}
-	\label{table:extra}
+	\end{tabular}
+	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
+	\label{table:rand_retinanet}
 \end{table}
 
+\begin{table}[tb]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
+		\hline\hline
+		\checkmark & & & & & & 46.3   \\
+		\hline
+		\checkmark & \checkmark & \checkmark & & & & 48.8   \\
+		\hline
+		\checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{57.9}   \\
+		%57.84
+		\hline
+		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{57.9}   \\
+		%57.96
+		\hline\hline
+		\multicolumn{6}{|l|}{Oracle} & 76.3   \\
+		\hline
+	\end{tabular}
+	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
+	\label{table:rand_fasterrcnn}
+\end{table}
+
+\bigskip
+The values of \gls{map} confirm the hypothesis of Section~\ref{sec:dataaug}: the random component introduced by the fundamental data augmentation operations helps to reduce the mismatch between source and target domains. Presumably, the source data distribution is expanded such that the intersection between the source and target distributions becomes larger too.
+
+Comparing the two tables, it can be seen that the Faster \gls{rcnn} base detectector with \gls{fpn}, trained with horizontal flip only, performs considerably better than RetinaNet with the same transformation (difference of 15.9 \gls{map}) and without having seen any image belonging to the target domain, thanks to the use of the features extracted by the \gls{fpn} in the \gls{iou} proposal phase. The feature extractor helps in extracting relevant features from the different backbone levels, which are used for the \gls{roi} proposal. This helps to identify low-level image features that are common to different domains, such as tires or windows for cars, and capture them in a meaningful way.
+
+The addition of simple geometric transformations (rotation and translation) helps both networks better learn important features and has a large impact on RetinaNet in particular (+7.2 \gls{map}, +2.5 for Faster \gls{rcnn}).
+
+The important contribution of randomization introduced by the data augmentation techniques starts to become evident if color operators are used: the large variation in brightness, contrast, saturation and hue of the images makes the detection results rise on \textit{CityScapes} (+11.8 for RetinaNet, +9.1 for Faster \gls{rcnn}). At this point, the additional solarization and equalization slightly vary the final performance or not at all.
+
+\section{Domain adaptation methods}
+
+\begin{table}[tb]
+	\centering
+	\begin{tabularx}{\linewidth}{|X|c|c|c|c|c|c|c|}
+		\hline
+		Method & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
+		\hline\hline
+		Baseline & \checkmark & & & & & & 30.4   \\
+		\hline
+		\multirow{3}{*}{Image statistics matching} & \checkmark & & & & & & 48.2   \\
+		\cline{2-7}
+		 & \checkmark & \checkmark & \checkmark & & & & 52.0   \\
+		\cline{2-7}
+		 & \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.7}   \\
+		\hline
+		\multirow{3}{*}{DA RetinaNet} & \checkmark & & & & & & 52.8   \\
+		\cline{2-7}
+		 & \checkmark & \checkmark & \checkmark & & & & 54.2   \\
+		%54.237
+		\cline{2-7}
+		 & \checkmark & \checkmark & \checkmark & \checkmark & & & 54.8   \\
+		%54.788
+		\hline\hline
+		Oracle & \checkmark & & & & & & 68.7   \\
+		\hline
+	\end{tabularx}
+	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment.}
+	\label{table:retinanet}
+\end{table}
+
+\iffalse
 \begin{table}[ht!]
 	\centering
 	\begin{tabularx}{\linewidth}{|X|c|}
@@ -919,10 +1007,38 @@ The results obtained with RetinaNet-based methods are reported in Table~\ref{tab
 	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}.}
 	\label{table:retinanet}
 \end{table}
+\fi
 
-\section{Faster R-CNN}
-The results obtained with Faster \gls{rcnn}-based methods are reported in Table~\ref{table:fasterrcnn}.
+\begin{table}[tb]
+	\centering
+	\begin{tabularx}{\linewidth}{|X|c|c|c|c|c|c|c|c|}
+		\hline
+		Method & FPN & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
+		\hline\hline
+		\multirow{2}{*}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
+		\cline{2-8}
+		 & \checkmark & \checkmark & & & & & & 46.3   \\
+		\hline
+		\multirow{3}{=}{Image statistics matching} & \checkmark & \checkmark & & & & & & 55.0   \\
+		\cline{2-8}
+		& \checkmark & \checkmark & \checkmark & \checkmark & & & & 62.0   \\
+		\cline{2-8}
+		& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.5}   \\
+		\hline
+		\multirow{3}{*}{DA Faster R-CNN} & & \checkmark & & & & & & 36.3   \\
+		\cline{2-8}
+		& \checkmark & \checkmark & & & & & & 45.0   \\
+		\cline{2-8}
+		& ML & \checkmark & & & & & & 46.8   \\
+		\hline\hline
+		Oracle & \checkmark & \checkmark & & & & & & 76.3   \\
+		\hline
+	\end{tabularx}
+	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column state if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.}
+	\label{table:fasterrcnn}
+\end{table}
 
+\iffalse
 \begin{table}[ht!]
 	\centering
 	\begin{tabularx}{\linewidth}{|X|c|}
@@ -961,8 +1077,52 @@ The results obtained with Faster \gls{rcnn}-based methods are reported in Table~
 	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}.}
 	\label{table:fasterrcnn}
 \end{table}
+\fi
+
+Table~\ref{table:retinanet} and Table~\ref{table:fasterrcnn} present the results obtained by RetinaNet and Faster \gls{rcnn} networks with the domain adaptation approaches explained before, always trained on \textit{Sim10k} and evaluated on \textit{CityScapes}, as well as the contribution of the data augmentation techniques in addition to the methods themselves. In Table~\ref{table:fasterrcnn}, the \glossary{fpn} column states if a \gls{fpn} is used or not used as part of the backbone.
+
+\bigskip
+For the RetinaNet detector, tested adaptation methods (image statistics matching and alignment on \gls{fpn}) performed well, with an increase over the baseline of 17.8 and 22.4 \gls{map} respectively. The use of data augmentation does not have a big impact for the Domain Adaptive RetinaNet, while the color transformations have a strong impact for the image statistics matching between source and target domains.
+
+\bigskip
+For Faster \gls{rcnn}, adaptation at image and instance levels yields improvements with respect to the basic Faster \gls{rcnn} architecture without \gls{fpn}, consistently with previous works\cite{abramov2020simple}\cite{chen2018domain}\cite{saito2017asymmetric}.
+
+On the other hand, adding a \gls{fpn} to the backbone (a scenario that was not considered in the previously mentioned works) significantly increases the performance of the base detector (around +12.6 \acrshort{map}), even on a domain it has never seen for the already mentioned reasons. Adapting the \gls{fpn} by gradient reversal layer gives no contribution to the adaptation and even degrades the \gls{map} values when all levels of the pyramid are considered at the same time. If different layers are used at different levels, the information acquired by the \gls{fpn} is preserved (+0.5 of \gls{map}). Since the network without \gls{fpn} is outdated and adversarial adaptation on the features extracted by the backbone \gls{fpn} is not efficient, eventual improvements of data augmentations are not tested for the Domain Adaptive Faster \gls{rcnn}.
+
+Image statistics matching proves to be effective for domain adaptation with Faster \gls{rcnn} as well (+8.7 \gls{map}), although it is a very simple method. It is even more efficient if additional geometric transformations are used.
+
+\section{Extra experiments}
+A few extra experiments have been performed with data augmentation techniques on bounding boxes, mentioned in Section~\ref{sec:dataaug}. All the transformations described above add a considerable number of additional combinations and it is not obvious a priori which can have a more important contribution than the others. Experiments with almost randomly chosen combinations did not give satisfactory results and actually deteriorated the performances of the basic detectors. For this reason, these transformations have not been explored in detail.
+
+A similar reasoning is followed for experiments on patch-based image statistics matching. Results on 2x2 matching are reported.
+
+\begin{table}[ht!]
+	\centering
+	\begin{tabularx}{\linewidth}{|X|c|}
+		\hline
+		Method  &   mAP@0.5 \\
+		\hline\hline
+		Baseline (HFlip + rotation + translation + shearing)      &   39.2   \\
+		\hline
+		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   49.8   \\
+		\hline
+		Baseline (HFlip + rotation + translation + shearing + box translation + box equalize + equalize)      &   21.0   \\
+		\hline
+		Baseline (HFlip + box shearing + background color jitter + box equalize)      &   29.1   \\
+		\hline
+		Baseline (HFlip + rotation + translate y box + equalize)      &   34.1   \\
+		\hline
+		RetinaNet - image statistics matching 2x2 (HFlip) &   45.0    \\
+		\hline
+		Faster R-CNN - image statistics matching 2x2 (w/ FPN, HFlip) &   55.48    \\
+		\hline
+	\end{tabularx}
+	\caption{Extra experiments, mostly on RetinaNet}
+	\label{table:extra}
+\end{table}
 
 \chapter{Conclusions}
+\todo[inline]{Write full conclusion}
 
 
 \backmatter
