@@ -147,10 +147,17 @@ machine learning}
 \TesiDiLaurea{Master Thesis}
 \def\Candidato{Candidate}
 \candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
-\AdvisorName{Supervisor}
-\relatore{prof. Paolo Garza}% per la laurea e/o il dottorato
-%\tutoreaziendale{Valérian Gonnot}
-%\NomeTutoreAziendale{Company advisor\\Neovision}
+\AdvisorName{Supervisors}
+%\relatore{prof.~Paolo Garza}% per la laurea e/o il dottorato
+%\secondorelatore{prof.~Olivier François}
+\relatore{{\tabular[t]{@{}l}
+		prof.~Paolo \textsc{Garza}\\
+		\qquad\small{Politecnico di Torino}\\[0.5ex]
+		prof.~Olivier \textsc{François}\\
+		\qquad\small{Grenoble INP - Ensimag}
+		\endtabular}}
+\tutoreaziendale{Valérian Gonnot}
+\NomeTutoreAziendale{Company advisor\\Neovision}
 
 \sedutadilaurea{\textsc{Academic~year} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
@@ -168,9 +175,14 @@ This work focuses on domain adaptation for an object detection task. It starts f
 \ringraziamenti
 \lipsum[1-2]
 
-\newpage
-\vspace*{1cm}
-\epigraph{\itshape \textquotedblleft Test citazione\textquotedblright}{---Gabriele Degola}
+%\newpage
+%\vspace*{1cm}
+%\epigraph{\itshape \textquotedblleft Test citazione\textquotedblright}{---Gabriele Degola}
+\begin{citazioni}
+	\textit{\textquotedblleft testo testo testo\\~testo testo testo\textquotedblright}
+	
+	---\textsc{G.\ Leopardi}, Operette Morali\vspace{1em}
+\end{citazioni}
 \paginavuota
 
 %\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
@@ -186,7 +198,7 @@ This work focuses on domain adaptation for an object detection task. It starts f
 Over the past few decades, machine learning and deep learning techniques have achieved impressive results in a variety of tasks, of which computer vision and language processing are probably the best known. However, they generally assume that the training and inference data are drawn from the same distribution, which is not always the case. Furthermore, data collection and annotation is an expensive and time-consuming task. It may therefore be desirable to apply a model trained on annotated data to another domain for which annotations are not available or only partially available. Several methods have been proposed to reduce the domain shift between the two data distributions. They have been widely studied and are presented in the following sections.
 
 \bigskip
-The starting point of this research work is a six-months internship carried out at Neovision\footnote{\url{https://neovision.fr/}}, an engineering company based in Grenoble, France, and specialized in artificial intelligence. Transferring knowledge from synthetic to real data in an object detection scenario is a captivating but challenging task with applications in a variety of domains of great commercial interest. In addition, the shortage of available annotated data for the use case of interest is often one of the biggest obstacles for machine learning projects: engineers have to spend several hours gathering and possibly annotating related data, rather than focusing on algorithms and optimization. In addition, the tasks at hand can often be similar, but with data collected under different conditions of brightness, light spectrum, camera angle, and more. Previously trained models cannot then be reused and long training processes are required. This is why Neovision wants to tackle the domain adaptation problem, in order to offer the acquired knowledge and methods to its numerous customers. For this reason, the research documented in this Master Thesis proposes and shows that simple approaches for domain adaptation, independent of specific employed network architectures and without introducing complex architecture modifications, can obtain satisfactory results and compete with more challenging methods proposed in the literature.
+The starting point of this research work is a six-months internship carried out at Neovision\footnote{\url{https://neovision.fr/en/}}, an engineering company based in Grenoble, France, and specialized in artificial intelligence. Transferring knowledge from synthetic to real data in an object detection scenario is a captivating but challenging task with applications in a variety of domains of great commercial interest. In addition, the shortage of available annotated data for the use case of interest is often one of the biggest obstacles for machine learning projects: engineers have to spend several hours gathering and possibly annotating related data, rather than focusing on algorithms and optimization. In addition, the tasks at hand can often be similar, but with data collected under different conditions of brightness, light spectrum, camera angle, and more. Previously trained models cannot then be reused and long training processes are required. This is why Neovision wants to tackle the domain adaptation problem, in order to offer the acquired knowledge and methods to its numerous customers. For this reason, the research documented in this Master Thesis proposes and shows that simple approaches for domain adaptation, independent of specific employed network architectures and without introducing complex architecture modifications, can obtain satisfactory results and compete with more challenging methods proposed in the literature.
 
 
 \chapter{Problem definition}
@@ -429,7 +441,7 @@ The computed value is then compared to a threshold to classify a prediction as c
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=.95\linewidth]{imgs/precision_recall_iou.jpg}
+	\includegraphics[width=\linewidth]{imgs/precision_recall_iou.jpg}
 	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}. Image source: \url{https://datascience.stackexchange.com/questions/25119/how-to-calculate-map-for-detection-task-for-the-pascal-voc-challenge}}
 	\label{fig:iou}
 \end{figure}
