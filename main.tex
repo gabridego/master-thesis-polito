@@ -83,8 +83,10 @@ machine learning}
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{xurl}
-\usepackage{epigraph}
-\setlength{\epigraphrule}{0pt}
+\usepackage{nicematrix}
+\usepackage{booktabs}
+\setlength\heavyrulewidth{1.5pt}
+\newcommand{\hdrule}{\midrule[\heavyrulewidth]}
 \usepackage{todonotes}
 %
 
@@ -148,16 +150,17 @@ machine learning}
 \def\Candidato{Candidate}
 \candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
 \AdvisorName{Supervisors}
-%\relatore{prof.~Paolo Garza}% per la laurea e/o il dottorato
+\relatore{prof.~Paolo Garza}% per la laurea e/o il dottorato
 %\secondorelatore{prof.~Olivier François}
-\relatore{{\tabular[t]{@{}l}
-		prof.~Paolo \textsc{Garza}\\
-		\qquad\small{Politecnico di Torino}\\[0.5ex]
-		prof.~Olivier \textsc{François}\\
-		\qquad\small{Grenoble INP - Ensimag}
-		\endtabular}}
-\tutoreaziendale{Valérian Gonnot}
-\NomeTutoreAziendale{Company advisor\\Neovision}
+%\relatore{{\tabular[t]{@{}l}
+%		prof.~Paolo \textsc{Garza}\\
+%		\qquad\small{Politecnico di Torino}\\[0.5ex]
+%		prof.~Olivier \textsc{François}\\
+%		\qquad\small{Grenoble INP - Ensimag}
+%		\endtabular}
+%}
+\tutoreaziendale{Etienne \textsc{Balit}\\Valérian \textsc{Gonnot}}
+\NomeTutoreAziendale{Company advisors\\Neovision}
 
 \sedutadilaurea{\textsc{Academic~year} 2021-2022}% per la laurea magistrale
 \end{ThesisTitlePage}
@@ -900,44 +903,38 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 
 \begin{table}[tb]
 	\centering
-	\begin{tabular}{|c|c|c|c|c|c|c|}
-		\hline
+	\begin{NiceTabular}{ccccccc}
+		\toprule
 		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
-		\hline\hline
+		\hdrule
 		\checkmark & & & & & & 30.4   \\
-		\hline
 		\checkmark & \checkmark & \checkmark & & & & 37.6   \\
-		\hline
 		\checkmark & \checkmark & \checkmark & \checkmark & & & 49.4   \\
-		\hline
 		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{52.7}   \\
-		\hline\hline
-		\multicolumn{6}{|l|}{Oracle} & 68.7   \\
-		\hline
-	\end{tabular}
+		\hdrule
+		\Block[l]{1-6}{Oracle} & & & & & & 68.7   \\
+		\bottomrule
+	\end{NiceTabular}
 	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\label{table:rand_retinanet}
 \end{table}
 
 \begin{table}[tb]
 	\centering
-	\begin{tabular}{|c|c|c|c|c|c|c|}
-		\hline
+	\begin{NiceTabular}{ccccccc}
+		\toprule
 		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
-		\hline\hline
+		\hdrule
 		\checkmark & & & & & & 46.3   \\
-		\hline
 		\checkmark & \checkmark & \checkmark & & & & 48.8   \\
-		\hline
 		\checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{57.9}   \\
 		%57.84
-		\hline
 		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{57.9}   \\
 		%57.96
-		\hline\hline
-		\multicolumn{6}{|l|}{Oracle} & 76.3   \\
-		\hline
-	\end{tabular}
+		\hdrule
+		\Block[l]{1-6}{Oracle} & & & & & & 76.3   \\
+		\bottomrule
+	\end{NiceTabular}
 	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\label{table:rand_fasterrcnn}
 \end{table}
@@ -955,141 +952,61 @@ The important contribution of randomization introduced by the data augmentation 
 
 \begin{table}[tb]
 	\centering
-	\begin{tabularx}{\linewidth}{|X|c|c|c|c|c|c|c|}
-		\hline
+	\begin{NiceTabularX}{\linewidth}{Xccccccc}
+		\toprule
 		Method & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
-		\hline\hline
+		\hdrule
 		Baseline & \checkmark & & & & & & 30.4   \\
-		\hline
-		\multirow{3}{*}{Image statistics matching} & \checkmark & & & & & & 48.2   \\
-		\cline{2-7}
-		 & \checkmark & \checkmark & \checkmark & & & & 52.0   \\
-		\cline{2-7}
-		 & \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.7}   \\
-		\hline
-		\multirow{3}{*}{DA RetinaNet} & \checkmark & & & & & & 52.8   \\
-		\cline{2-7}
-		 & \checkmark & \checkmark & \checkmark & & & & 54.2   \\
+		\midrule
+		\Block[l]{3-1}{Image statistics matching} & \checkmark & & & & & & 48.2   \\
+		\cmidrule{2-7}
+		& \checkmark & \checkmark & \checkmark & & & & 52.0   \\
+		\cmidrule{2-7}
+		& \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.7}   \\
+		\midrule
+		\Block[l]{3-1}{DA RetinaNet} & \checkmark & & & & & & 52.8   \\
+		\cmidrule{2-7}
+		& \checkmark & \checkmark & \checkmark & & & & 54.2   \\
 		%54.237
-		\cline{2-7}
-		 & \checkmark & \checkmark & \checkmark & \checkmark & & & 54.8   \\
+		\cmidrule{2-7}
+		& \checkmark & \checkmark & \checkmark & \checkmark & & & 54.8   \\
 		%54.788
-		\hline\hline
+		\hdrule
 		Oracle & \checkmark & & & & & & 68.7   \\
-		\hline
-	\end{tabularx}
+		\bottomrule
+	\end{NiceTabularX}
 	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment.}
 	\label{table:retinanet}
 \end{table}
 
-\iffalse
-\begin{table}[ht!]
-	\centering
-	\begin{tabularx}{\linewidth}{|X|c|}
-		\hline
-		Method  &   mAP@0.5 \\
-		\hline\hline
-		Baseline (HFlip)       &   30.4   \\
-		\hline
-		Baseline (HFlip + rotation + translation)      &   37.6   \\
-		\hline
-		Baseline (HFlip + rotation + translation + color jitter)      &   49.4   \\
-		\hline
-		Baseline (HFlip + rotation + translation + color jitter + solarize + equalize)      &   52.7   \\
-		\hline
-		Image statistics matching (HFlip)  &   48.2    \\
-		\hline
-		Image statistics matching (HFlip + rotation + translation)  &   52.0    \\
-		\hline
-		Image statistics matching (HFlip + rotation + translation + color jitter)  &   62.7    \\
-		\hline
-		DA RetinaNet (HFlip)   &   52.8    \\
-		\hline
-		DA RetinaNet (HFlip + rotation + translation)   &   54.2    \\
-		%54.237
-		\hline
-		DA RetinaNet (HFlip + rotation + translation + color jitter)   &   54.8    \\
-		%54.788
-		\hline\hline
-		Image statistics matching 2x2 (HFlip) &   45.0    \\
-		\hline\hline
-		Oracle (HFlip) &   68.7    \\
-		\hline
-	\end{tabularx}
-	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}.}
-	\label{table:retinanet}
-\end{table}
-\fi
-
 \begin{table}[tb]
 	\centering
-	\begin{tabularx}{\linewidth}{|X|c|c|c|c|c|c|c|c|}
-		\hline
+	\begin{NiceTabularX}{\linewidth}{Xcccccccc}
+		\toprule
 		Method & FPN & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
-		\hline\hline
-		\multirow{2}{*}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
-		\cline{2-8}
-		 & \checkmark & \checkmark & & & & & & 46.3   \\
-		\hline
-		\multirow{3}{=}{Image statistics matching} & \checkmark & \checkmark & & & & & & 55.0   \\
-		\cline{2-8}
+		\hdrule
+		\Block[l]{2-1}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
+		\cmidrule{2-8}
+		& \checkmark & \checkmark & & & & & & 46.3   \\
+		\midrule
+		\Block[l]{3-1}{Image statistics matching} & \checkmark & \checkmark & & & & & & 55.0   \\
+		\cmidrule{2-8}
 		& \checkmark & \checkmark & \checkmark & \checkmark & & & & 62.0   \\
-		\cline{2-8}
+		\cmidrule{2-8}
 		& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.5}   \\
-		\hline
+		\midrule
 		\multirow{3}{*}{DA Faster R-CNN} & & \checkmark & & & & & & 36.3   \\
-		\cline{2-8}
+		\cmidrule{2-8}
 		& \checkmark & \checkmark & & & & & & 45.0   \\
-		\cline{2-8}
+		\cmidrule{2-8}
 		& ML & \checkmark & & & & & & 46.8   \\
-		\hline\hline
+		\hdrule
 		Oracle & \checkmark & \checkmark & & & & & & 76.3   \\
-		\hline
-	\end{tabularx}
-	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column state if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.}
+		\bottomrule
+	\end{NiceTabularX}
+	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column states if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.}
 	\label{table:fasterrcnn}
 \end{table}
-
-\iffalse
-\begin{table}[ht!]
-	\centering
-	\begin{tabularx}{\linewidth}{|X|c|}
-		\hline
-		Method  &   mAP@0.5 \\
-		\hline\hline
-		Baseline (w/o FPN, HFlip)       &   33.7\cite{abramov2020simple}   \\
-		\hline
-		Baseline (w/ FPN, HFlip)       &   46.3   \\
-		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation)       &   48.8   \\
-		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation + color jitter)       &   57.9  \\
-		% 57.94
-		\hline
-		Baseline (w/ FPN, HFlip + rotation + translation + color jitter + solarize + equalize)       &   57.9   \\
-		% 57.86
-		\hline
-		DA Faster R-CNN (w/o FPN, HFlip)    & 36.3     \\
-		\hline
-		DA Faster R-CNN (w/ FPN, HFlip)    & 45.0     \\
- 		\hline
- 		DA Faster R-CNN (different discriminators on FPN, HFlip)     &   46.8    \\
-		\hline
-		Image statistics matching (w/ FPN, HFlip)  &   55.0    \\
-		\hline
-		Image statistics matching (w/ FPN, HFlip + rotation + translation) &   62.0    \\
-		\hline
-		Image statistics matching (w/ FPN, HFlip + rotation + translation + color jitter) &   62.5    \\
-		\hline\hline
-		Image statistics matching 2x2 (w/ FPN, HFlip) &   55.48    \\
-		\hline\hline
-		Oracle (w/ FPN, HFlip) &   76.3    \\
-		\hline
-	\end{tabularx}
-	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}.}
-	\label{table:fasterrcnn}
-\end{table}
-\fi
 
 Table~\ref{table:retinanet} and Table~\ref{table:fasterrcnn} present the results obtained by RetinaNet and Faster \gls{rcnn} networks with the domain adaptation approaches explained before, always trained on \textit{Sim10k} and evaluated on \textit{CityScapes}, as well as the contribution of the data augmentation techniques in addition to the methods themselves. In Table~\ref{table:fasterrcnn}, the \glossary{fpn} column states if a \gls{fpn} is used or not used as part of the backbone.
 
