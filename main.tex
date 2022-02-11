@@ -44,8 +44,6 @@
 \usepackage[T1]{fontenc}%    codifica dei font
 \usepackage{lmodern}%        scelta dei font
 
-\setcounter{tocdepth}{1}
-
 % Vedere la documentazione toptesi-it.pdf per le
 % attenzioni che bisogna usare al fine di ottenere un file
 % veramente conforme alle norme per l'archiviabilità.
@@ -93,7 +91,7 @@ machine learning}
 \makeglossaries
 \newacronym{ai}{AI}{artificial intelligence}
 \newacronym{ilsvrc}{ILSVRC}{ImageNet Large Scale Visual Recognition Challenge}
-\newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{cnn}{CNN}{convolutional neural network}
 \newacronym{gan}{GAN}{Generative Adversarial Network}
 \newacronym{svm}{SVM}{Support Vector Machines}
 \newacronym{ide}{IDE}{Integrated Development Environment}
@@ -118,6 +116,7 @@ machine learning}
 \newacronym[firstplural=GPUs]{gpu}{GPU}{Graphics Processing Unit}
 \newacronym{cpu}{CPU}{Central Processing Unit}
 \newacronym[first=\textit{multi-layer perceptron} (MLP)]{mlp}{MLP}{multi-layer perceptron}
+\newacronym{relu}{ReLU}{rectified linear unit}
 
 \glsdisablehyper
 
@@ -149,8 +148,8 @@ machine learning}
 \TesiDiLaurea{Master Thesis}
 \def\Candidato{Candidate}
 \candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
-\AdvisorName{Supervisors}
-\relatore{prof.~Paolo Garza}% per la laurea e/o il dottorato
+\AdvisorName{Supervisor}
+\relatore{prof.~Paolo \textsc{Garza}}% per la laurea e/o il dottorato
 %\secondorelatore{prof.~Olivier François}
 %\relatore{{\tabular[t]{@{}l}
 %		prof.~Paolo \textsc{Garza}\\
@@ -166,6 +165,7 @@ machine learning}
 \end{ThesisTitlePage}
 
 %\pagenumbering{roman}
+\paginavuota
 
 \sommario
 Nowadays, computer vision is built almost exclusively on deep learning methods. Research in recent years has improved more and more the performances of convolutional neural networks on several popular key tasks, such as image classification, detection and segmentation. However, these methods require large amounts of annotated data to be trained effectively, which are not always available.
@@ -173,23 +173,32 @@ For this reason, domain adaptation methods have been widely studied and develope
 
 This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world applications, when it is complex to obtain image annotations.
 
-% \paginavuota % funziona anche senza specificare l'opzione classica
+\paginavuota % funziona anche senza specificare l'opzione classica
 
-\ringraziamenti
-\lipsum[1-2]
+%\ringraziamenti
+%\lipsum[1-2]
 
+\iffalse
 %\newpage
 %\vspace*{1cm}
 %\epigraph{\itshape \textquotedblleft Test citazione\textquotedblright}{---Gabriele Degola}
+\begin{dedica}
+	Alla mia famiglia\\
+	Ad Alba
+\end{dedica}
+
 \begin{citazioni}
 	\textit{\textquotedblleft testo testo testo\\~testo testo testo\textquotedblright}
 	
 	---\textsc{G.\ Leopardi}, Operette Morali\vspace{1em}
 \end{citazioni}
-\paginavuota
+%\paginavuota
+\fi
 
 %\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
+%\setcounter{tocdepth}{1}
 \indici
+%\paginavuota
 
 \mainmatter
 \english
@@ -205,7 +214,7 @@ The starting point of this research work is a six-months internship carried out 
 
 
 \chapter{Problem definition}
-\section{Convolutional neural networks and computer vision}
+\section{Neural networks and computer vision}
 Thanks to their achievements in computer vision, deep learning methods based on \glspl{cnn} have aroused a lot of interest over the last decade and have been used in many other branches of artificial intelligence. \Glspl{cnn} are a class of artificial neural networks, designed for the processing of structured arrays of data such as images.
 
 \subsection{Machine learning}
@@ -231,6 +240,7 @@ Popular supervised machine learning algorithms, such as \gls{svm} and K-Nearest 
 \subsection{Deep learning}
 Performances achieved by traditional machine learning algorithms heavily depend on the representation of the data with which they are fed. Indeed, they cannot analyze the full world, but only some pieces of relevant information are available and used for learning. Each piece of information in the training examples is called a feature. Traditional machine learning algorithms learn from these features, but cannot influence how they are defined and extracted from the real world data.
 
+\medskip
 Plenty of tasks can be solved by designing an appropriate set of features to extract, that will be forwarded to a machine learning algorithm. This requires previous knowledge, which is not always available, and intensive work and research from human actors. In many cases, it is extremely difficult to know a priori which features should be extracted. A clear example is dealing with images: humans can immediately distinguish a dog from a cat, but the difference in, e.g., fur and shape is not easy to describe in mathematical terms. A dog or a cat can take several poses and be pictured in various weather and lightning conditions. In addition, dogs or cat of different breeds can have very different appearance (high \textit{intra-class variation}) and sometimes have common traits with other animals (low \textit{inter-class variation}), but humans have no difficulty in classifying them as dogs or cats nevertheless. This makes the task complicated for machines.
 
 \begin{figure}[ht]
@@ -243,7 +253,7 @@ Plenty of tasks can be solved by designing an appropriate set of features to ext
 To solve the problem, it is possible to use machine learning to learn an effective data representation in addition to the mapping from inputs to outputs, an approach known as \textbf{representation learning}. This increases performances with respect to hand-crafted features and enable the algorithm to easily adapt to new tasks. However, not all extracted features may be useful to understand which animal is present in an image, while some of theme can be sound only if considered together with other features.
 
 \bigskip
-\textbf{Deep learning} has been a fundamental milestone in representation learning. In deep learning, representations are expressed in terms of other simpler representations, that were previously extracted from the input data. In the case of dog images, a \textit{deep neural network} can represent the concept of dog in terms of simpler concepts, such as corners and contours, which are in turn defined in terms of edges\cite{goodfellow2016deep}.
+\textbf{Deep learning} has been a fundamental milestone in representation learning. In deep learning, representations are expressed in terms of other simpler representations, that were previously extracted from the input data. In the case of dog images, a \textit{deep neural network} can represent the concept of dog in terms of simpler concepts, such as corners and contours, which are in turn defined in terms of edges.
 
 \begin{figure}[ht]
 	\centering
@@ -252,29 +262,80 @@ To solve the problem, it is possible to use machine learning to learn an effecti
 	\label{fig:mlp}
 \end{figure}
 
-Different network architectures have been proposed for different tasks. The basic model is the \textit{feedforward neural network} or \gls{mlp}, whose schema is reported in Figure~\ref{fig:mlp}. Each node of the directed acyclic graph represents a neuron (from which the name \textit{neural network}): the first network layer is the input layer, with as many neurons as input features, while the last layer is the output layer, with one node for any class the network is designed to predict. The intermediate layers are the hidden layers, in which every neuron computes the value of a linear function of the features in the previous layer, followed by a scalar non-linearity. Each output is connected to all nodes in the next layer. The network learns the weights associated to all connections between neurons of different layers.
-%TODO: training and more details
-\todo{Add training and implementation details}
+Different network architectures have been proposed for different tasks. The basic model is the \textit{feedforward neural network} or \gls{mlp}, whose schema is reported in Figure~\ref{fig:mlp}. Each node of the directed acyclic graph represents a neuron (from which the name \textit{neural network}): the first network layer is the input layer, with as many neurons as input features, while the last layer is the output layer, with one node for any class the network is designed to predict (only one node in the case of binary classification). The intermediate layers are the hidden layers, in which every neuron computes the value of a linear function of the features returned by the previous layer, followed by a scalar non-linearity. Each output is connected to all nodes in the next layer.
+
+\bigskip
+More formally, the output of the $j$\textsuperscript{th} node of the first hidden layer $h_1$, when receiving an observation $x$ from the $n$ input nodes, is the composition of:
+\begin{itemize}
+	\item a dot product $a_j$ between $x$ and the node's weight vector $w_j$, considering its bias term $b_j$:
+	\begin{equation*}
+		a_j = b_j + \sum_{i=0}^n w_{j,i}x_i
+	\end{equation*}
+	\item and a differentiable activation function $h$, such that:
+	\begin{equation*}
+		z_j = h(a_j)\text{.}
+	\end{equation*}
+\end{itemize}
+This is incrementally repeated for all neurons of every network layer, until an output is produced by the neurons of the output layer. The network learns the weights $w$ associated to all neurons as well as their bias $b$, which define the output of the nodes when no input is provided\cite{amini2015apprentissage}.
+
+\bigskip
+Several activation functions have been proposed over the years to build deep neural networks and effectively exploit their depth. \textit{Sigmoid} and \textit{tan-h}, respectively defined as $h(t) = \frac{1}{1 + e^{-t}}$ and $h(t) = \tanh(t) = \frac{e^t - e^{-t}}{e^t + e^{-t}}$, have been often used as activation functions, as they squeeze input values to finite intervals ($[0,1]$ and $[-1,1]$ respectively) and are biologically inspired. In modern deep learning, the default recommendation is to use the \gls{relu} function, defined as $h(t) = \max(0,t)$. With respect to sigmoid and tan-h, the \gls{relu} does not saturate (mitigating the risk of \textit{vanishing gradient}) and has faster convergence. An alternative is the \textit{leaky \gls{relu}}, defined as $h(t) = \max(\alpha t, t),\ \alpha \in [0,1]$, which mitigates the risk of \textquotedblleft dying\textquotedblright~neurons, due to the fact that \gls{relu} sets all negative values to $0$.
+
+\bigskip
+Network weights are learnt through gradient based methods. In order to do so, a fundamental step is the definition of a \textit{loss} or \textit{cost} function. Loss functions are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem, in order to make network weights evolve in the desired directions. 
+
+\medskip
+In a multi-class classification scenario, the output of each output neuron is mapped to the posterior probability of the corresponding class. This is usually done through the \textit{softmax} operation. If the $k$\textsuperscript{th} node of the output layer returns the value $y_k$, it is computed as:
+\begin{equation*}
+	p(c_k|x) = \frac{\exp{(y_k)}}{\sum_{i=0}^n \exp{(y_i)}}
+\end{equation*}
+which is therefore the probability that observation $x$ belongs to class $k$.
+
+\medskip
+According to the \textit{backpropagation} algorithm, classification error or loss is estimated at the output layer and network weights are updated accordingly, from the output to the input layer. This is done by computing the gradient of the loss function and distributing it backwards on the network neurons, by recursively applying the chain rule of calculus\cite{goodfellow2016deep}. A general schema is reported in Figure~\ref{fig:forwardbackward}.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Forward step}{
+		\includegraphics[width=.41\linewidth]{imgs/forward.png}
+	}
+	\subcaptionbox{Backward step}{
+		\includegraphics[width=.53\linewidth]{imgs/backward.png}
+	}
+	\caption{Propagation and backpropagation schema}
+	\label{fig:forwardbackward}
+\end{figure}
 
 \subsection{Convolutional neural networks}
-%TODO: section on CNNs
-\todo{Add a section on CNNs}
+\Acrfullpl{cnn} are a special class of feedworward neural networks, designed to work with inputs that are organized as grids. Hidden units are organized into grids as well. Indeed, if image pixels are directly fed to a feedforward neural network, it could not extract meaningful relations between adjacent pixels, possibly taking into account the different color channels.
+
+\bigskip
+\Glspl{cnn} are usually composed of two main sections: the first one deals with feature extraction, while the second addresses classification or regression, depending on the desired task. A simple \gls{cnn} architecture is reported in Figure~\ref{fig:cnn}.
+
+For feature extraction, following the same principle of \glspl{mlp}, increasingly complex non-linear relationships between adjacent pixels are extracted from input images, by stacking convolutional layers with non-linear activation functions. Linear mappings from one layer to the next one take the form of convolution operations with three-dimensional convolutional filters of fixed size. \textit{Pooling} layers can then be added in order to reduce the size of the extracted feature maps. The goal of pooling is to replace the output of a convolutional layer with a summary of its local statistics, making it more robust to small differences in the input. Popular pooling operators are \textit{max} and \textit{average} pooling.
+
+\medskip
+Extracted features are then forwarded to one or more \textit{fully connected} layers, that can be seen as a standard \gls{mlp} introduced in the previous section. The \gls{mlp} assembles all local information into a global vectorial representation and outputs a prediction for the input image.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.9\linewidth]{imgs/cnn.png}
+	\caption{An example of \gls{cnn} for handwritten digit recognition}
+	\label{fig:cnn}
+\end{figure}
 
 \subsection{Computer vision}
-%TODO: traditional CV methods
-\todo{Mention traditional CV methods}
-\glspl{cnn} are a special class of feedworward neural networks, designed to work with inputs that are organized as grids. Hidden units are organized into grids as well. By stacking convolutional layers with non-linear activation functions, increasingly complex non-linear relationships between adjacent pixels in input images are extracted.
-
-These methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by CNNs in computer vision.
+\todo[inline]{Edge detection, SIFT, HOGs}
+\Gls{cnn}-based methods have outperformed previous approaches based on manually extracted features and classical machine learning algorithms, since they are able to learn complex relationships in the data by progressively extracting higher-level features from the raw data. Figure~\ref{fig:imagenet} shows an example of the progresses made by \glspl{cnn} in computer vision.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.8\textwidth]{imgs/ILSVRC.png}
-	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}\cite{russakovsky2015imagenet}. Image source: \cite{hanqing2020research}.
-		\label{fig:imagenet}}
+	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}, from right to left\cite{russakovsky2015imagenet}. Image source: \cite{hanqing2020research}.
+	\label{fig:imagenet}}
 \end{figure}
 
-Three main tasks in computer vision can be identified, all of which have benefited from the development of deep neural network architectures:
+Three main tasks can be identified in computer vision, all of which have benefited from the development of deep neural network architectures:
 
 \begin{itemize}
 	\item \textbf{Image classification}, whose objective is to predict the class label for an image.
@@ -367,7 +428,10 @@ The main improvements of RetinaNet\cite{lin2018focal} over previous one stage de
 After their proposal in the context of single-stage detectors, \glspl{fpn} have also been used as part of the backbone of two-stage detectors, aiming at improving their performances.
 
 \subparagraph{Focal loss}
-One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions. Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem. In this case, a specific loss function can be used to encourage the network to focus on regions of the images that actually contain objects.
+One of the main obstacles for the training of other object detection models is the large imbalance between background and foreground examples, which drives the model to focus on irrelevant background regions.
+%Loss functions are one of the fundamental bricks of deep learning: they are mathematical functions that map an event or the values of one or more variables to a real number, which intuitively represents a certain cost associated with these values. Therefore, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem.
+As explained in previous sections, each training of deep neural networks aims at minimizing or maximizing one or more loss functions that depend on the problem.
+In this case, a specific loss function can be used to encourage the network to focus on regions of the images that actually contain objects.
 
 \bigskip
 The \textit{focal loss}, introduced by RetinaNet, is based on the \textit{cross entropy} loss. For binary classification, the cross entropy loss is widely used and defined as:
@@ -440,7 +504,7 @@ For each predicted bounding box, the overlapping with the ground truth bounding 
 \begin{equation}
 	\text{IoU} = \frac{\text{area of overlap}}{\text{area of union}}
 \end{equation}
-The computed value is then compared to a threshold to classify a prediction as correct or not. Typical values for the threshold are $0.5$, $0.75$ and $0.95$ and that defines how much we want a detection to be precise. Indeed, a detection classified as true positive with a certain threshold may be considered as false positive if a higher value is used.
+The resulting value is then compared to a threshold to classify a prediction as correct or not. Typical values for the threshold are $0.5$, $0.75$ and $0.95$ and that defines how much we want a detection to be precise. Indeed, a detection classified as true positive with a certain threshold may be considered as false positive if a higher value is used.
 
 \begin{figure}[t]
 	\centering
@@ -471,22 +535,23 @@ CityScapes is an object segmentation dataset containing 5000 street scenes image
 The \gls{kitti} dataset\cite{Geiger2013IJRR} contains 7481 images captured in a context similar to CityScapes. Bounding box annotations are stored in plain text, with one file per image.
 
 \paragraph{Sim10k}
-Sim10k is a synthetic dataset containing 10000 annotated images for car detection, rendered from the video-game Grand Theft Auto 5, with the objective of training models in a rich virtual world for detection in the real\cite{johnsonroberson2017driving}.
+Sim10k is a synthetic dataset containing 10000 annotated images for car detection, rendered from the popular open-world video-game \textit{Grand Theft Auto 5}, with the objective of training models in a rich virtual world for detection in the real\cite{johnsonroberson2017driving}.
 
-\begin{figure}[ht]
+\begin{figure}[p]
 	\centering
 	\subcaptionbox{CityScapes\cite{cordts2016cityscapes}}{
-		\includegraphics[width=.7\linewidth]{imgs/cityscapes.png}
+		\includegraphics[width=.8\linewidth]{imgs/cityscapes.png}
 	}
 	\subcaptionbox{\acrshort{kitti}\cite{Geiger2013IJRR}}{
-		\includegraphics[width=.7\linewidth]{imgs/kitti.png}
+		\includegraphics[width=.8\linewidth]{imgs/kitti.png}
 	}
 	\subcaptionbox{Sim10k\cite{johnsonroberson2017driving}}{
-		\includegraphics[width=.7\linewidth]{imgs/sim10k.jpg}
+		\includegraphics[width=.8\linewidth]{imgs/sim10k.jpg}
 	}
-	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even if they contain the same categories of objects.}
+	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even though they contain the same categories of objects.}
 	\label{fig:datasets}
 \end{figure}
+\todo{different lightning, camera, texture}
 
 \subsubsection{Anchor boxes}\label{sec:anchor}
 In most cases, generating a large number of possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars, wide \textit{anchor boxes} can be defined at different scales, to identify both near and far objects.
@@ -511,6 +576,7 @@ Object detection models usually produce more than one detection for each object,
 
 For most use cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remains the same, while the domain differs.
 
+\bigskip
 Domain adaptation methods are effective for several computer vision tasks, when dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, among other cases they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
 
 Different types of domain adaptation can be identified, based on whether annotations are available or not for the target domain:
@@ -605,14 +671,14 @@ This avoids the need to seek the optimal value for $\lambda$, but introduces the
 	
 	This is done through \textquotedblleft flipped labels\textquotedblright : the training procedure fools the domain discriminator into believing that the features extracted from the target domain belong to the source domain instead. As a consequence, the target feature extractor is lead to learn features for the target domain that the domain discriminator could misclassify (as belonging to the source domain).
 	
-	\item For inference on images belonging to target domain, the aligned feature extractor (trained at step~\ref{item:adda2}) is used to extract features that now belong to the shared feature space. These features are then classified by the classifier trained at step~\ref{item:adda1} on the source domain.
+	\item For inference on images belonging to target domain, the aligned feature extractor (trained at step~\ref{item:adda2}) is used to extract features that now belong to the shared feature space. These features are then classified by the classifier that was previously trained on the source domain (in step~\ref{item:adda1}).
 \end{enumerate}
 A method overview is reported in Figure~\ref{fig:adda}.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\linewidth]{imgs/adda.png}
-	\caption[\acrshort{adda} working schema]{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are frozen after the previous step, while the remaining parameters are learned.}
+	\includegraphics[width=.75\linewidth]{imgs/adda.png}
+	\caption[\acrshort{adda} working schema]{\acrshort{adda} working schema\cite{tzeng2017adversarial}. The dashed lines indicate the parts of the networks that are previously learned and now frozen, while the network learns the remaining parameters.}
 	\label{fig:adda}
 \end{figure}
 
@@ -654,11 +720,11 @@ Similar approaches are commonly used in networks for style transfer, but in thes
 
 \chapter{Method}
 \section{Introduction}
-The purpose of this Master Thesis is the investigation of common approaches for domain adaptive object detection, in order to identify and correct possible critical points and propose appropriate actions for improvement.
+The purpose of this Master Thesis is the investigation of common approaches for domain adaptive object detection, in order to identify and possibly correct critical points and propose appropriate means of improvement.
 
-A common belief is that extremely complex methods are more likely to achieve good performances than simple methods. For neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
+A common belief is that extremely complex methods are more likely to achieve good performances than simple ones. Considering for example neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time lead to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
 
-A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are researched and can boost their productivity.
+A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are heavily researched and can boost their productivity.
 
 For the sake of completeness, the studied methods are implemented and tested on two popular object detection models presented in Section~\ref{sec:detection}, if they are compatible with both architectures: Faster \gls{rcnn} and RetinaNet.
 
@@ -729,6 +795,7 @@ More advanced data augmentation techniques, first introduced by Zoph \textit{et 
 	\label{fig:learndataaug}
 \end{figure}
 
+\medskip
 In a data randomization scenario, the data augmentation operators presented in that work can be used to increase the variability of training images and widen the data distribution associated to the source domain. However, these peculiar transformations have to be used carefully: geometric operations can lead to unintended results if applied to bounding box content or to background only. For example, if the bounding box is small and its content is translated horizontally, the contained object may disappear if it is translated too much. Likewise, geometric transformations on background (the whole image except the content of bounding boxes) do not make sense, as it inevitably duplicates objects without associated bounding box. This bad behavior is clear in Figure~\ref{fig:backgroundrottransl}. In both cases, this would produce erroneous training images and lead to incorrect training procedures.
 
 A few images produced by these wrong transformations are reported in Figure~\ref{fig:badaugs}.
@@ -896,13 +963,14 @@ The following parameters are used for each data augmentation technique:
 Additional performed data augmentation techniques are horizontal flip (\texttt{HF}, a basic transformation which is always used) and equalization (\texttt{Eq.}).
 
 \bigskip
-The models indicated as \textquotedblleft oracle\textquotedblright are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique and represent an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
+The models indicated as \textquotedblleft oracle\textquotedblright~are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique and represent an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
 
 \section{Domain randomization}
 Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain the results obtained by RetinaNet and Faster \gls{rcnn} (with \gls{fpn} backbone) respectively, trained on \textit{Sim10k} images with several data augmentation techniques and evaluated on \textit{CityScapes} test images. For each combination of operations, the tables contain the detection \gls{map} on \textit{CityScapes}.
 
 \begin{table}[tb]
 	\centering
+	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\begin{NiceTabular}{ccccccc}
 		\toprule
 		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
@@ -915,12 +983,12 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 		\Block[l]{1-6}{Oracle} & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabular}
-	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\label{table:rand_retinanet}
 \end{table}
 
 \begin{table}[tb]
 	\centering
+	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\begin{NiceTabular}{ccccccc}
 		\toprule
 		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
@@ -935,7 +1003,6 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 		\Block[l]{1-6}{Oracle} & & & & & & 76.3   \\
 		\bottomrule
 	\end{NiceTabular}
-	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
 	\label{table:rand_fasterrcnn}
 \end{table}
 
@@ -950,13 +1017,16 @@ The important contribution of randomization introduced by the data augmentation 
 
 \section{Domain adaptation methods}
 
-\begin{table}[tb]
+\begin{table}[t!]
 	\centering
+	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment.}
 	\begin{NiceTabularX}{\linewidth}{Xccccccc}
 		\toprule
 		Method & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\hdrule
-		Baseline & \checkmark & & & & & & 30.4   \\
+		\Block[l]{2-1}{Baseline} & \checkmark & & & & & & 30.4   \\
+		\cmidrule{2-7}
+		 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & 52.7   \\
 		\midrule
 		\Block[l]{3-1}{Image statistics matching} & \checkmark & & & & & & 48.2   \\
 		\cmidrule{2-7}
@@ -975,19 +1045,21 @@ The important contribution of randomization introduced by the data augmentation 
 		Oracle & \checkmark & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabularX}
-	\caption{\gls{map} with different domain adaptation method for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment.}
 	\label{table:retinanet}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[t]
 	\centering
+	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column states if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.}
 	\begin{NiceTabularX}{\linewidth}{Xcccccccc}
 		\toprule
 		Method & FPN & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\hdrule
-		\Block[l]{2-1}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
+		\Block[l]{3-1}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
 		\cmidrule{2-8}
 		& \checkmark & \checkmark & & & & & & 46.3   \\
+		\cmidrule{2-8}
+		& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & 57.9   \\
 		\midrule
 		\Block[l]{3-1}{Image statistics matching} & \checkmark & \checkmark & & & & & & 55.0   \\
 		\cmidrule{2-8}
@@ -1004,7 +1076,6 @@ The important contribution of randomization introduced by the data augmentation 
 		Oracle & \checkmark & \checkmark & & & & & & 76.3   \\
 		\bottomrule
 	\end{NiceTabularX}
-	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column states if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.}
 	\label{table:fasterrcnn}
 \end{table}
 
