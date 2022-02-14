@@ -817,6 +817,7 @@ In the present work, instead, randomization is introduced through the combinatio
 	\item \textit{Horizontal flip}: geometric transformation that horizontally mirrors the image.
 	\item \textit{Rotation}: geometric transformation that rotates image and bounding boxes of a degree value, sampled from a provided interval.
 	\item \textit{Translation}: geometric transformation that horizontally and vertically translates image and bounding boxes of a given number of pixels, sampled from a provided interval.
+	\item \textit{Shearing}: geometric transformation that deforms the image in a parallelogram shape according to horizontal or vertical axis. Horizontal and vertical shearing degrees are sampled from a provided interval.
 	\item \textit{Color jitter}: color-level transformation that changes brightness, contrast, saturation and hue of the image. Jitter factors for each of the properties are sampled from provided intervals.
 	\item \textit{Solarization}: color-level transformation that, for an image, inverts the color of all pixels whose value is above a threshold. The threshold is sampled from a provided interval.
 	\item \textit{Equalization}: color-level transformation that equalizes the color histogram of the image.
@@ -824,9 +825,7 @@ In the present work, instead, randomization is introduced through the combinatio
 The operations can be easily implemented and used in most popular deep learning frameworks.
 
 \medskip
-Many other operations are often used for data augmentation, but are not included in the performed experiments due to time constraints and since the possible combinations of the aforementioned operations are already numerous. Examples are \textit{shearing}, a geometric transformation that deforms the image in parallelogram shape according to horizontal or vertical axis,
-%. Each pixel of the image is translated in the same direction, by a magnitude proportional to its distance from the image origin. The amount of shearing is sampled from a provided interval.
-and \textit{cutout}, which randomly masks regions of the training images in order to improve networks' robustness. Other operations, such as \textit{vertical flip}, do not make any sense in this context. Indeed, vertical flip would completely change the appearance of objects and background, making it impossible to match the target domain.
+Many other operations are often used for data augmentation, but are not included in the performed experiments due to time constraints and since the possible combinations of the aforementioned operations are already numerous. An example is \textit{cutout}, which randomly masks regions of the training images in order to improve networks' robustness. Other operations, such as \textit{vertical flip}, do not make any sense in this context. Indeed, vertical flip would completely change the appearance of objects and background, making it impossible to match the target domain.
 
 \begin{figure}[ht]
 	\centering
@@ -973,7 +972,7 @@ More precisely, for each labeled source image, an unlabeled target image is rand
 \end{enumerate}
 A sample application of the method is reported in Figure~\ref{fig:kis}.
 
-A detection model is therefore trained on labeled mapped images that share statistics with target images. They can thus be considered as belonging to target domain. The model can then be directly used for inference on the target domain without any additional operation, as shown in Figure~\ref{fig:patchkis}.
+A detection model is therefore trained on labeled mapped images that share statistics with target images. They can thus be considered as belonging to target domain. The model can then be directly used for inference on the target domain without any additional operation.
 
 \begin{figure}[ht]
 	\centering
@@ -1019,44 +1018,67 @@ Additionally, transformations can be applied on a patch basis, in order to local
 
 \chapter{Experimental results}
 \section{Experimental settings}
-In this chapter, the results obtained with the tested methods are reported, compared and discussed. For coherence with previous works, \textit{Sim10k} and \textit{CityScapes} are treated as source domain and target domains respectively for training a model to recognize cars in a simulated world for detection in the real. Results are presented in terms of \gls{map} computed at \gls{iou} threshold of $ 0.5 $, separately for the experiments performed with RetinaNet and Faster \gls{rcnn} base detectors. Impact of data augmentation operations in addition to domain adaptation methods is also studied, and the transformations employed in each experiment are reported in parentheses.
+This chapter reports, compares and discusses the results obtained with the methods described in the previous chapter. For coherence with previous works, \textit{Sim10k} and \textit{CityScapes} are respectively treated as source domain and target domains. Experiments deal therefore with \textit{sim2real} domain adaptation, training a model to recognize cars in a simulated world for detection in the real. Results are presented in terms of \gls{map} computed at \gls{iou} threshold of $ 0.5 $, separately for the experiments performed with RetinaNet and Faster \gls{rcnn} base detectors. Impact of data augmentation operations, in addition to domain adaptation methods, is also studied. All experiments have been conducted with PyTorch.
 
-Parameters and training details were used for all experiments as far as possible. Common settings are:
-\begin{itemize}
-	\item 15 training epochs;
-	\item models pre-trained on \gls{coco};
-	\item ResNet-50 backbone;
-	\item random data augmentation operators applied with probability $ 0.5 $.
-\end{itemize}
-The following parameters are used for each data augmentation technique:
+\bigskip
+In the following sections, the models indicated as \textquotedblleft oracle\textquotedblright~are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique. This represents an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
+
+\subsection{Data processing}
+As said, \textit{Sim10k} and \textit{CityScapes} are considered as source and target domain, for domain adaptation between synthetic and real image data. As mentioned in Section~\ref{sec:datasets}, the two dataset use different formats for storing bounding box annotations. The Python library \textit{Datumaru}\cite{datumaro} is therefore used to convert them into a common format.
+
+\medskip
+As an official Python interface is provided to easily load the annotations and compute the detection \gls{map}, the \gls{coco} format has been chosen. Only annotations for the class \textquotedblleft car\textquotedblright~are kept, as this is the only category common to the two datasets containing street scenes.
+
+\medskip
+Finally, the tool \textit{cocosplit}\cite{cocosplit} is used to partition the \textit{Sim10k} dataset into training, validation and test sets with a proportion of 7\string:2\string:1, as standard sets are not officially available. The dataset is quite large (10000 annotated images) and it can be assumed that image distributions are similar between the three splits. On the other hand, splits are made public for \textit{CityScapes}, but annotations are not available for the test images. The performances of adaptation methods are therefore evaluated on the provided validation set, as it is never used during training.
+
+\subsection{Data augmentation}
+Impact of data augmentation is extensively tested, for both domain randomization by itself or in combination with the other methods. The following parameters are used for each previously introduced data augmentation technique:
 \begin{itemize}
 	\item random rotation (\texttt{Rot.}) between $ -10 $ and $ 10 $ degrees;
 	\item random translation (\texttt{Tr.}) between $ -100 $ and $ 100 $ pixels, independently chosen for the two axis;
+	\item random shearing (\texttt{Sh.}) between $-20$ and $20$ degrees (not always used);
 	\item brightness, contrast, saturation and hue randomly jittered (\texttt{C.J.}) between $ 0.5 $ and $ 1.5 $, independently chosen for each property;
-	\item for solarization (\texttt{Sol.}), the threshold over which pixels are inverted is randomly chosen between $ 64 $ and $ 192 $ (RGB pixel values going from $ 0 $ to $ 255 $ for each color channel).
+	\item for solarization (\texttt{Sol.}), the threshold over which pixels are inverted is randomly chosen between $ 64 $ and $ 192 $ (with RGB pixel values going from $ 0 $ to $ 255 $ for each color channel).
 \end{itemize}
 
-Additional performed data augmentation techniques are horizontal flip (\texttt{HF}, a basic transformation which is always used) and equalization (\texttt{Eq.}).
+Additional performed data augmentation techniques are horizontal flip (\texttt{HF}, a basic transformation which is always used) and equalization (\texttt{Eq.}), both parameter-free operations that are applied with probability 0.5 each.
 
 \bigskip
-The models indicated as \textquotedblleft oracle\textquotedblright~are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique and represent an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
+The Python library \textit{imgaug}\cite{imgaug} is exploited for data augmentation.
+
+\subsection{RetinaNet}
+The open-source RetinaNet implementation, included in the PyTorch's package for computer vision (\textit{torchvision})\cite{torchvision_retinanet}, have been used as starting point for the experiments with the basic detector, which included domain randomization and image statistics matching. For Domain Adaptive RetinaNet, the implementation provided by the same authors of the original paper\cite{pasqualino2020unsupervised}, using the \textit{detectron2} framework\cite{wu2019detectron2}\cite{daretinanet_github}, is followed and adapted.
+
+\bigskip
+All used RetinaNet networks include a ResNet-50 backbone and are pre-trained on the \gls{coco} dataset. They are then further trained on the data from one or both domains using the Adam optimizer for 15 epochs, with initial learning rate $1\times 10^{-4}$, decayed to $1\times 10^{-5}$ after 10 epochs.
+%todo: more precise parameters, check implementation (number of anchor boxes, number of proposals, real number of epochs in daretinanet and adversarial coefficient)
+
+\subsection{Faster R-CNN}
+As for RetinaNet, \textit{torchvision}'s implementation of Faster \gls{rcnn} model is used as basic detector\cite{torchvision_fasterrcnn}. For Domain Adaptive Faster \gls{rcnn}, an implementation by the authors of the paper\cite{chen2018domain} is considered\cite{dafasterrcnn_github}, but is reimplemented in a more recent version of PyTorch and \textit{torchvision}. The original implementation is only used for testing the method without \gls{fpn}.
+
+\bigskip
+As for RetinaNet, all Faster \gls{rcnn} models include a ResNet-50 backbone and are pre-trained on \gls{coco}. Networks are then finetuned on \textit{Sim10k} and \textit{CityScapes} for 15 epochs using the SGD optimizer with momentum set at $0.9$ and weight decay of $5\times 10^{-4}$. Initial learning rate is set at $1\times 10^{-3}$ and is reduced to $1\times 10^{-4}$ after 10 epochs.  In order to improve stability of two-stage object detectors, the learning rate is initialized using a warm-up policy. It is linearly increased from 0 to $1 \times 10^{-3}$ during the first 1000 training iterations.
+%todo: more precise parameters, check implementation (number of anchor boxes, number of proposals, real number of epochs in dafasterrcnn and adversarial coefficient)
 
 \section{Domain randomization}
 Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain the results obtained by RetinaNet and Faster \gls{rcnn} (with \gls{fpn} backbone) respectively, trained on \textit{Sim10k} images with several data augmentation techniques and evaluated on \textit{CityScapes} test images. For each combination of operations, the tables contain the detection \gls{map} on \textit{CityScapes}.
 
 \begin{table}[tb]
 	\centering
-	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
-	\begin{NiceTabular}{ccccccc}
+	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textquotedblleft oracle\textquotedblright.}
+	\begin{NiceTabular}{cccccccc}
 		\toprule
-		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
+		HF & Rot. & Tr. & Sh. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\midrule
-		\checkmark & & & & & & 30.4   \\
-		\checkmark & \checkmark & \checkmark & & & & 37.6   \\
-		\checkmark & \checkmark & \checkmark & \checkmark & & & 49.4   \\
-		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{52.7}   \\
+		$\checkmark$ & & & & & & & 30.4   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & & & & & 37.6   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & & 39.2   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & & $\checkmark$ & & & 49.4   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{52.7}   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & 49.8   \\
 		\midrule
-		\Block[l]{1-6}{Oracle} & & & & & & 68.7   \\
+		\Block[l]{1-6}{Oracle} & & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabular}
 	\label{table:rand_retinanet}
@@ -1064,16 +1086,16 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 
 \begin{table}[tb]
 	\centering
-	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textit{oracle}.}
+	\caption{\gls{map} with different data augmentation techniques for a Faster \gls{rcnn} model with \gls{fpn}, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textquotedblleft oracle\textquotedblright.}
 	\begin{NiceTabular}{ccccccc}
 		\toprule
 		HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\midrule
-		\checkmark & & & & & & 46.3   \\
-		\checkmark & \checkmark & \checkmark & & & & 48.8   \\
-		\checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{57.9}   \\
+		$\checkmark$ & & & & & & 46.3   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & & & & 48.8   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & \textbf{57.9}   \\
 		%57.84
-		\checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{57.9}   \\
+		$\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{57.9}   \\
 		%57.96
 		\midrule
 		\Block[l]{1-6}{Oracle} & & & & & & 76.3   \\
@@ -1083,13 +1105,18 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 \end{table}
 
 \bigskip
-The values of \gls{map} confirm the hypothesis of Section~\ref{sec:dataaug}: the random component introduced by the fundamental data augmentation operations helps to reduce the mismatch between source and target domains. Presumably, the source data distribution is expanded such that the intersection between the source and target distributions becomes larger too.
+The resulting \gls{map} values confirm the hypothesis of Section~\ref{sec:dataaug}: the random component introduced by the fundamental data augmentation operations helps to reduce the mismatch between source and target domains. Presumably, the source data distribution is expanded such that the intersection between the source and target distributions becomes larger too.
 
-Comparing the two tables, it can be seen that the Faster \gls{rcnn} base detector with \gls{fpn}, trained with horizontal flip only, performs considerably better than RetinaNet with the same transformation (difference of 15.9 \gls{map}) and without having seen any image belonging to the target domain, thanks to the use of the features extracted by the \gls{fpn} in the \gls{iou} proposal phase. The feature extractor helps in extracting relevant features from the different backbone levels, which are used for the \gls{roi} proposal. This helps to identify low-level image features that are common to different domains, such as tires or windows for cars, and capture them in a meaningful way.
+\bigskip
+Comparing the two tables, it can be noticed that the Faster \gls{rcnn} base detector with \gls{fpn}, trained with horizontal flip only, performs considerably better than RetinaNet with the same transformation (difference of 15.9 \gls{map}) and without having seen any image belonging to the target domain, thanks to the use of the features extracted by the \gls{fpn} in the \gls{iou} proposal phase. The feature extractor helps in extracting relevant features from the different backbone levels, which are used for the \gls{roi} proposal. This helps to identify low-level image features that are common to different domains, such as tires or windows for cars, and capture them in a meaningful way.
 
+\medskip
 The addition of simple geometric transformations (rotation and translation) helps both networks better learn important features and has a large impact on RetinaNet in particular (+7.2 \gls{map}, +2.5 for Faster \gls{rcnn}).
 
-The important contribution of randomization introduced by the data augmentation techniques starts to become evident if color operators are used: the large variation in brightness, contrast, saturation and hue of the images makes the detection results rise on \textit{CityScapes} (+11.8 for RetinaNet, +9.1 for Faster \gls{rcnn}). At this point, the additional solarization and equalization slightly vary the final performance or not at all.
+%todo: comment shearing
+
+\medskip
+The important contribution of randomization introduced by the data augmentation techniques starts to become evident if color operators are used: the large variation in brightness, contrast, saturation and hue of the images makes the detection results rise on \textit{CityScapes} (+11.8 for RetinaNet, +9.1 for Faster \gls{rcnn}). At this point, the additional solarization and equalization vary the final performances slightly or not at all.
 
 \section{Domain adaptation methods}
 
@@ -1100,58 +1127,60 @@ The important contribution of randomization introduced by the data augmentation 
 		\toprule
 		Method & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\midrule
-		\Block[l]{2-1}{Baseline} & \checkmark & & & & & & 30.4   \\
+		\Block[l]{2-1}{Baseline} & $\checkmark$ & & & & & & 30.4   \\
 		\cmidrule{2-7}
-		 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & 52.7   \\
+		 & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & 52.7   \\
 		\midrule
-		\Block[l]{3-1}{Image statistics matching} & \checkmark & & & & & & 48.2   \\
+		\Block[l]{3-1}{Image statistics matching} & $\checkmark$ & & & & & & 48.2   \\
 		\cmidrule{2-7}
-		& \checkmark & \checkmark & \checkmark & & & & 52.0   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & & & & 52.0   \\
 		\cmidrule{2-7}
-		& \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.7}   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & \textbf{62.7}   \\
 		\midrule
-		\Block[l]{3-1}{DA RetinaNet} & \checkmark & & & & & & 52.8   \\
+		\Block[l]{3-1}{DA RetinaNet} & $\checkmark$ & & & & & & 52.8   \\
 		\cmidrule{2-7}
-		& \checkmark & \checkmark & \checkmark & & & & 54.2   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & & & & 54.2   \\
 		%54.237
 		\cmidrule{2-7}
-		& \checkmark & \checkmark & \checkmark & \checkmark & & & 54.8   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & 54.8   \\
 		%54.788
 		\midrule
-		Oracle & \checkmark & & & & & & 68.7   \\
+		Oracle & $\checkmark$ & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabularX}
 	
 	\bigskip
-	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column states if \gls{fpn} is used or not (\texttt{ML} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.	\label{table:fasterrcnn}}
+	\caption{\gls{map} with different domain adaptation method for a Faster \gls{rcnn} model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. \gls{fpn} column states if \gls{fpn} is used or not (\texttt{RN} means different domain discriminators are applied to the three ResNet layers used to build the \gls{fpn}). The other columns indicate which transformations are applied to each experiment.	\label{table:fasterrcnn}}
 	\begin{NiceTabularX}{\linewidth}{Xcccccccc}
 		\toprule
 		Method & FPN & HF & Rot. & Tr. & C.J. & Sol. & Eq. & mAP@0.5 \\
 		\midrule
-		\Block[l]{3-1}{Baseline} & & \checkmark & & & & & & 33.7\cite{abramov2020simple}   \\
+		\Block[l]{3-1}{Baseline} & & $\checkmark$ & & & & & & 33.7\cite{abramov2020simple}   \\
 		\cmidrule{2-8}
-		& \checkmark & \checkmark & & & & & & 46.3   \\
+		& $\checkmark$ & $\checkmark$ & & & & & & 46.3   \\
 		\cmidrule{2-8}
-		& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & 57.9   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & 57.9   \\
 		\midrule
-		\Block[l]{3-1}{Image statistics matching} & \checkmark & \checkmark & & & & & & 55.0   \\
+		\Block[l]{3-1}{Image statistics matching} & $\checkmark$ & $\checkmark$ & & & & & & 55.0   \\
 		\cmidrule{2-8}
-		& \checkmark & \checkmark & \checkmark & \checkmark & & & & 62.0   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & & 62.0   \\
 		\cmidrule{2-8}
-		& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & & & \textbf{62.5}   \\
+		& $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & & & \textbf{62.5}   \\
 		\midrule
-		\multirow{3}{*}{DA Faster R-CNN} & & \checkmark & & & & & & 36.3   \\
+		\Block[l]{3-1}{DA Faster R-CNN} & & $\checkmark$ & & & & & & 36.3   \\
 		\cmidrule{2-8}
-		& \checkmark & \checkmark & & & & & & 45.0   \\
+		& $\checkmark$ & $\checkmark$ & & & & & & 45.0   \\
 		\cmidrule{2-8}
-		& ML & \checkmark & & & & & & 46.8   \\
+		& RN & $\checkmark$ & & & & & & 46.8   \\
 		\midrule
-		Oracle & \checkmark & \checkmark & & & & & & 76.3   \\
+		Oracle & $\checkmark$ & $\checkmark$ & & & & & & 76.3   \\
 		\bottomrule
 	\end{NiceTabularX}
 \end{table}
 
-Table~\ref{table:retinanet} and Table~\ref{table:fasterrcnn} present the results obtained by RetinaNet and Faster \gls{rcnn} networks with the domain adaptation approaches explained before, always trained on \textit{Sim10k} and evaluated on \textit{CityScapes}, as well as the contribution of the data augmentation techniques in addition to the methods themselves. In Table~\ref{table:fasterrcnn}, the \texttt{\gls{fpn}} column states if a \gls{fpn} is used or not used as part of the backbone.
+Table~\ref{table:retinanet} and Table~\ref{table:fasterrcnn} present the results obtained by RetinaNet and Faster \gls{rcnn} networks with the domain-invariant feature learning and domain mapping approaches explained before, always trained on \textit{Sim10k} and evaluated on \textit{CityScapes}, as well as the contribution of the data augmentation techniques in addition to the methods themselves. In Table~\ref{table:fasterrcnn}, the \texttt{\gls{fpn}} column states if a \gls{fpn} is used or not used as part of the backbone.
+
+For Domain adaptive Faster \gls{rcnn}, \texttt{RN} means that adversarial alignment is performed at the level of the last three ResNet layers, as done in \cite{pasqualino2020unsupervised} for RetinaNet, before being used to build the feature pyramids. Instead, the line with the simple $\checkmark$ contains the result obtained with adversarial adaptation on the network's \gls{fpn}.
 
 \bigskip
 For the RetinaNet detector, tested adaptation methods (image statistics matching and alignment on \gls{fpn}) performed well, with an increase over the baseline of 17.8 and 22.4 \gls{map} respectively. The use of data augmentation does not have a big impact for the Domain Adaptive RetinaNet, while the color transformations have a strong impact for the image statistics matching between source and target domains.
@@ -1159,12 +1188,34 @@ For the RetinaNet detector, tested adaptation methods (image statistics matching
 \bigskip
 For Faster \gls{rcnn}, adaptation at image and instance levels yields improvements with respect to the basic Faster \gls{rcnn} architecture without \gls{fpn}, consistently with previous works\cite{abramov2020simple}\cite{chen2018domain}\cite{saito2017asymmetric}.
 
-On the other hand, adding a \gls{fpn} to the backbone (a scenario that was not considered in the previously mentioned works) significantly increases the performance of the base detector (around +12.6 \acrshort{map}), even on a domain it has never seen for the already mentioned reasons. Adapting the \gls{fpn} by gradient reversal layer gives no contribution to the adaptation and even degrades the \gls{map} values when all levels of the pyramid are considered at the same time. If different layers are used at different levels, the information acquired by the \gls{fpn} is preserved (+0.5 of \gls{map}). Since the network without \gls{fpn} is outdated and adversarial adaptation on the features extracted by the backbone \gls{fpn} is not efficient, eventual improvements of data augmentations are not tested for the Domain Adaptive Faster \gls{rcnn}.
+\medskip
+On the other hand, adding a \gls{fpn} to the backbone (a scenario that was not considered in the previously mentioned works) significantly increases the performance of the base detector (around +12.6 \acrshort{map}) and performs way better than image and instance level adaptation withouth \gls{fpn}, even on a domain it has never seen for the already mentioned reasons. Adapting the \gls{fpn} by gradient reversal layer gives no contribution to the adaptation and even degrades the \gls{map} values when all levels of the pyramid are considered at the same time. If different discriminators are used to align different ResNet layers, the information acquired by the \gls{fpn} is preserved (+0.5 of \gls{map}). Since the network without \gls{fpn} is outdated and adversarial adaptation on the features extracted by the backbone with \gls{fpn} is not efficient, further improvements through data augmentation operators are not sought for Domain Adaptive Faster \gls{rcnn}.
+%eventual improvements through data augmentations are not tested for the Domain Adaptive Faster \gls{rcnn}.
 
-Image statistics matching proves to be effective for domain adaptation with Faster \gls{rcnn} as well (+8.7 \gls{map}), although it is a very simple method. It is even more efficient if additional geometric transformations are used.
+\medskip
+Image statistics matching proves to be effective for domain adaptation with Faster \gls{rcnn} with \gls{fpn} as well (+8.7 \gls{map}), although it is a very simple method. It is even more efficient if additional geometric transformations are used.
 
 \section{Extra experiments}
-A few extra experiments have been performed with data augmentation techniques on bounding boxes, mentioned in Section~\ref{sec:dataaug}. All the transformations described above add a considerable number of additional combinations, and it is not obvious a priori which can have a more important contribution than the others. Experiments with almost randomly chosen combinations did not give satisfactory results and actually deteriorated the performances of the basic detectors. For this reason, these transformations have not been explored in detail.
+\subsection{Bounding box data augmentation}
+A few extra experiments have been performed with data augmentation techniques on bounding boxes, mentioned in Section~\ref{sec:dataaug}. In this case, only the RetinaNet detector was used. All the transformations described above add a considerable number of additional combinations, and it is not obvious a priori which can have a more important contribution than the others. The used combinations were therefore selected almost randomly, considering more frequently operations that obtained best results in the original work by Zoph \textit{et al.}\cite{zoph2019learning}, and obtained results are not satisfactory. Actually, they degrade the performances of the basic detector. For this reason, these transformations have not been explored in detail.
+
+\begin{table}[tb]
+	\centering
+	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textquotedblleft oracle\textquotedblright.}
+	\begin{NiceTabular}{cccccccc}
+		\toprule
+		HF & Rot. & Tr. & Sh. & C.J. & Sol. & Eq. & mAP@0.5 \\
+		\midrule
+		I & & & & & & & 30.4   \\
+		I & I & I + O & I & & & I + O & 21.0\\
+		I & & & O & B & & O & 29.1   \\
+		I & I & Oy & & & & I & 30.4   \\
+		\midrule
+		\Block[l]{1-6}{Oracle} & & & & & & & 68.7   \\
+		\bottomrule
+	\end{NiceTabular}
+	\label{table:bbox_augment}
+\end{table}
 
 A similar reasoning is followed for experiments on patch-based image statistics matching. Results on 2x2 matching are reported.
 
@@ -1174,16 +1225,6 @@ A similar reasoning is followed for experiments on patch-based image statistics 
 		\hline
 		Method  &   mAP@0.5 \\
 		\hline\hline
-		Baseline (HFlip + rotation + translation + shearing)      &   39.2   \\
-		\hline
-		Baseline (HFlip + rotation + translation + shearing + color jitter + solarize + equalize)      &   49.8   \\
-		\hline
-		Baseline (HFlip + rotation + translation + shearing + box translation + box equalize + equalize)      &   21.0   \\
-		\hline
-		Baseline (HFlip + box shearing + background color jitter + box equalize)      &   29.1   \\
-		\hline
-		Baseline (HFlip + rotation + translate y box + equalize)      &   34.1   \\
-		\hline
 		RetinaNet - image statistics matching 2x2 (HFlip) &   45.0    \\
 		\hline
 		Faster R-CNN - image statistics matching 2x2 (w/ FPN, HFlip) &   55.48    \\
@@ -1192,6 +1233,8 @@ A similar reasoning is followed for experiments on patch-based image statistics 
 	\caption{Extra experiments, mostly on RetinaNet}
 	\label{table:extra}
 \end{table}
+
+\section{Final considerations}
 
 \chapter{Conclusions}
 %todo{Write full conclusion}
