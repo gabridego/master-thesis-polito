@@ -55,7 +55,8 @@
 \Keywords{domain adaptation\sep
 object detection\sep
 computer vision\sep
-machine learning}
+machine learning\sep
+sim2real}
 \end{pdfxmetadata} 
 \usepackage[a-1b]{pdfx}
 
@@ -172,7 +173,7 @@ machine learning}
 
 \sommario
 Nowadays, computer vision is built almost exclusively on deep learning methods. Research in recent years has improved more and more the performances of convolutional neural networks on several popular key tasks, such as image classification, detection and segmentation. However, these methods require large amounts of annotated data to be trained effectively, which are not always available.
-For this reason, domain adaptation methods have been widely studied and developed. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
+For this reason, domain adaptation methods have been widely studied and developed in recent years. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
 
 This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world applications, when it is complex to obtain image annotations.
 
@@ -215,7 +216,7 @@ Over the past few decades, machine learning and deep learning techniques have ac
 \bigskip
 The starting point of this research work is a six-months internship carried out at Neovision\footnote{\url{https://neovision.fr/en/}}, an engineering company based in Grenoble, France, and specialized in artificial intelligence. Transferring knowledge from synthetic to real data in an object detection scenario is a captivating but challenging task with applications in a variety of domains of great commercial interest. In addition, the shortage of available annotated data for the use case of interest is often one of the biggest obstacles for machine learning projects: engineers have to spend several hours gathering and possibly annotating related data, rather than focusing on algorithms and optimization. On the other hand, synthetic data can be easily generated in large quantities.
 
-In addition, the tasks at hand can frequently be similar, but with data collected under different conditions of brightness, light spectrum, camera angle, and more. Previously trained models cannot then be reused, and long training processes are therefore required. This is why Neovision is interested in tackling the domain adaptation problem, in order to offer the acquired knowledge and methods to its numerous customers. For this reason, the research documented in this Master Thesis proposes and shows that simple approaches for domain adaptation, independent of specific employed network architectures and without introducing complex architecture modifications, can obtain satisfactory results and compete with more challenging methods previously proposed in the literature.
+In addition, the tasks at hand can frequently be similar, but with data collected under different conditions of brightness, light spectrum, camera angle, and more. Previously trained models cannot be reused, and long training processes are therefore required. This is why Neovision is interested in tackling the domain adaptation problem, in order to offer the acquired knowledge and methods to its numerous customers. For this reason, the research documented in this Master Thesis proposes and shows that simple approaches for domain adaptive object detection, independent of specific employed network architectures and without introducing complex architecture modifications, can obtain satisfactory results and compete with more challenging methods previously proposed in the literature.
 
 
 \chapter{Problem definition}
@@ -226,7 +227,7 @@ Thanks to their achievements in computer vision, deep learning methods based on 
 The goal of machine learning is to extract patterns from raw input data, making a computer program build its own knowledge without relying on any hard-coded expertise. This knowledge is built from some representative data for the task of interest (the \textit{training set}) in order to make predictions or take decisions on new data that may only be available over time (the \textit{test set}). Machine learning approaches are often organized in three broad categories:
 
 \begin{itemize}
-	\item \textbf{Supervised learning}, in which training data are provided as input-output pairs and the goal is to learn a rule that maps inputs to outputs. Common supervised learning problems are classification, when the response variable belongs to a discrete set, and regression, in which the objective is to estimate a continuous function to map inputs and outputs.
+	\item \textbf{Supervised learning}, in which training data are provided as input-output pairs and the goal is to learn a rule that maps the inputs to the outputs. Common supervised learning problems are classification, when the response variable belongs to a discrete set, and regression, in which the objective is to estimate a continuous mapping function.
 	\item \textbf{Unsupervised learning}, in which patterns and similarities in the data are sought without the need of data labels.
 	\item \textbf{Reinforcement learning}, in which the computer program (called \textit{agent}) interacts with an unknown environment and records the rewards associated to the actions it takes, progressively discovering the environment. The objective is to learn sequences of actions that lead to reward maximization.
 \end{itemize}
@@ -402,7 +403,7 @@ An object detection task can be seen as a combination of two main steps: finding
 %todo{Add details on how the methods work}
 As said, the most commonly used models for object detection are based on a two-stage approach and belong to the family of \glspl{rcnn}. In basic \gls{rcnn}\cite{girshick2014rich}, a manageable number of possible \glspl{roi} are extracted from an image, following the \textit{Selective Search} algorithm.
 
-Selective search aims at localizing objects in the input images, and is pitted against previously used \textit{Exhaustive Search}, in which the sliding-window approach is followed to detect \glspl{roi}. In selective search, input image is initially segmented in small regions, which are then recursively merged according to their similarity. The operation is repeated until bigger, independent, regions are generated. These regions are returned as candidate \glspl{roi}.
+Selective search aims at localizing objects in the input images, and is pitted against previously used \textit{Exhaustive Search}, in which the sliding-window approach is followed to detect \glspl{roi}. In selective search, an input image is initially segmented in small regions, which are then recursively merged according to their similarity. The operation is repeated until bigger, independent, regions are generated. These regions are returned as candidate \glspl{roi}.
 
 A \gls{cnn} is then evaluated independently on each proposed \gls{roi} to extract features that are fed into a \gls{svm}
 %to classify the presence of an object in that region and the bounding box location.
@@ -428,7 +429,7 @@ Examples of typical architectures are reported in Figure~\ref{fig:architectures}
 \end{figure}
 
 \subsubsection{One stage object detectors}
-Differently from two stage detectors, one stage object detectors skip the region proposal step and focus on predicting object regions and classes together. This leads to faster predictions with respect to two stage models, making them suitable for real-time applications at the cost of lower prediction quality. The pioneer work for one stage object detection is OverFeat\cite{sermanet2014overfeat}, published in 2014. Here, the last classification layers of a standard \gls{cnn} are replaced by a regression network for each class, in order to predict the coordinates of the object bounding boxes.
+Differently from two stage detectors, one stage object detectors skip the region proposal phase and focus on predicting object regions and classes together. This leads to faster predictions with respect to two stage models, making them suitable for real-time applications at the cost of lower prediction quality. The pioneer work for one stage object detection is OverFeat\cite{sermanet2014overfeat}, published in 2014. Here, the last classification layers of a standard \gls{cnn} are replaced by a regression network for each class, in order to predict the coordinates of the object bounding boxes.
 
 \paragraph{YOLO}\label{sec:yolo}
 The \gls{yolo} model\cite{redmon2016look} uses pretrained \gls{cnn} for classification and splits each image in cells. If the center of an object falls into a cell, that cell is responsible for detection and should predict the bounding box locations, a confidence score and a class probability for the detected objects. A specific loss function is used to efficiently learn at the same time to predict bounding boxes and object classes.
@@ -492,13 +493,13 @@ A balanced version of the cross entropy loss is sometimes used to deal with clas
 \bigskip
 With cross entropy, also easily classified example ($p$ close to $1$ if $y=1$, to $0$ otherwise) produce a non-negligible value for the loss.
 
-In focal loss, an additional modulating factor $\left(1-p_t\right)^\gamma$ is introduced, with tunable focusing parameter $\gamma$. Focal loss is therefore defines as:
+In focal loss, an additional modulating factor $\left(1-p_t\right)^\gamma$ is introduced, with tunable focusing parameter $\gamma$. Focal loss is therefore defined as:
 \begin{equation}
 	\text{FL}(p_t) = -\left(1-p_t\right)^\gamma \log(p_t)
 \end{equation}
 The contribution of easy detections to the overall loss is more or less important depending on the value of $\gamma$. With a high $\gamma$, well detected objects provide a very little contribution to the total loss.
 
-Considering the strong imbalance between the foreground ($y=1$) and background ($y=-1$) classes, the focal loss, balanced by the $\alpha_t$ parameter as previously defined, is used in RetinaNet:
+Considering the strong imbalance between the foreground ($y=1$) and background ($y=-1$) classes, the focal loss balanced by the $\alpha_t$ parameter as previously defined is used in RetinaNet:
 \begin{equation}
 	\text{FL}(p_t) = -\alpha_t\left(1-p_t\right)^\gamma \log(p_t).
 	\label{eq:focalloss}
@@ -514,8 +515,8 @@ Algorithm evaluation is a fundamental part of machine learning projects and can 
 \paragraph{Precision and recall}
 First, the following concepts must be defined in the context of object detection:
 \begin{itemize}
-	\item \textbf{True positive} (TP): object correctly detected;
-	\item \textbf{False positive} (FP): incorrect detection, an object is detected but is not actually present in the bounding box or only partly;
+	\item \textbf{True positive} (TP): a bounding box is correctly assigned to an object that actually appears in the image;
+	\item \textbf{False positive} (FP): incorrect detection, an object is detected but is not really present in the bounding box or only partly;
 	\item \textbf{False negative} (FN): an object present is the image is not detected by the model.
 \end{itemize}
 The concept of true negative (TN) does not make sense in an object detection context, as the missing detection of a non-present object is not relevant. In fact, this would mean that the model has correctly identified the background as not belonging to any class.
@@ -533,7 +534,7 @@ Recall measures the model detection ability, so it returns the percentage or fra
 \end{equation}
 
 \paragraph{Intersection over union}
-For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify the prediction as true or false positive. For a couple of bounding boxes, \gls{iou} is computed as:
+For each predicted bounding box, the overlapping with the ground truth bounding boxes is computed, in order to classify a prediction as true or false positive. For a couple of bounding boxes, \gls{iou} is computed as:
 \begin{equation}
 	\text{IoU} = \frac{\text{area of overlap}}{\text{area of union}}
 \end{equation}
@@ -547,7 +548,7 @@ The resulting value is then compared to a threshold to classify a prediction as 
 \end{figure}
 
 \paragraph{Mean Average Precision (mAP)}
-\gls{roc} curve is a popular concept in machine learning. There, recall (or true positive rate) and false positive rate are plotted at different classification thresholds. The associated \gls{auc} metric considers the area under the \gls{roc} curve to assess the performances of a model\cite{roc}. It ranges from $ 0 $ to $ 1 $, with $ 0 $ meaning the model's predictions are all wrong and $ 1 $ they are all correct. Ideally, the \gls{auc} score is $ 0.5 $ for a model that always returns random predictions.
+\gls{roc} curve is a popular concept in machine learning. There, recall (or true positive rate) and false positive rate are plotted at different classification thresholds. The associated \gls{auc} metric considers the area under the \gls{roc} curve to assess the performances of a model\cite{roc}. It ranges from $ 0 $ to $ 1 $, with $ 0 $ meaning the model's predictions are all wrong and $ 1 $ they are all correct. \Gls{auc} score is $ 0.5 $ for a model that always returns random predictions.
 
 \medskip
 Similarly, the precision-recall curve shows the trade-off between precision and recall for different thresholds\cite{precrecall}. \gls{ap} is defined as the area under the precision-recall curve. A high area under the curve means both high recall and high precision. The definition of \gls{map} depends on the context. If \gls{ap} is independently computed for each class or for different \gls{iou} thresholds, then \gls{map} is the average of \gls{ap}. In other cases, \gls{map} and \gls{ap} can be used interchangeably.
@@ -602,7 +603,7 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 \subsubsection{Anchor boxes}\label{sec:anchor}
 In most cases, generating many possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars, wide \textit{anchor boxes} can be defined at different scales, to identify both near and far objects of car shape.
 
-Anchor boxes were first introduced by the \gls{rpn} of Faster \gls{rcnn} and were the main source of improvements in detection performances and speed\cite{ren2016faster}. The basic working schema is reported in Figure~\ref{fig:rpn}. Nowadays, anchor boxes are used in most architectures for object detection, such as \gls{yolo}, \gls{ssd} and RetinaNet. Regarding anchor boxes, the difference between one-step and two-step methods is that the former analyze each anchor box independently and return only the most promising ones, while the latter start from the anchor boxes to estimate the true bounding boxes of the objects in the images.
+Anchor boxes were first introduced by the \gls{rpn} of Faster \gls{rcnn} and were one of the main source of improvements in detection performances and speed\cite{ren2016faster}. The basic working schema is reported in Figure~\ref{fig:rpn}. Nowadays, anchor boxes are used in most architectures for object detection, such as \gls{yolo}, \gls{ssd} and RetinaNet. Regarding anchor boxes, the difference between one-step and two-step methods is that the former analyze each anchor box independently and return only the most promising ones, while the latter start from the anchor boxes to estimate the true bounding boxes of the objects in the images.
 
 \begin{figure}[tb]
 	\centering
@@ -628,7 +629,7 @@ Object detection models usually produce more than one detection for each object,
 
 
 \section{Domain adaptation}
-For most use cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same data distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remains the same, while the domain differs.
+For most use cases, a huge number of annotated images are necessary to train robust and efficient deep learning models. In an industrial context, the process of collecting and annotating data suitable for each specific customer case is often too expensive and time-consuming. In contrast, synthetic data can be generated through various rendering software, even free and open-source, easily and in massive quantities, for simulating the environments in which the models will be applied. However, deep learning models are effective if the training and test data are drawn from the same data distribution, so a model trained on simulated data is likely to perform badly on real data. Domain adaptation techniques can be used to transfer knowledge acquired on the \textbf{source domain} (e.g., synthetic data) to the \textbf{target domain} (e.g., real data) without training a new model on the latter. In a domain adaptation setting, the task to be performed on source and target domains and the classes to be predicted remain the same, while the domain differs.
 
 \bigskip
 Domain adaptation methods are effective for several computer vision tasks, therefore dealing with image classification, object detection and semantic segmentation. In addition to the knowledge transfer from synthetic to real images, among other cases they can be used to adapt a model to different cameras, different weather conditions and moments of the day (e.g. from sunny to rainy weather or from day to night) or from infrared to normal images.
@@ -649,7 +650,7 @@ Domain adaptation is mostly studied in the unsupervised and homogeneous scenario
 Different approaches to the problem has been proposed in recent years. The most frequent ones are \textit{domain-invariant feature learning} and \textit{domain mapping}.
 
 \subsubsection{Domain-invariant feature learning}
-Several methods try to align source and target domains by creating a domain-invariant feature representation at the level of the feature extractor neural network. Intuitively, if a model performs well on domain-invariant features extracted from the source domain, it should generalize to the target domain since the two distributions are aligned. A schema is reported in Figure~\ref{fig:align}.
+Several methods try to align source and target domains by creating a domain-invariant feature representation at the level of the neural network for feature extraction. Intuitively, if a model performs well on domain-invariant features extracted from the source domain, it should generalize to the target domain since the two distributions are aligned. A schema is reported in Figure~\ref{fig:align}.
 
 \begin{figure}[ht]
 	\centering
@@ -666,7 +667,7 @@ Several methods try to align source and target domains by creating a domain-inva
 The methods differ in how they align the domains. An adversarial approach, as in \glspl{gan}, is often used through a domain classifier which outputs whether the features extracted by the \gls{cnn} belong to source or target domain. At the same time, the feature extractor is trained with the aim of fooling the domain classifier, so that it is unable to correctly classify from which domain the feature representation originates. The two networks are trained simultaneously and in an adversarial fashion.
 
 \subsubsection{Domain mapping}
-An alternative to creating a domain-invariant feature representation is mapping one domain to the other, making source images similar to the target or vice versa. For example, synthetic images from \textit{Sim10k} can be mapped to the real world, transferring them to the \textit{CityScapes} style. This can be obtained with conditional \glspl{gan} for image-to-image translation that do not take into account the annotations of source images. Therefore, domain adaptation can be accomplished by training a \gls{gan} to map data from source to target and then training a machine learning model on the mapped labeled source images (that now belong to the target domain). At test time, the model is used to make predictions on unlabeled target data. A general schema is reported in figure~\ref{fig:gan}. However, \gls{gan} training is challenging and may incur in several problems such as mode collapse, when a generative network learns to only produce a limited amount of output images.
+An alternative to creating domain-invariant feature representations is mapping one domain to the other, making source images similar to the target or vice versa. For example, synthetic images from \textit{Sim10k} can be mapped to the real world, transferring them to the \textit{CityScapes} style. This can be obtained with conditional \glspl{gan} for image-to-image translation that do not take into account the annotations of source images. Therefore, domain adaptation can be accomplished by training a \gls{gan} to map data from source to target and then training a machine learning model on the mapped labeled source images (that now belong to the target domain). At test time, the model is used to make predictions on unlabeled target data. A general schema is reported in figure~\ref{fig:gan}. However, \gls{gan} training is challenging and may incur in several problems such as mode collapse, when a generative network learns to only produce a limited amount of output images.
 
 \begin{figure}[ht]
 	\centering
@@ -683,13 +684,14 @@ An alternative to creating a domain-invariant feature representation is mapping 
 % TODO: mention enhancing photorelism enhancement
 
 \subsubsection{Previous works}
-Several fundamental domain adaptation methods can be identified in the case of image classification. These methods have laid the foundation for much subsequent work.
+Several fundamental domain adaptation methods can be identified in the case of image classification. These methods have laid the foundation for many subsequent works.
 
 \paragraph{Domain Adversarial Neural Network}\label{sec:dann}
 \gls{dann}\cite{ganin2015unsupervised} is a classic method for unsupervised domain adaptation with the objective of learning domain invariant features. The network is composed of a standard feature extractor, a label predictor and a domain classifier: without this last component, it consists of a standard model for image classification.
 
-The alignment between domains is achieved through the gradient reversal layer, introduced in this work: it leaves input unchanged during the forward step and reverses the gradient during backpropagation, multiplying it by a negative factor $-\lambda$. The network is trained adversarially, with the aim of minimizing the label predictor’s loss. 
+The alignment between domains is achieved through the gradient reversal layer, introduced in this work: this layer leaves input unchanged during the forward step and reverses the gradient during backpropagation, multiplying it by a negative factor $-\lambda$. The network is trained adversarially, with the aim of minimizing the label predictor’s loss. 
 At the same time, it also seeks the backbone parameters that maximize the domain classifier loss and the domain classifier parameters that minimize its own loss.
+
 The objective is to align the two data distributions, fooling the domain classifier: when alignment is accomplished, the label predictor is capable of correctly classify an image, whether it is taken from the source or the target domain, while the domain classifier can only return random guesses. A network representation is reported in Figure~\ref{fig:dann}.
 
 \begin{figure}[ht!]
@@ -737,35 +739,33 @@ A method overview is reported in Figure~\ref{fig:adda}.
 	\label{fig:adda}
 \end{figure}
 
-\iffalse
-\paragraph{Asymmetric Tri-Training}
-Differently from the previous mentioned methods, asymmetric tri-training\cite{saito2017asymmetric} performs adaptation through pseudo-labelling. Three networks, sharing the same feature extractor, are used. Two of them include a classifier trained on source labeled images, with the aim of classifying features extracted from target image. If their predictions are coherent and with high confidence, the predicted pseudo-labels are assigned to those images. The third network is then trained with those pseudo-labels. An additional \gls{loss} is used to force a different point of view for the two source classifiers.
-\fi
+%\paragraph{Asymmetric Tri-Training}
+%Differently from the previous mentioned methods, asymmetric tri-training\cite{saito2017asymmetric} performs adaptation through pseudo-labelling. Three networks, sharing the same feature extractor, are used. Two of them include a classifier trained on source labeled images, with the aim of classifying features extracted from target image. If their predictions are coherent and with high confidence, the predicted pseudo-labels are assigned to those images. The third network is then trained with those pseudo-labels. An additional \gls{loss} is used to force a different point of view for the two source classifiers.
 
 \subsection{Domain adaptation for object detection}
 Like classification models, object detectors suffer from domain shifts between different datasets, which can lead to drastic performance degradation. Annotating images for an object detection task is even more expensive and time-consuming than classification, since each image may contain more than one object that needs to be assigned a bounding box and object category. Due to the different nature of the problem, direct translation of domain adaptation methods for classification may not be effective, and ad-hoc methods have been proposed, generally based on existing object detectors.
 
 \subsubsection{Previous works}
 \paragraph{Domain Adaptive Faster R-CNN}\label{sec:dafrcnn}
-DA Faster \acrshort{rcnn}\cite{chen2018domain} is one of the first works to tackle the problem of cross-domain object detection. It uses a Faster \acrshort{rcnn} as base object detector and the network is trained with adaptation with gradient reversal layers at different levels. Indeed, in an object detection scenario the domain shift can occur at high level, such as image style and illumination, and at low level, such as object appearance and bounding box size. The former is referred to as \textit{image level}, while the latter is defined as \textit{instance level}. An additional loss function, referred as \textit{consistency loss}, is used to enforce consistent prediction from the two domain classifiers.
+DA Faster \gls{rcnn}\cite{chen2018domain} is one of the first works to tackle the problem of cross-domain object detection. It uses a Faster \gls{rcnn} as base object detector and the network is trained with adversarial adaptation with gradient reversal layers at different levels. Indeed, in an object detection scenario the domain shift can occur at high level, such as image style and illumination, and at low level, such as object appearance and bounding box size. The former is referred to as \textit{image level}, while the latter is defined as \textit{instance level}. An additional loss function, referred as \textit{consistency loss}, is used to enforce consistent prediction from the two domain classifiers.
 
 At inference time, the aligned Faster \gls{rcnn} is normally used.
 
 \paragraph{Strong-Weak Distribution Alignment}
-Aligning image level features as in DA Faster \acrshort{rcnn} makes the strong assumption that image components, such as backgrounds and scene layouts, must be similar across domains in addition to object categories. In the case of large domain shifts, that may affect the model performances. Saito \emph{et al.}\cite{saito2019strongweak} propose a weak global alignment (at image level) combined with a strong alignment of local features (such as texture or color of the objects in the two domains), which are most likely to be similar.
+Aligning image level features as in Domain Adaptive Faster \gls{rcnn} makes the strong assumption that image components, such as backgrounds and scene layouts, must be similar across domains in addition to object categories. In the case of large domain shifts, that may affect the model performances. Saito \emph{et al.}\cite{saito2019strongweak} propose a weak global alignment (at image level) combined with a strong alignment of local features (such as texture or color of the objects in the two domains), which are most likely to be similar.
 
 For weak alignment between domains, the domain classifier should focus on examples that are hard to classify, so near the boundary between the two distributions. This can be achieved using the focal loss to train the domain classifier, in order to tune the importance to source or target images whose domain is easy to predict.
 
 \paragraph{Progressive Domain Adaptation}
-Hsu \emph{et al.}\cite{hsu2019progressive} introduce an intermediate domain between source and target, exploiting a \gls{gan} to map source images in the target domain. Adaptation is performed in two steps, from source to intermediate and then from intermediate to target, in order to introduce a bridge between source and target domains. That helps to reduce the domain shift and simplifies the adaptation process, such that an object detection model can be trained on the intermediate domain. In addition, a weight is assigned to generated data, giving more importance to images that are close to the target distribution.
+Hsu \emph{et al.}\cite{hsu2019progressive} introduce an intermediate domain between source and target, exploiting a \gls{gan} to map source images in the target domain. Adaptation is performed in two steps, from source to intermediate and then from intermediate to target, in order to introduce a bridge between source and target domains. That helps to reduce the domain shift and simplifies the adaptation process, such that an object detection model can be trained on the intermediate domain. In addition, a weight is assigned to generated data, giving more importance to images that are closer to the target distribution.
 
-When adaptation from the intermediate to the source domain is complete, the aligned model can be used for inference on unlabeled images from the target domain.
+When adaptation between the source and the intermediate domains is completed, the aligned model can be used for inference on unlabeled images from the target domain.
 
 \paragraph{Domain Adaptive RetinaNet}\label{sec:daretinanet}
 Recently, Pasqualino \emph{et al.}\cite{pasqualino2020unsupervised} proposed an adaptation approach for the RetinaNet model, but that can be applied to any architecture that includes a \gls{fpn} backbone. Different domain discriminators with different architectures are applied at different levels of the ResNet backbone which is used to construct the feature pyramid, with gradient reversal layers. In this way, extracted features are aligned at different levels in the backbone and the representation derived by the \gls{fpn} is coherent and meaningful.
 
 \paragraph{Image statistics matching}\label{sec:kis}
-The method introduced by Abramov \emph{et al.}\cite{abramov2020simple} relies on image transformations at pixel level instead of adversarial techniques or complex architectures. The objective is to transform annotated source images in a way to make them similar to the unlabeled target domain, matching color statistics and histograms. During training, a target image is randomly chosen for each image belonging to the source domain and the mean and covariance of its color channels are aligned, and its color histogram are matched accordingly. In this way, a standard detection model can be trained on modified source image with annotations and directly applied on the target domain.
+The method introduced by Abramov \emph{et al.}\cite{abramov2020simple} relies on image transformations at pixel level instead of adversarial techniques or complex architectures. The objective is to transform annotated source images in a way to make them similar to the unlabeled target domain, matching color statistics and histograms. During training, a target image is randomly chosen for each image belonging to the source domain and the mean and covariance of its color channels are aligned, as well as its color histogram that are matched accordingly. In this way, a standard detection model can be trained on modified source image with annotations and directly applied on the target domain.
 
 Similar approaches are commonly used in networks for style transfer, but in these cases the correspondence between source and target images is performed at the level of extracted features and not at image level.
 
@@ -807,7 +807,7 @@ Most works that investigate domain randomization focus on \textit{sim2real} know
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/randomization.png}
+	\includegraphics[width=0.7\linewidth]{imgs/randomization.png}
 	\caption{Randomization in generating training images, in the framework proposed by Tobin \textit{et al.}\cite{tobin2017domain}}
 	\label{fig:randomization}
 \end{figure}
@@ -1021,7 +1021,7 @@ Additionally, transformations can be applied on a patch basis, in order to local
 This chapter reports, compares and discusses the results obtained with the methods described in the previous chapter. For coherence with previous works, \textit{Sim10k} and \textit{CityScapes} are respectively treated as source domain and target domains. Experiments deal therefore with \textit{sim2real} domain adaptation, training a model to recognize cars in a simulated world for detection in the real. Results are presented in terms of \gls{map} computed at \gls{iou} threshold of $ 0.5 $, separately for the experiments performed with RetinaNet and Faster \gls{rcnn} base detectors. Impact of data augmentation operations, in addition to domain adaptation methods, is also studied. All experiments have been conducted with PyTorch.
 
 \bigskip
-In the following sections, the models indicated as \textquotedblleft oracle\textquotedblright~are trained and tested directly on the target domain (CityScapes in the \textit{sim2real} context) without applying any data augmentation technique. This represents an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
+In the following sections, the models indicated as \textquotedblleft oracle\textquotedblright~are trained and tested directly on the target domain (\textit{CityScapes} in the \textit{sim2real} context) without applying any data augmentation technique. This represents an upper bound for domain adaptation performance. This case cannot be encountered in reality, as in the case of unsupervised domain adaptation the annotations are not available for the target domain.
 
 \subsection{Data processing}
 As said, \textit{Sim10k} and \textit{CityScapes} are considered as source and target domain, for domain adaptation between synthetic and real image data. As mentioned in Section~\ref{sec:datasets}, the two dataset use different formats for storing bounding box annotations. The Python library \textit{Datumaru}\cite{datumaro} is therefore used to convert them into a common format.
@@ -1078,7 +1078,7 @@ Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain t
 		$\checkmark$ & $\checkmark$ & $\checkmark$ & & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{52.7}   \\
 		$\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & 49.8   \\
 		\midrule
-		\Block[l]{1-6}{Oracle} & & & & & & & 68.7   \\
+		\Block[l]{1-7}{Oracle} & & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabular}
 	\label{table:rand_retinanet}
@@ -1186,7 +1186,7 @@ For Domain adaptive Faster \gls{rcnn}, \texttt{RN} means that adversarial alignm
 For the RetinaNet detector, tested adaptation methods (image statistics matching and alignment on \gls{fpn}) performed well, with an increase over the baseline of 17.8 and 22.4 \gls{map} respectively. The use of data augmentation does not have a big impact for the Domain Adaptive RetinaNet, while the color transformations have a strong impact for the image statistics matching between source and target domains.
 
 \bigskip
-For Faster \gls{rcnn}, adaptation at image and instance levels yields improvements with respect to the basic Faster \gls{rcnn} architecture without \gls{fpn}, consistently with previous works\cite{abramov2020simple}\cite{chen2018domain}\cite{saito2017asymmetric}.
+For Faster \gls{rcnn}, adaptation at image and instance levels yields improvements with respect to the basic Faster \gls{rcnn} architecture without \gls{fpn}, consistently with previous works\cite{abramov2020simple}\cite{chen2018domain}\cite{saito2019strongweak}.
 
 \medskip
 On the other hand, adding a \gls{fpn} to the backbone (a scenario that was not considered in the previously mentioned works) significantly increases the performance of the base detector (around +12.6 \acrshort{map}) and performs way better than image and instance level adaptation withouth \gls{fpn}, even on a domain it has never seen for the already mentioned reasons. Adapting the \gls{fpn} by gradient reversal layer gives no contribution to the adaptation and even degrades the \gls{map} values when all levels of the pyramid are considered at the same time. If different discriminators are used to align different ResNet layers, the information acquired by the \gls{fpn} is preserved (+0.5 of \gls{map}). Since the network without \gls{fpn} is outdated and adversarial adaptation on the features extracted by the backbone with \gls{fpn} is not efficient, further improvements through data augmentation operators are not sought for Domain Adaptive Faster \gls{rcnn}.
@@ -1195,13 +1195,13 @@ On the other hand, adding a \gls{fpn} to the backbone (a scenario that was not c
 \medskip
 Image statistics matching proves to be effective for domain adaptation with Faster \gls{rcnn} with \gls{fpn} as well (+8.7 \gls{map}), although it is a very simple method. It is even more efficient if additional geometric transformations are used.
 
-\section{Extra experiments}
+\section{Additional experiments}
 \subsection{Bounding box data augmentation}
-A few extra experiments have been performed with data augmentation techniques on bounding boxes, mentioned in Section~\ref{sec:dataaug}. In this case, only the RetinaNet detector was used. All the transformations described above add a considerable number of additional combinations, and it is not obvious a priori which can have a more important contribution than the others. The used combinations were therefore selected almost randomly, considering more frequently operations that obtained best results in the original work by Zoph \textit{et al.}\cite{zoph2019learning}, and obtained results are not satisfactory. Actually, they degrade the performances of the basic detector. For this reason, these transformations have not been explored in detail.
+A few extra experiments have been performed with data augmentation techniques on bounding boxes, mentioned in Section~\ref{sec:dataaug}. In this case, only the RetinaNet detector was used. All the transformations described above add a considerable number of additional combinations, and it is not obvious a priori which can have a more important contribution than the others. The used combinations were therefore selected almost randomly, considering more frequently operations that contributed achieving the best results in the original work by Zoph \textit{et al.}\cite{zoph2019learning}, but obtained results (reported in Table~\ref{table:bbox_augment}) are not satisfactory. Actually, they degrade the performances of the basic detector. The achievements of different combinations highly depend on the dataset, and so they should be investigated thoroughly. For this reason, these transformations have not been explored in detail.
 
 \begin{table}[tb]
 	\centering
-	\caption{\gls{map} with different data augmentation techniques for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. Only horizontal flip is used for the \textquotedblleft oracle\textquotedblright.}
+	\caption{\gls{map} with different combinations of data augmentation techniques on whole images (\texttt{I}), bounding boxes (\texttt{O}) or backgrounds (\texttt{B}) only, for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns state the transformations applied to each experiment. \texttt{y} means operation is only applied on the vertical axis. Only horizontal flip is used for the \textquotedblleft oracle\textquotedblright.}
 	\begin{NiceTabular}{cccccccc}
 		\toprule
 		HF & Rot. & Tr. & Sh. & C.J. & Sol. & Eq. & mAP@0.5 \\
@@ -1209,16 +1209,45 @@ A few extra experiments have been performed with data augmentation techniques on
 		I & & & & & & & 30.4   \\
 		I & I & I + O & I & & & I + O & 21.0\\
 		I & & & O & B & & O & 29.1   \\
-		I & I & Oy & & & & I & 30.4   \\
+		I & I & Oy & & & & I & 34.1   \\
 		\midrule
-		\Block[l]{1-6}{Oracle} & & & & & & & 68.7   \\
+		\Block[l]{1-7}{Oracle} & & & & & & & 68.7   \\
 		\bottomrule
 	\end{NiceTabular}
 	\label{table:bbox_augment}
 \end{table}
 
-A similar reasoning is followed for experiments on patch-based image statistics matching. Results on 2x2 matching are reported.
+\subsection{Patch-based domain mapping}
+A similar reasoning as bounding box augmentations is followed for experiments on patch-based image statistics matching. Matching on $2\times 2$ grids is only tested, on RetinaNet and Faster \gls{rcnn} with \gls{fpn}, and results are reported in Table~\ref{table:patches}. Again, results are not completely satisfactory and the method would require further study.
 
+\begin{table}[tb]
+	\centering
+	\caption{\gls{map} with different domain adaptation method for RetinaNet and Faster \gls{rcnn} models, trained on \textit{Sim10k} and evaluated on \textit{CityScapes} with patch-based image statistics matching. Table columns state the transformations applied to each experiment.}
+	\begin{NiceTabular}{ccc}
+		\toprule
+		Model & Method & mAP@0.5 \\
+		\midrule
+		\Block[l]{4-1}{Retinanet} & Baseline & 30.4   \\
+		\cmidrule{2-2}
+		& $1\times 1$ matching & 48.2 \\
+		\cmidrule{2-2}
+		& $2\times 2$ matching & 45.0 \\
+		\cmidrule{2-2}
+		& Oracle & 68.7 \\
+		\midrule
+		\Block[l]{4-1}{Faster \gls{rcnn}} & Baseline & 46.3   \\
+		\cmidrule{2-2}
+		& $1\times 1$ matching & 55.0 \\
+		\cmidrule{2-2}
+		& $2\times 2$ matching & 55.5 \\
+		\cmidrule{2-2}
+		& Oracle & 76.3 \\
+		\bottomrule
+	\end{NiceTabular}
+	\label{table:patches}
+\end{table}
+
+\iffalse
 \begin{table}[ht!]
 	\centering
 	\begin{tabularx}{\linewidth}{|X|c|}
@@ -1233,11 +1262,35 @@ A similar reasoning is followed for experiments on patch-based image statistics 
 	\caption{Extra experiments, mostly on RetinaNet}
 	\label{table:extra}
 \end{table}
+\fi
 
-\section{Final considerations}
+\section{Final considerations and possible research directions}
+Reported results show that implemented approaches are indeed effective for domain adaptive object detection, from a computer-generated source domain to a real target domain. Extremely simple modifications of the appearance of training images have high impact on detection performances: the best results, on both RetinaNet and Faster \gls{rcnn} detectors, are obtained through domain mapping based on matching the statistics of source and target domains. This method works without any architectural modifications and does not require any annotation for the target domain.
+
+Prior to this, performed experiments clearly show that domain randomization alone, introduced through basic data augmentation operators, can return satisfactory results and considerably reduce the shift between source and target domain. This is extremely simple to set up and experiment with and, if combined with fast one stage object detectors such as RetinaNet, can help to achieve good performances in a short time and is suitable for real applications. In addition, the experiments also showed that the domain randomization components combines well with domain adaptation methods. Their combination significantly improved the results obtained with a single domain adaptation method, either based on domain mapping or domain-invariant feature learning. Furthermore, these methods can be easily extended to all other computer vision tasks and are not limited to object detection.
+
+On the other hand, widely-studied methods for domain adaptation, mostly based on adversarial feature learning and requiring deep modifications to the network architectures, have reached similar or lower performances than these simple methods, despite requiring much more time to investigate and implement. Furthermore, often it is not possible to transfer these methods from one base detector to another. They are surely interesting from a research point of view, but their actual viability to real use cases seems uncertain, especially by engineers that may have low experience in domain adaptation.
+
+\bigskip
+Studied domain adaptation approaches present interesting open questions that can be further studied. Among them, how to align the features extracted by a backbone with \gls{fpn} is maybe the prominent one. Although adversarial adaptation of the ResNet layers that are used to build the feature pyramid, as proposed by Pasqualino \textit{et al.}\cite{pasqualino2020unsupervised}, is particularly effective for the RetinaNet model, it does not generalize to two stage object detectors as Faster \gls{rcnn}, in which the \gls{fpn} is used to extract interesting \glspl{roi}. Due to the higher detection performances with respect to one stage architectures, Faster \gls{rcnn} and the like are mostly used for applications in which high accuracy is preferable over high speed.
+
+In a recent work, Chen \textit{et al.} have tackled this issue proposing what they call \textit{Scale-Aware} Domain Adaptive Faster \gls{rcnn}\cite{chen2021scale}. They extend their previous Domain Adaptive Faster \gls{rcnn} (widely discussed in the preceding sections), applying adversarial adaptation at image and instance level independently for each pyramid level. It might be interesting to study this method more specifically.
+
+\medskip
+Additionally, image transformations that take into account the bounding boxes could be explored more broadly for domain randomization. Taking inspiration by the work by Zoph \textit{et al.}\cite{zoph2019learning}, it may be interesting to study a way to find an optimal data augmentation pipeline starting from the available source and target data.
+
+\bigskip
+However, when performing domain adaptation, one must be aware of the nature of the two domains. They could impose limitations on the performances of even the best of the method.
+
+Consider the discusses \textit{Sim10k} and \textit{CityScapes} datasets. Neglecting for a moment their different nature (synthetic and real datasets), the street scenes contained in the two datasets are largely different: \textit{CityScapes} contains images captured in the center of several German cities, while the video-game \textit{Grand Theft Auto V} is set in a fictional region of Southern California. This means that, for example, surrounding buildings and more popular car models are then different in the two datasets. In addition, \textit{CityScapes} may contain more scenes with high numbers of pedestrians, while \textit{Sim10k} contains landscapes (such as desert areas) which are unlikely to be found in Europe. 
+
+Discussed domain adaptation methods cannot deal with such structural difference between domains.
 
 \chapter{Conclusions}
-%todo{Write full conclusion}
+In a real working environment, being able to transfer well the knowledge learned by a deep learning model from one domain to another can bring a lot of improvements in many projects, new and already in place, and increase productivity. Many methods address this issue in the different computer vision domains: image classification, object detection and semantic segmentation.
+
+\bigskip
+Focusing on object detection, most studied methods in the literature involve architecture-specific modifications. However, all this complexity seems excessive when very simple methods can obtain similar or even better detection performances. Overall, domain mapping based on image statistics can yield results that approach models with knowledge of the target domain, even more so when supported by data augmentation techniques. The domain randomization introduced by classical data image transformations also helps to reduce the mismatch between the two data distributions and may be sufficient for several use cases. Domain adaptation research is always active and new promising methods can be published from one day to another.
 
 
 \backmatter
