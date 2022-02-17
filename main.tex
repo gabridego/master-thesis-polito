@@ -153,6 +153,7 @@ sim2real}
 \corsodilaurea{Data Science and Engineering}% per la laurea
 \TesiDiLaurea{Master Thesis}
 \def\Candidato{Candidate}
+%\candidato{Gabriele \textsc{Degola}}[273479]% per tutti i percorsi 
 \candidato{Gabriele \textsc{Degola}}% per tutti i percorsi 
 \AdvisorName{Supervisor}
 \relatore{prof.~Paolo \textsc{Garza}}% per la laurea e/o il dottorato
@@ -616,7 +617,7 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 	\subcaptionbox{Sim10k\cite{johnsonroberson2017driving}}{
 		\includegraphics[width=.8\linewidth]{imgs/sim10k.jpg}
 	}
-	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even though they contain the same categories of objects. Indeed, images can be taken from different cameras and in different lightning or weather conditions. More extremely, \textit{Sim10k} only contains computer generated images: the texture of the objects differ widely from the ones in the other datasets.}
+	\caption{Examples of different street scenes datasets. It is evident that the appearance of images from different domains varies, even though they contain the same categories of objects. Indeed, images can be taken from different cameras and in different lightning or weather conditions. More extremely, \textit{Sim10k} only contains computer generated images: the texture of the objects widely differ from the ones in the other datasets.}
 	\label{fig:datasets}
 \end{figure}
 
@@ -803,7 +804,7 @@ A common belief is that extremely complex methods are more likely to achieve goo
 A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are heavily researched and can boost their productivity.
 
 \bigskip
-These \quotes{simple} method are mostly explored in this work. However, traditional domain adaptation methods, that deeply affect the network architecture, play an important role in research, and present unresolved issues that may undermine their use in actual engineering applications. Possible ways to address some detected issues are explored and tested, in parallel to the aforementioned simple approaches to domain adaptive object detection.
+These \quotes{simple} methods are mostly explored in this work. However, traditional domain adaptation methods, that deeply affect the network architecture, play an important role in research, and present unresolved issues that may undermine their use in actual engineering applications. Possible ways to address some detected issues are explored and tested, in parallel to the aforementioned simple approaches to domain adaptive object detection.
 
 \bigskip
 For the sake of completeness, the studied methods are implemented and tested on two popular object detection models presented in Section~\ref{sec:detection}, when they are compatible with both architectures: Faster \gls{rcnn} and RetinaNet.
@@ -811,7 +812,7 @@ For the sake of completeness, the studied methods are implemented and tested on 
 \section{Data augmentation for domain randomization}\label{sec:dataaug}
 Data augmentation is a widely used technique to ease the training of deep learning models and improve their generalization capability. In a typical application, different transformations are randomly applied on training images, in order to vary their appearance and virtually introduce new data on which a model can learn.
 
-Data augmentations can modify the orientation of the images or operate at pixel level, transforming their color and appearance. Those operations can be geometric, if they geometrically distort the image keeping without modifying its content, or color-based, if they distort color channels without modifying the position of the pixels. Common transformations include, but are not limited to, horizontal and vertical flip, rotation, translation and color shift. For object detection, the bounding boxes have to be updated coherently with the applied geometric data augmentation.
+Data augmentations can modify the orientation of the images or operate at pixel level, transforming their color and appearance. Those operations can be geometric, if they geometrically distort the image without modifying its content, or color-based, if they distort color channels without modifying the position of the pixels. Common transformations include, but are not limited to, horizontal and vertical flip, rotation, translation and color shift. For object detection, the bounding boxes have to be updated coherently with the applied geometric data augmentation.
 
 \begin{figure}[ht!]
 	\centering
@@ -968,10 +969,10 @@ Such approaches have not yet been followed in the academic literature for two st
 
 \begin{figure}[ht]
 	\centering
-	\subcaptionbox{Adversarial alignment on features extracted by the \gls{fpn} from \gls{resnet} layers\label{fig:adapt_fpn}}{
+	\subcaptionbox{Adversarial alignment on pyramidal feature representations, build by the \gls{fpn} from \gls{resnet} layers\label{fig:adapt_fpn}}{
 		\includegraphics[width=.6\linewidth]{imgs/adapt_fpn.png}
 	}\\
-	\subcaptionbox{Adversarial alignment on feature extracted by ResNet layers\cite{pasqualino2020unsupervised}\label{fig:adapt_resnet}}{
+	\subcaptionbox{Adversarial alignment on features extracted by ResNet layers\cite{pasqualino2020unsupervised}\label{fig:adapt_resnet}}{
 		\includegraphics[width=.6\linewidth]{imgs/adapt_resnet.png}
 	}
 	\caption{Approaches to image level domain adaptation for a model with \gls{fpn}}
