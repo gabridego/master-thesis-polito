@@ -85,6 +85,13 @@ sim2real}
 \usepackage{nicematrix}
 \usepackage{nicefrac}
 \usepackage{booktabs}
+
+\usepackage[
+	type={CC},
+	modifier={by-nc-sa},
+	version={4.0},
+	lang={english}
+]{doclicense}
 %
 
 \makeglossaries
@@ -172,13 +179,18 @@ sim2real}
 \end{ThesisTitlePage}
 
 %\pagenumbering{roman}
-\paginavuota
+\vspace*{\fill}
+\doclicenseThis
+%\paginavuota
 
 \sommario
 Nowadays, computer vision is built almost exclusively on deep learning methods. Research in recent years has improved more and more the performances of convolutional neural networks on several popular key tasks, such as image classification, detection and segmentation. However, these methods require large amounts of annotated data to be trained effectively, which are not always available.
 For this reason, domain adaptation methods have been widely studied and developed in recent years. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
 
-This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world applications, when it is complex to obtain image annotations.
+\bigskip
+This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. At the same time, it attempts to address some issues of more popular domain adaptation methods for object detection, that may undermine their use in actual applications.
+
+The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world projects, when it is complex to obtain image annotations.
 
 \paginavuota % funziona anche senza specificare l'opzione classica
 
