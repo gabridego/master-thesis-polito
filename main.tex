@@ -49,7 +49,7 @@
 % veramente conforme alle norme per l'archiviabilità.
 % \usepackage{imakeidx}
 \begin{pdfxmetadata}
-\Title{Exploring "simple" approaches for Domain Adaptive Object Detection}
+\Title{Approaches for Domain Adaptive Object Detection in Production Environments}
 \Author{Gabriele Degola}
 \Publisher{Politecnico di Torino}
 \Keywords{domain adaptation\sep
@@ -85,6 +85,7 @@ sim2real}
 \usepackage{nicematrix}
 \usepackage{nicefrac}
 \usepackage{booktabs}
+\usepackage{epigraph}
 
 \usepackage[
 	type={CC},
@@ -136,6 +137,7 @@ sim2real}
 \ExtendCaptions{english}{Abstract}{Acknowledgements}
 \newcommand{\quotes}[1]{``#1''}
 
+
 \begin{document}
 \english
 %%%%%%% Questi comandi è meglio metterli dentro l'ambiente
@@ -154,7 +156,7 @@ sim2real}
 \facolta{CONTROL AND COMPUTER ENGINEERING}% facolta'
 %\Materia{Remote sensing}
 %\titolo{Domain Adaptation for Object Detection}% 
-\titolo{Exploring \quotes{simple} approaches for Domain Adaptive Object Detection}% 
+\titolo{Approaches for Domain Adaptive Object Detection in Production Environments}% 
 %\sottotitolo{A data augmentation approach}% 
 \CorsoDiLaureaIn{Master Degree in\space}
 \corsodilaurea{Data Science and Engineering}% per la laurea
@@ -185,34 +187,63 @@ sim2real}
 
 \sommario
 Nowadays, computer vision is built almost exclusively on deep learning methods. Research in recent years has improved more and more the performances of convolutional neural networks on several popular key tasks, such as image classification, detection and segmentation. However, these methods require large amounts of annotated data to be trained effectively, which are not always available.
-For this reason, domain adaptation methods have been widely studied and developed in recent years. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
+
+For this reason, domain adaptation methods have been widely studied and developed. The goal is to transfer the knowledge learned by a machine learning model on annotated data to data from other domains for which annotations are not available or only partially. A typical case is the transfer from synthetic data (easy to generate in large quantities) to real data (expensive to collect and annotate).
 
 \bigskip
-This work focuses on domain adaptation for an object detection task. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need of complex modifications to the most commonly used network architectures. At the same time, it attempts to address some issues of more popular domain adaptation methods for object detection, that may undermine their use in actual applications.
+This work focuses on domain adaptation for an object detection task, with the goal of identifying methods that can be deployed in production environments. It starts from a review of both the fundamental and some recently proposed methods and explores a simple approach to domain adaptation, without the need for complex modifications to the most commonly used network architectures. At the same time, it attempts to address some issues of more popular domain adaptation methods for object detection, that may hinder their use in actual applications.
 
 The performed experiments show that the method can be easily applied by engineers for satisfactory results in real world projects, when it is complex to obtain image annotations.
 
 \paginavuota % funziona anche senza specificare l'opzione classica
 
-%\ringraziamenti
-%\lipsum[1-2]
+\ringraziamenti
+\begin{otherlanguage*}{italian}
+\makebox[\textwidth][r]{
+	\begin{minipage}[t]{.45\textwidth}
+		\large{\textit{Alla mia famiglia\\Ad Alba\\Ai miei nonni}}
+	\end{minipage}
+}
+\end{otherlanguage*}
+
+\vspace*{1cm}
+
+\bigskip
+\foreignlanguage{french}{Merci à Valérian, Etienne, Olivier, Taiamiti et à tout le monde chez Neovision, pour m'avoir accueilli comme si je faisais partie de l'équipe et pour m'avoir suivi minutieusement tout au long de mon stage.}
+
+\bigskip
+I would like to sincerely thank the supervisor of this work, prof. Paolo Garza, for his thorough revision and for the useful comments and advice.
+
+\bigskip
+Thanks to the great people I have come across over these years. It has been a fun journey.
+
+\newpage
 
 \iffalse
-%\newpage
-%\vspace*{1cm}
-%\epigraph{\itshape \textquotedblleft Test citazione\textquotedblright}{---Gabriele Degola}
 \begin{dedica}
 	Alla mia famiglia\\
-	Ad Alba
+	Ad Alba\\
+	Ai miei nonni
 \end{dedica}
-
-\begin{citazioni}
-	\textit{\quotes{testo testo testo\\~testo testo testo}}
-	
-	---\textsc{G.\ Leopardi}, Operette Morali\vspace{1em}
-\end{citazioni}
-%\paginavuota
 \fi
+
+\english
+
+\iffalse
+\begin{citazioni}
+	\textit{\quotes{So, nobody told me what to do\\~And there was no preconception of what to do.}}
+	
+	---Giorgio Moroder
+\end{citazioni}
+\fi
+
+\vspace*{1cm}
+\renewcommand{\epigraphsize}{\normalsize}
+\setlength{\epigraphwidth}{0.56\textwidth}
+\renewcommand{\sourceflush}{flushright}
+\let\originalepigraph\epigraph 
+\renewcommand\epigraph[2]{\originalepigraph{\textit{#1}}{\textsc{#2}}}
+\epigraph{So, nobody told me what to do\\And there was no preconception of what to do.}{--- Giorgio Moroder}
 
 %\tablespagetrue\figurespagetrue % normalmente questa riga non serve ed e' commentata
 %\setcounter{tocdepth}{1}
