@@ -498,7 +498,7 @@ to determine if an object is present in this bounding box (classification task) 
 \end{figure}
 
 \medskip
-Fast \gls{rcnn}\cite{girshick2015fast} and Faster \gls{rcnn}\cite{ren2016faster} improved the \gls{rcnn} architecture, improving its performances and reducing the inference time.
+Fast \gls{rcnn}\cite{girshick2015fast} and Faster \gls{rcnn}\cite{ren2016faster} enhanced the \gls{rcnn} architecture, improving its performances and reducing the inference time.
 
 \paragraph{Fast \gls{rcnn}}
 In Fast \gls{rcnn}\cite{girshick2015fast}, performances are improved through the introduction of a \textit{\gls{roi} pooling} layer and of a single-stage training procedure with an optimized multi-task loss.
@@ -516,22 +516,19 @@ Following a single-stage training, instead, Fast \gls{rcnn} discards the previou
 \end{itemize}
 
 The two heads are trained jointly, thanks to a purpose-built loss function that takes into consideration the classification and regression tasks. For each couple of classes $u, v$, with $u$ ground truth class, this multi-task loss is defined as:
-
 \begin{equation}
 	L(p,u,t^u,v) = L_{\text{cls}}(p,u) + \lambda\left[u\geq1\right]L_{\text{loc}}(t^u,v).
+	\label{eq:fastrcnn}
 \end{equation}
 
 Here, $L_{\text{cls}}(p,u) = -\log{p_u}$ is the standard negative log-likelihood for the correct class $u$ and is responsible for the training the classification head. $L_{\text{loc}}(t^u,v)$ is instead responsible for the regression head and is defined as a robust $L_1$ loss:
-
 \begin{equation*}
 	L_{\text{loc}}(t^u,v) = \sum_{i\in \text{\{x,y,w,h\}}}\text{smooth}_{L_1}(t_i^u - v_i)
 \end{equation*}
-
 in which
-
 \begin{equation*}
 	\text{smooth}_{L_1}(x) = \begin{cases}
-		0.5x^2 & \text{if |x| < 1}\\
+		0.5x^2 & \text{if } |x| < 1\\
 		|x| - 0.5 & \text{otherwise.}
 		\end{cases}
 \end{equation*}
@@ -541,11 +538,7 @@ $\left[u\geq1\right]$ is an indicator function that evaluates to $1$ when $u\geq
 Finally, the $\lambda$ hyperparameter is used to assign a relative weight to the two tasks.
 
 \paragraph{Faster \gls{rcnn}}
-The main contribution of Faster \gls{rcnn} is the introduction of a \gls{rpn}, which integrates some convolutional layers of the image classifier into the region proposal phase. It is designed to replace selective search, an expensive and time-consuming algorithm, and helps to considerably reduce the required time.
-
-%todo important: explain rpn, check "visual object detection"
-
-Because of its good performances and speed, Faster \gls{rcnn} is widely used for benchmarking and as base for several derived works.
+The main contribution of Faster \gls{rcnn}\cite{ren2016faster} over Fast \gls{rcnn} is the introduction of a \gls{rpn}, which integrates some convolutional layers of the image classifier into the region proposal phase. It is designed to replace selective search, an expensive and time-consuming algorithm, and helps to considerably reduce the required time. Faster \gls{rcnn} working scheme is reported in Figure~\ref{fig:fasterrcnn}.
 
 \begin{figure}[ht]
 	\centering
@@ -553,6 +546,26 @@ Because of its good performances and speed, Faster \gls{rcnn} is widely used for
 	\caption{Description of Faster \gls{rcnn}\cite{ren2016faster}}
 	\label{fig:fasterrcnn}
 \end{figure}
+
+\medskip
+The goal of \gls{rpn} is to extract a set of \glspl{roi} from an input image, each with a probability that it contains indeed an object instead of background. Basically, this \gls{cnn} shares a common set of convolutional layers with a Fast \gls{rcnn} object detector and highlights the image regions on which it should focus.
+
+In order to generate \gls{roi} proposals, the \gls{rpn} receives as input the features extracted by the last shared convolutional layer, and a sliding-window approach is followed to extract multiple proposals. Each \gls{roi} is mapped to a lower-dimensional feature map, which is fed to two sibling fully-connected layers: a binary classification layer which estimates the probability that the input \gls{roi} actually contains an object, and a box-regression layer to refine the bounding box proposals.
+
+The regions that are generated at each sliding-window location have different sizes and aspect rations and are called \textit{anchor boxes}. This is an important concept in modern object detection, and is further detailed in Section~\ref{sec:anchor}.
+
+\Gls{rpn} can then be trained with the goal of minimizing a multi-task loss function that follows the same reasoning of \eqref{eq:fastrcnn}.
+
+\medskip
+However, the \gls{rpn} and the Fast \gls{rcnn} detector share a set of convolutional layers: independent training of the two components would modify the weights in different ways and results would be inconsistent. Three techniques are proposed for jointly training networks with shared features:
+\begin{itemize}
+	\item \textit{Alternating training}: the \gls{rpn} is initialized with pre-trained \gls{cnn} and fine-tuned end-to-end on the \gls{roi} proposal task, and the generated proposals are used to train a Fast \gls{rcnn} object detection network. In this phase, no convolutional layer is shared among the two networks. Fast \gls{rcnn} is then used to initialize \gls{rpn} training, but fixing shared layers and fine-tuning only the ones unique to \gls{rpn}, making the two components share convolutional layers. Finally, shared layers are kept fixed and unique layers of Fast \gls{rcnn} are fine-tuned. The process can be repeated for many iterations.
+	\item \textit{Approximate joint training}: \gls{rpn} and Fast \gls{rcnn} components are merged into one network. However, this joint training leads to approximate results, as \gls{roi} proposals are treated like fixed, pre-computed proposals when training the Fast \gls{rcnn}. For this reason, during backpropagation the fact that the proposed bounding boxes' coordinates depend on the \gls{rpn} is ignored.
+	\item \textit{Non-approximate joint training}: the above-mentioned problem could be resolved by computing gradients with respect to the box coordinates in the backpropagation step. This would require the development of a \gls{roi} pooling layer that is differentiable with respect to box coordinates. This is a nontrivial problem.
+\end{itemize}
+
+\medskip
+Because of its good performances and speed, Faster \gls{rcnn} is widely used for benchmarking and as base for several derived works.
 
 \subsubsection{One stage object detectors}
 Differently from two stage detectors, one stage object detectors skip the region proposal phase and focus on predicting object regions and classes together. This leads to faster predictions with respect to two stage models, making them suitable for real-time applications at the cost of lower prediction quality. The pioneer work for one stage object detection is OverFeat\cite{sermanet2014overfeat}, published in 2014. Here, the last classification layers of a standard \gls{cnn} are replaced by a regression network for each class, in order to predict the coordinates of the object bounding boxes.
@@ -981,7 +994,7 @@ More advanced data augmentation techniques, first introduced by Zoph \textit{et 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.9\linewidth]{imgs/learndataaug.png}
-	\caption{Examples of the data augmentation operators introduced by Zoph \textit{et al.}\cite{zoph2019learning}}
+	\caption{Examples of usage of the data augmentation operators introduced by Zoph \textit{et al.}\cite{zoph2019learning}}
 	\label{fig:learndataaug}
 \end{figure}
 
