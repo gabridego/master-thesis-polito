@@ -159,7 +159,7 @@ sim2real}
 %\titolo{Domain Adaptation for Object Detection}% 
 \titolo{Approaches for Domain Adaptive Object Detection in Production Environments}% 
 %\sottotitolo{A data augmentation approach}% 
-\CorsoDiLaureaIn{Master Degree in\space}
+\CorsoDiLaureaIn{Master of Science in\space}
 \corsodilaurea{Data Science and Engineering}% per la laurea
 \TesiDiLaurea{Master Thesis}
 \def\Candidato{Candidate}
@@ -742,7 +742,7 @@ Sim10k is a synthetic dataset containing 10000 annotated images for car detectio
 \subsubsection{Anchor boxes}\label{sec:anchor}
 In most cases, generating many possible bounding boxes is too cumbersome and leads to inaccurate predictions. If we already know which classes we want to detect, it may be more efficient to define a-priori a set of possible aspect ratios and zoom factors for the bounding boxes. For example, if we are interested in detecting cars, wide \textit{anchor boxes} can be defined at different scales, to identify both near and far objects of car shape.
 
-Anchor boxes were first introduced by the \gls{rpn} of Faster \gls{rcnn} and were one of the main source of improvements in detection performances and speed\cite{ren2016faster}. The basic working schema is reported in Figure~\ref{fig:rpn}. Nowadays, anchor boxes are used in most architectures for object detection, such as \gls{yolo}, \gls{ssd} and RetinaNet. Regarding anchor boxes, the difference between one-step and two-step methods is that the former analyze each anchor box independently and return only the most promising ones, while the latter start from the anchor boxes to estimate the true bounding boxes of the objects in the images.
+Anchor boxes were first introduced by the \gls{rpn} of Faster \gls{rcnn} and were one of the main source of improvements in detection performances and speed\cite{ren2016faster}. The basic working schema is reported in Figure~\ref{fig:rpn}. Nowadays, anchor boxes are used in most architectures for object detection, such as \gls{yolo}, \gls{ssd} and RetinaNet. From an anchor boxes point of view, the difference between one-step and two-step methods is that the former analyze each anchor box independently, then refine and return only the most promising ones, while the latter start from the anchor boxes to estimate the true bounding boxes of the objects in the images.
 
 \begin{figure}[tb]
 	\centering
@@ -762,7 +762,7 @@ Object detection models usually produce more than one detection for each object,
 	\subcaptionbox{After \acrlong{nms}}{
 		\includegraphics[width=.70\linewidth]{imgs/nms.png}
 	}
-	\caption{Example of application of \acrlong{nms}: several bounding boxes are proposed for each detected car, but only one per object is returned.}
+	\caption{Example of application of \acrlong{nms} on a Faster \gls{rcnn} detector: several bounding boxes are proposed for each detected car, but only one per object is returned.}
 	\label{fig:nms}
 \end{figure}
 
@@ -853,6 +853,7 @@ In~\eqref{eq:dann}, $L_y$ and $L_d$ are the objective functions for label and do
 $\lambda$ is therefore the only additional hyperparameter with respect to the training of a standard classification model and its value is to be fixed a priori. To increase the stability of the training and to foster good learning of the domain classifier at the beginning of the training procedure, $\lambda$ is sometimes set dynamically. The following expression can be used to change its value from $0$ (at the beginning of the procedure) to $1$ (at the end) according to the training progress represented by $p$ (in turn between $0$ and $1$):
 \begin{equation}
 	\lambda_p = \frac{2}{1 + \exp{\left(-\gamma\cdot p\right)}} - 1.
+	\label{eq:dynamic_lambda}
 \end{equation}
 This avoids the need to seek the optimal value for $\lambda$, but introduces the new hyperparameter $\gamma$ (which represents the speed at which the value of $\lambda_p$ converges to 1).
 
@@ -917,7 +918,7 @@ Similar approaches are commonly used in networks for style transfer, but in thes
 The purpose of this Master Thesis is the investigation of common approaches for domain adaptive object detection, in order to identify and possibly correct critical points and propose appropriate means of improvement.
 
 \bigskip
-A common belief is that extremely complex methods are more likely to achieve good performances than simple ones. Considering for example neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time led to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \glspl{mlp} only, reached surprisingly good performances in image classification.
+A widespread belief is that extremely complex methods are more likely to achieve good performances than simple ones. Considering for example neural networks, the trend over the years has been to try making the networks deeper and deeper, which has produced extraordinary results but at the same time led to several problems in the training procedures. Recently, simple architectures like \textit{MLP-Mixer}\cite{tolstikhin2021mlpmixer} and \textit{Feed-Forward Stack}\cite{melaskyriazi2021need}, composed of \acrlongpl{mlp} only, reached surprisingly good performances in image classification.
 
 A similar question can be raised for the problem of domain adaptation in an object detection scenario: can simple methods perform comparably or even better than the complex ones that are mostly studied in the literature? Indeed, in an industrial context engineers do not often have the time to deeply understand elaborate network architectures, potentially not useful for the problem they are facing, and must consider the trade-off between complexity and expected efficacy. Simple methods that are capable of reaching good performances are heavily researched and can boost their productivity.
 
@@ -1158,7 +1159,7 @@ Additionally, transformations can be applied on a patch basis, in order to local
 
 \chapter{Experimental results}
 \section{Experimental settings}
-This chapter reports, compares and discusses the results obtained with the methods described in the previous chapter. For coherence with previous works, \textit{Sim10k} and \textit{CityScapes} are respectively considered as source domain and target domains. Experiments deal therefore with \textit{sim2real} domain adaptation, training a model to recognize cars in a simulated world for detection in the real. Results are presented in terms of \gls{map} computed at \gls{iou} threshold of $ 0.5 $, separately for the experiments performed with RetinaNet and Faster \gls{rcnn} base detectors. Impact of data augmentation operations, in addition to domain adaptation methods, is also studied. All experiments have been conducted with the PyTorch deep learning framework.
+This chapter reports, compares and discusses the results obtained with the methods described in the previous chapter. For coherence with previous works, \textit{Sim10k} and \textit{CityScapes} are respectively considered as source domain and target domains. Experiments deal therefore with \textit{sim2real} domain adaptation, training a model to recognize cars in a simulated world for detection in the real. Results are presented in terms of \gls{map} computed at \gls{iou} threshold of $ 0.5 $, separately for the experiments performed with RetinaNet and Faster \gls{rcnn} base detectors. Impact of data augmentation operations, in addition to domain adaptation methods, is also studied. All experiments have been conducted with the PyTorch deep learning framework and run on an NVIDIA GeForce RTX 2070 \gls{gpu} with 8 GB of memory.
 
 \bigskip
 In the following sections, the models indicated as \quotes{oracle} are trained and tested directly on the target domain (\textit{CityScapes} in the \textit{sim2real} context) without applying any data augmentation technique. This represents an upper bound for domain adaptation performance. Such a model cannot be trained in real applications, as, in the common case of unsupervised domain adaptation, annotations are not available for the target domain.
@@ -1171,6 +1172,9 @@ As an official Python interface is provided to easily load the annotations and c
 
 \medskip
 Finally, the open source tool \textit{cocosplit}\cite{cocosplit} is used to partition the \textit{Sim10k} dataset into training, validation and test sets with a proportion of 7\string:2\string:1, as standardized set splits are not officially available. The dataset is quite large (10000 annotated images) and it can be assumed that image distributions are similar between the three splits. On the other hand, splits are made public for \textit{CityScapes}, but annotations are not available for the test images. The performances of the tested domain adaptation methods are therefore evaluated on the provided validation set, as it is never used during training.
+
+\medskip
+When fed to the object detection models for training or evaluation, input images are resized so that the shortest side is equal to 600 pixels.
 
 \subsection{Data augmentation}
 Impact of data augmentation is extensively tested, for both domain randomization by itself or in combination with the other methods. The following parameters are used for each previously introduced data augmentation technique:
@@ -1191,15 +1195,35 @@ The Python library \textit{imgaug}\cite{imgaug} is exploited for data augmentati
 The open-source RetinaNet implementation, included in the PyTorch's library for computer vision (\textit{torchvision})\cite{torchvision_retinanet}, has been used as starting point for the experiments with the base object detection model, which included domain randomization and image statistics matching. For Domain Adaptive RetinaNet, the implementation provided by the same authors of the original paper\cite{pasqualino2020unsupervised}, using the \textit{detectron2} framework\cite{wu2019detectron2}\cite{daretinanet_github}, is followed and adapted.
 
 \bigskip
-All used RetinaNet networks include a \gls{resnet}-50 backbone and are pre-trained on the \gls{coco} dataset. They are then further trained on the data from one or both domains using the Adam optimizer for 15 epochs, with initial learning rate $1\times 10^{-4}$, reduced to $1\times 10^{-5}$ after 10 epochs.
-%todo important: more precise parameters, check implementation (number of anchor boxes, number of proposals, real number of epochs in daretinanet and adversarial coefficient)
+All used RetinaNet networks include a \gls{resnet}-50 backbone and are pre-trained on the \gls{coco} dataset. They are then finetuned on the data from one or both domains using the Adam optimizer for 15 epochs, with initial learning rate $1\times 10^{-4}$, reduced to $1\times 10^{-5}$ after 10 epochs. A training batch is composed of four annotated images from the source domain. When the target domain is needed for adversarial adaptation, two images are added to each training batch without considering image annotations, for a final batch size of 6.
+
+\medskip
+Additional configurations include:
+\begin{itemize}
+	\item anchor boxes of size 32, 64, 128, 256 and 512 are generated with aspect ratios $0.5$, 1 and 2, for a total of 15 anchor boxes for each location of the feature map returned by the \gls{resnet} backbone;
+	\item best 1000 bounding box proposals are kept before \gls{nms}, and only if detection confidence is greater than $0.05$;
+	\item best 300 bounding boxes are returned after \gls{nms}, performed with \gls{iou} threshold $0.5$.
+\end{itemize}
+
+The focal loss hyperparameters, as in \eqref{eq:focalloss}, are set to $\alpha = 0.25$ and $\gamma = 2$.
+
+When adversarial adaptation is performed on the last three layers of the \gls{resnet}-50 backbone (layers 3, 4 and 5), the $\lambda$ coefficient introduced in \eqref{eq:dann} evolves from 0 to 1, and is limited to $0.5$ for layers 3 and 4, and to $0.1$ for layer 5. The dynamic update is performed independently for each adversarial coefficient following the policy illustrated in \eqref{eq:dynamic_lambda}. In this last equation, $\gamma$ is set to 10.
 
 \subsection{Faster R-CNN}
 As for RetinaNet, \textit{torchvision}'s implementation of Faster \gls{rcnn} model is used as basic detector\cite{torchvision_fasterrcnn}. For Domain Adaptive Faster \gls{rcnn}, an implementation by the authors of the paper\cite{chen2018domain} is considered\cite{dafasterrcnn_github}, but is reimplemented in a more recent version of PyTorch and \textit{torchvision}. The original implementation is only used for testing the method without \gls{fpn}.
 
 \bigskip
-As for RetinaNet, all Faster \gls{rcnn} models include a \gls{resnet}-50 backbone and are pre-trained on \gls{coco}. Networks are then finetuned on \textit{Sim10k} and \textit{CityScapes} for 15 epochs using the SGD optimizer with momentum of $0.9$ and weight decay of $5\times 10^{-4}$. Initial learning rate is set at $1\times 10^{-3}$ and is reduced to $1\times 10^{-4}$ after 10 epochs.  In order to improve stability of two-stage object detectors, the learning rate is initialized using a warm-up policy. It is linearly increased from 0 to $1 \times 10^{-3}$ during the first 1000 training iterations.
-%todo important: more precise parameters, check implementation (number of anchor boxes, number of proposals, real number of epochs in dafasterrcnn and adversarial coefficient)
+As for RetinaNet, all Faster \gls{rcnn} models include a \gls{resnet}-50 backbone and are pre-trained on \gls{coco}. Networks are then finetuned on \textit{Sim10k} (annotated) and \textit{CityScapes} (without annotations) for 15 epochs using the SGD optimizer with momentum of $0.9$ and weight decay of $5\times 10^{-4}$. Initial learning rate is set at $1\times 10^{-3}$ and is reduced to $1\times 10^{-4}$ after 10 epochs. In order to improve stability of two-stage object detectors, the learning rate is initialized using a warm-up policy. It is linearly increased from 0 to $1 \times 10^{-3}$ during the first 1000 training iterations. Batch size of 4 is used when the model is training only on annotated images from the source domain. When images from the target domain are used for adversarial domain adaptation, a training batch is composed of one annotated image from the source domain and one unlabeled image from the target domain.
+
+\medskip
+Additional configurations involve:
+\begin{itemize}
+	\item anchor boxes of size 32, 64, 128, 256 and 512 are generated with aspect ratios $0.5$, 1 and 2, for a total of 15 anchor boxes for each location of the feature map returned by the \gls{resnet} backbone;
+	\item during training, the \gls{rpn} extracts 1000 bounding box proposals after \gls{nms}, performed with \gls{iou} threshold $0.7$;
+	\item during inference, 100 bounding boxes are returned after \gls{nms}, performed with \gls{iou} threshold $0.5$, and only if their detection confidence is higher than 0.05.
+\end{itemize}
+
+When adversarial domain adaptation is performed, the adversarial coefficient $\lambda$ is set to $0.1$.
 
 \section{Domain randomization}
 Table~\ref{table:rand_retinanet} and Table~\ref{table:rand_fasterrcnn} contain the results obtained by RetinaNet and Faster \gls{rcnn} (with \gls{fpn} backbone) respectively, trained on \textit{Sim10k} images using several data augmentation techniques and evaluated on \textit{CityScapes} test images. Images belonging to the target domain as considered as they are for evaluation, without applying any transformation. For each combination of data augmentation operations, the tables contain the detection \gls{map} on \textit{CityScapes}.
