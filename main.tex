@@ -32,7 +32,7 @@
     tipotesi=magistrale,
     evenboxes,
     english,
-%   cucitura=7mm,
+%	cucitura=7mm,
 	numerazioneromana,
 ]{toptesi}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,14 +49,14 @@
 % veramente conforme alle norme per l'archiviabilità.
 % \usepackage{imakeidx}
 \begin{pdfxmetadata}
-\Title{Approaches for Domain Adaptive Object Detection in Production Environments}
-\Author{Gabriele Degola}
-\Publisher{Politecnico di Torino}
-\Keywords{domain adaptation\sep
-object detection\sep
-computer vision\sep
-machine learning\sep
-sim2real}
+	\Title{Approaches for Domain Adaptive Object Detection in Production Environments}
+	\Author{Gabriele Degola}
+	\Publisher{Politecnico di Torino}
+	\Keywords{domain adaptation\sep
+	object detection\sep
+	computer vision\sep
+	machine learning\sep
+	sim2real}
 \end{pdfxmetadata} 
 \usepackage[a-1b]{pdfx}
 
@@ -214,7 +214,7 @@ The performed experiments show that the method can be easily applied by engineer
 \foreignlanguage{french}{Merci à Valérian, Etienne, Olivier, Taiamiti et à tout le monde chez Neovision, pour m'avoir accueilli comme si je faisais partie de l'équipe et pour m'avoir suivi minutieusement et patiemment tout au long de mon stage.}
 
 \bigskip
-I would like to sincerely thank the supervisor of this work, prof. Paolo Garza, for his thorough revision and for the useful comments and advice.
+I would like to sincerely thank the supervisor of this work, professor Paolo Garza, for his thorough revision and for the useful comments and advice.
 
 \bigskip
 Thanks to the great people I have come across over these years. It has been a fun journey.
@@ -246,7 +246,7 @@ Thanks to the great people I have come across over these years. It has been a fu
 \renewcommand{\sourceflush}{flushright}
 \let\originalepigraph\epigraph 
 \renewcommand\epigraph[2]{\originalepigraph{\textit{#1}}{\textsc{#2}}}
-\epigraph{So, nobody told me what to do\\And there was no preconception of what to do.}{--- Giorgio Moroder}
+\epigraph{Once you free your mind about a concept of\\Harmony and of music being \quotes{correct},\\You can do whatever you want.\\So, nobody told me what to do\\And there was no preconception of what to do.}{--- Giorgio Moroder}
 
 \paginavuota
 
@@ -431,7 +431,7 @@ Figure~\ref{fig:imagenet} shows an example of the progresses made by \glspl{cnn}
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.8\textwidth]{imgs/ILSVRC.png}
-	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}, from right to left\cite{russakovsky2015imagenet}. Image source: \cite{hanqing2020research}.
+	\caption[Evolution of top-5 error for the winning entries in \gls{ilsvrc}]{Evolution over the years of the top-5 error for the winning entries in the \gls{ilsvrc}, from right to left\cite{russakovsky2015imagenet}\cite{hanqing2020research}.
 	\label{fig:imagenet}}
 \end{figure}
 
@@ -449,7 +449,7 @@ A summary is presented in Figure~\ref{fig:classdetseg}.
 \begin{figure}
 	\centering
 	\includegraphics[width=.9\textwidth]{imgs/classification_detection_segmentaion.jpeg}
-	\caption[Comparison between classification, object detection and semantic segmentation]{Comparison between classification, object detection and semantic segmentation. Image source: \url{http://ronny.rest/tutorials/module/seg_01/segmentation_01_intro/}}
+	\caption[Comparison between classification, object detection and semantic segmentation]{Comparison between classification, object detection and semantic segmentation}
 	\label{fig:classdetseg}
 \end{figure}
 
@@ -687,7 +687,7 @@ The resulting value is then compared to a threshold to classify a prediction as 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{imgs/precision_recall_iou.jpg}
-	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}. Image source: \url{https://datascience.stackexchange.com/questions/25119/how-to-calculate-map-for-detection-task-for-the-pascal-voc-challenge}}
+	\caption[Graphical representations of precision, recall and \gls{iou}]{Graphical representations of precision, recall and \gls{iou}}
 	\label{fig:iou}
 \end{figure}
 
@@ -979,7 +979,7 @@ Data augmentations can modify the orientation of the images or operate at pixel 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/augmentation.png}
-	\caption[Some examples of data augmentation]{Some examples of data augmentation. Image source: \url{http://datahacker.rs/tf-data-augmentation/}}
+	\caption{A few examples of data augmentation}
 	\label{fig:augmentation}
 \end{figure}
 
@@ -1131,7 +1131,7 @@ Such approaches have not yet been followed in the academic literature for two st
 
 \begin{figure}[ht]
 	\centering
-	\subcaptionbox{Adversarial alignment on pyramidal feature representations, build by the \gls{fpn} from \gls{resnet} layers\label{fig:adapt_fpn}}{
+	\subcaptionbox{Adversarial alignment on pyramidal feature representations, built by the \gls{fpn} from \gls{resnet} layers\label{fig:adapt_fpn}}{
 		\includegraphics[width=.6\linewidth]{imgs/adapt_fpn.png}
 	}\\
 	\subcaptionbox{Adversarial alignment on features extracted by ResNet layers\cite{pasqualino2020unsupervised}\label{fig:adapt_resnet}}{
@@ -1391,8 +1391,7 @@ Table~\ref{table:retinanet} and Table~\ref{table:fasterrcnn} present the results
 For Domain adaptive Faster \gls{rcnn}, \texttt{RN} means that adversarial alignment is performed at the level of the last three \gls{resnet} layers before being used to build the feature pyramids, as done in Domain Adaptive RetinaNet\cite{pasqualino2020unsupervised} and described in Section~\ref{sec:adapt_fpn_fasterrcnn}. Instead, the entry with the simple $\checkmark$ contains the result obtained with adversarial adaptation on the network's \gls{fpn}.
 
 \bigskip
-For the RetinaNet detector, tested adaptation methods (image statistics matching and alignment on \gls{fpn}) performed well, with an increase over the baseline of 17.8 and 22.4 \gls{map} respectively. The use of data augmentation does not have a considerable impact for the Domain Adaptive RetinaNet, while color transformations have a strong impact when matching image statistics between source and target domains.
-%todo: aggiungere qualcosa
+For the RetinaNet detector, tested adaptation methods (image statistics matching and alignment on \gls{fpn}) performed well, with an increase over the baseline of 17.8 and 22.4 \gls{map} respectively. The use of data augmentation does not have a considerable impact for the Domain Adaptive RetinaNet, while color transformations remarkably increase the detection performances when matching image statistics between source and target domains.
 
 \bigskip
 Regarding Faster \gls{rcnn}, adaptation at image and instance levels yields improvements with respect to the basic Faster \gls{rcnn} architecture without \gls{fpn}, consistently with previous works\cite{abramov2020simple}\cite{chen2018domain}\cite{saito2019strongweak}.
@@ -1412,7 +1411,7 @@ Ostensibly, the achievements of different combinations highly depend on the data
 
 \begin{table}[tb]
 	\centering
-	\caption{\gls{map} with different combinations of data augmentation techniques on whole images (\texttt{I}), bounding boxes (\texttt{O}) or backgrounds (\texttt{B}) only, for a RetinaNet model, trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns indicate the transformations that are employed in each experiment. \texttt{y} means operation is only applied on the vertical axis. Only horizontal flip is used for the \quotes{oracle}.}
+	\caption{\gls{map} with different combinations of data augmentation techniques, independently applied to whole images (\texttt{I}), bounding boxes (\texttt{O}) or backgrounds (\texttt{B}) only, for a RetinaNet model trained on \textit{Sim10k} and evaluated on \textit{CityScapes}. Table columns indicate the transformations that are employed in each experiment. \texttt{y} means operation is only applied on the vertical axis. Only horizontal flip is used for the \quotes{oracle}.}
 	\begin{NiceTabular}{cccccccc}
 		\toprule
 		HF & Rot. & Tr. & Sh. & C.J. & Sol. & Eq. & mAP@0.5 \\
@@ -1438,7 +1437,7 @@ A similar reasoning as bounding box augmentations is followed for experiments on
 		\toprule
 		Model & Method & mAP@0.5 \\
 		\midrule
-		\Block[l]{4-1}{Retinanet} & Baseline & 30.4   \\
+		\Block[l]{4-1}{RetinaNet} & Baseline & 30.4   \\
 		\cmidrule{2-2}
 		& $1\times 1$ matching & \textbf{48.2} \\
 		\cmidrule{2-2}
@@ -1480,11 +1479,10 @@ Consider the discussed \textit{Sim10k} and \textit{CityScapes} datasets. Neglect
 
 
 \chapter{Conclusions}
-In a real production environment, being able to successfully transfer the knowledge learned by a deep learning model from one domain to another can introduce considerable improvements in many projects, new and already in place, and increase general productivity. This would allow the same data to be used in multiple projects that deal with the same task. More extremely, data collection and annotation may not be necessary anymore, once a generator of synthetic data is available and domain adaptation from simulated to real data is deployed. Many methods address the domain adaptation problem in the different computer vision domains: image classification, object detection and semantic segmentation.
+In a real production environment, being able to successfully transfer the knowledge learned by a deep learning model from one domain to another can introduce considerable improvements in many projects, new and already in place, and increase general productivity. This would allow the same data to be used in multiple projects that deal with the same task. More extremely, data collection and annotation may not be necessary anymore, once a generator of synthetic data is available and domain adaptation from simulated to real data is deployed effectively. Many methods address the domain adaptation problem in the different computer vision domains: image classification, object detection and semantic segmentation.
 
 \bigskip
-Focusing on object detection, most studied methods in the literature involve architecture-specific modifications. However, all this complexity seems excessive when very simple methods can obtain similar or even better detection performances. Overall, domain mapping based on image statistics can yield results that approach models with full knowledge of the target domain, and perform even better when supported by data augmentation techniques. The domain randomization introduced by classic data image transformations also helps to reduce the mismatch between the two data distributions and may be sufficient for several use cases. However, domain adaptation is an open problem, for which research is always active. New promising methods and innovative approaches can be published from one day to another.
-%todo important: extend
+Focusing on object detection, most studied methods in the literature involve architecture-specific modifications. However, all this complexity seems excessive when very simple methods can obtain similar or even better detection performances. Overall, domain mapping based on image statistics can yield results that approach models with full knowledge of the target domain, and perform even better when supported by data augmentation techniques. The domain randomization introduced through classic image transformations also helps to reduce the mismatch between the two data distributions and may be sufficient for several use cases. However, domain adaptation is an open problem, for which research is always active. New promising methods and innovative approaches can be published from one day to another.
 
 
 \backmatter
