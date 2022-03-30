@@ -1,0 +1,98 @@
+\mode<presentation>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ---- Set the slides backgrounds ---- %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+\ifnum\thepage>1\relax%background 
+	\useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \includegraphics[height=\paperheight]{graphics/FondoSlide_2.pdf}
+\else 
+  % background for the title page
+  \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \includegraphics[height=\paperheight]{graphics/FondoSlide.pdf};
+\fi
+  \end{tikzpicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ---- Slide footer ---- %
+% Author's initials, short
+% title, and page number
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\defbeamertemplate*{footline}{my footline}
+{
+    \ifnum \insertpagenumber=1 %skip the title page
+      \leavevmode
+      \hbox{
+      \begin{beamercolorbox}[wd=\paperwidth,ht=0.5ex,dp=1ex,center]{}
+        % empty environment to raise height
+      \end{beamercolorbox}}
+      \vskip0pt
+    \else 
+      \leavevmode
+      \hbox{
+      \begin{beamercolorbox}[wd=\paperwidth,ht=1.25ex,dp=7ex,center]{title in head/foot}
+        \usebeamercolor[white]{title in head/foot}\usebeamerfont{title in head/foot}\insertshortauthor, \insertshorttitle, \insertframenumber~of \inserttotalframenumber
+      \end{beamercolorbox}}
+    \fi
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% ---- Title page ---- %
+%%%%%%%%%%%%%%%%%%%%%%%%
+\defbeamertemplate*{title page}{DE}[1][]
+{ 
+    \begin{textblock*}{10.7cm}(2cm,3.4cm){}
+    \usebeamerfont{author}
+    \centering
+    \Large\bf\inserttitle
+    \end{textblock*}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % ------ insert the author ------ %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{textblock*}{10cm}(2cm,5.5cm)
+    {\usebeamerfont{author}
+    \vspace*{.75cm}
+    \textbf{Candidate}\\
+    \insertauthor}
+    \end{textblock*}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % ---- insert the supervisors --- %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{textblock*}{10cm}(8.8cm,5.2cm)
+       {\textbf{Supervisor}\\
+       Prof. Paolo~\textsc{Garza}\\
+       \vspace*{.6mm}
+       {\textbf{Company advisors\\\small{Neovision}}\\
+       dr.~Etienne \textsc{Balit}\\
+       ing.~Valérian \textsc{Gonnot}}
+    }
+    \end{textblock*}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % ------ insert the date ------ %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{textblock*}{10cm}(2cm,8.3cm)
+    {\usebeamerfont{author}
+    \begin{center}
+        Master of Science in Data Science and Engineering
+        
+        \vspace*{2mm}
+        \insertdate
+    \end{center}}
+    \end{textblock*}
+  \vfill
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% ---- Last page ---- %
+%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{endpage}{
+ \setbeamertemplate{background}{
+  \includegraphics[height=\paperheight]{graphics/FondoSlide_3.pdf}} 
+}
+
+
+
+\mode<all>

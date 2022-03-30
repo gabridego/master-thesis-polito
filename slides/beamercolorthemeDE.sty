@@ -1,0 +1,31 @@
+\mode<presentation>
+%define colors
+\definecolor{DEblue}{rgb}{0.05,0.25,0.38}
+\definecolor{DEgreen}{rgb}{0.07,0.65,0.51}
+\definecolor{DEorange}{rgb}{0.92,0.50,0.04}
+
+% for the text
+\setbeamercolor*{title page header}{fg=white}
+
+%for the items
+\setbeamercolor*{itemize item}{fg=DEgreen}
+\setbeamercolor{itemize subitem}{fg=DEblue}
+\setbeamercolor{itemize subsubitem}{fg=DEorange}
+\setbeamercolor{item projected}{fg=white,bg=DEgreen}
+
+%for \alert
+\setbeamercolor{alerted text}{fg=DEgreen}
+
+%for the blocks
+\setbeamercolor{block title}{fg=DEblue}
+\addtobeamertemplate{proof begin}{%
+    \setbeamercolor{block title}{fg=DEgreen}
+}{}
+\setbeamercolor{block title example}{fg=DEorange}
+
+%for the bibliography
+\setbeamercolor{bibliography entry author}{fg=DEblue}
+
+
+
+\mode<all>

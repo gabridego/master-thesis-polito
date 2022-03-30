@@ -1,0 +1,23 @@
+\mode<presentation>
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to set-up the frame
+% title and sub-title
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\defbeamertemplate*{frametitle}{DE}[1][]
+{
+\vskip1cm
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.2cm]{frametitle} 
+  \begin{tikzpicture}
+  \useasboundingbox[fill=white](0,0) rectangle(\the\paperwidth,1.2);
+  
+   \ifx\insertframesubtitle\@empty
+      {\node[anchor=west,DEblue,font=\large\bf] at (0.8,0.61){\insertframetitle};}
+      \else%there is a subtitle
+      {\node[anchor= west,DEblue,font=\large\bf] at (0.8,0.81){\insertframetitle};
+       \node[anchor= west,DEgreen,font=\normalsize] at (0.83,0.21){\insertframesubtitle};}
+    \fi
+  \end{tikzpicture}
+  \end{beamercolorbox}
+}
+
+\mode<all>

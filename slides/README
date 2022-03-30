@@ -1,0 +1,19 @@
+Bachelor and Master template for the presentation
+of the thesis.
+
+To modify the first slide, open beamerinnerthemeDE.sty
+Insert the name of your supervisor(s) (lines 65-66).
+Write your thesis title (on line 12).
+Insert your name and the name of your supervisor(s).
+
+Save the changes.
+Open example.tex.
+On line 5, insert the title of your thesis.
+On line 6, specify the course (Bachelor or Master).
+On line 7, insert your name.
+Save and compile the file.
+
+references.bib contains the references you need.
+
+To thank in English (in the very last slide), open beamerinnerthemeDE.sty
+On line 84, substitute FondoSlide_3_ita.pdf with FondoSlide_3.pdf
