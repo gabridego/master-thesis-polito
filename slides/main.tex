@@ -1,5 +1,10 @@
 % \documentclass{beamer}
 \documentclass[aspectratio=141]{beamer}
+
+% uncomment this to produce speaker notes 
+%\setbeameroption{show notes on second screen}
+%\setbeamertemplate{note page}[plain]
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
@@ -27,13 +32,13 @@
 
 \setbeamertemplate{footline}[my footline]
 
-\AtBeginSection[]
-{
-  \begin{frame}
-    \frametitle{Contents}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+%\AtBeginSection[]
+%{
+%  \begin{frame}
+%    \frametitle{Contents}
+%    \tableofcontents[currentsection]
+%  \end{frame}
+%}
 
 \begin{document}
 
@@ -66,6 +71,7 @@
         \con<2-> ...but data collection and annotation is expensive and time-consuming
         \vspace*{3mm}
         \pro<3-> A solution is to use \alert{synthetic} data to simulate \alert{reality}
+        \note<3>{Open source \textbf{rendering software} or video games to generate synthetic images that simulate \textbf{environments} in which model will be \textbf{applied}, \textbf{easily} and in \textbf{large quantities}.}
         \only<3>{
             \begin{center}
                 \item[]
@@ -98,6 +104,7 @@
             \item Domain adaptation methods depend on specific network architectures, with deep modifications
         \end{itemize}
         \item[\contour{DEgreen}{$\Rightarrow$}] Domain adaptation can raise performances, but is complicated to set up in industrial projects
+        \note{Why is Neovision interested in exploring domain adaptation?}
     \end{itemize}
 \end{frame}
 
@@ -105,8 +112,9 @@
     \framesubtitle{Method}
     
     \begin{itemize}
-    	\item Focus on \alert{object detection} task and transfer from synthetic to real images
+    	\item Focus on \alert{object detection} task and \alert{\textit{sim2real}} transfer
     	\begin{itemize}
+    		\item Car detection
     		\item Synthetic dataset: \alert{\textit{Sim10k}}
     		\item Real dataset: \alert{\textit{CityScapes}}
     	\end{itemize}
@@ -119,7 +127,7 @@
 	    \vspace*{4mm}
     	\item Analysis of popular domain adaptation methods and of their issues
     	\begin{itemize}
-    	    \item Domain adaptation for one and two stage object detectors: Faster R-CNN\footfullcite{ren2016faster} and RetinaNet\footfullcite{lin2018focal}
+    	    \item One and two stage object detectors: Faster R-CNN\footfullcite{ren2016faster} and RetinaNet\footfullcite{lin2018focal}
     	\end{itemize}
     \end{itemize}
 \end{frame}
@@ -130,6 +138,7 @@
     \framesubtitle{Computer vision}
 	\begin{itemize}
 	\item \alert{Convolutional Neural Networks} (CNNs) extract features from images
+	\note{CNNs: class of deep neural networks to deal with structured arrays of data}
 	\item Three main tasks:
 		\begin{itemize}
 			\item \alert{Image classification}: class of an image
@@ -150,8 +159,10 @@
 	    \item Special case of \alert{transfer learning}
 	    \vspace*{4mm}
 	    \item Goal to transfer knowledge acquired on a \alert{source} domain (synthetic images) to a \alert{target} domain (real images), without training a new model from scratch
+	    \note[item]{Annotations of target images are only used for the evaluation}
 	    \vspace*{4mm}
 		\item Source domain is annotated, while target domain is not: \alert{unsupervised} domain adaptation
+		\note[item]{Most frequent case: unsupervised}
 	\end{itemize}
 \end{frame}
 
@@ -170,6 +181,9 @@
                     \item \textcolor<2->{gray}{\textit{Adversarial} approach: feature extractor evolves with the aim of fooling a domain classifier}
                 \end{itemize}
             }
+        	\note[item]<1>{Align distribution of features extracted by a CNN}
+        	\note[item]<1>{A model trained on synthetic images \textbf{generalizes} well to real images if features are \textbf{independent} of the domain}
+        	\note[item]<1>{Several approaches for alignment, adversarial methods are the most frequent: use of separate CNN as domain classifier}
             \vspace*{2mm}
             \item<2-> \textbf{\textit{Domain mapping}}
                 \begin{itemize}
@@ -221,12 +235,16 @@
                 \includegraphics[width=.45\textwidth]{imgs/sim10kaug2.png}
             \end{center}
         }
+    	\note[item]<1>{Data augmentation often used in machine learning projects to artificially increase the number of training images}
+   		\note[item]<1>{Transformations such as horizontal flip, rotation and color jitter}
         \item[\contour{DEgreen}{$\Rightarrow$}]<2-> \alert{\textbf{Domain randomization}}:
         \begin{itemize}
             \item Network is \quotes{overwhelmed} with widely different versions of the same training images
             \item Source data distribution may become closer to the target's
             \item No image from target domain is needed
         \end{itemize}
+    	\note[item]<2>{\textbf{High impact} data augmentation}
+   		\note[item]<2>{If we do not have any knowledge of the target domain, we can enlarge source data distribution and \quotes{hope} it now covers a part of the target distribution}
         \vspace*{5mm}
         \item<3-> Experiments confirm the hypothesis:
         \begin{itemize}
@@ -303,6 +321,9 @@
     \begin{itemize}
         \item FPN drives \textit{Faster R-CNN} to better detection performances than \textit{RetinaNet}
     \end{itemize}
+	\note[item]{Models always trained on synthetic and tested on real images}
+	\note[item]{We can appreciate the difference between one and two stage methods}
+	\note[item]{Higher base performances for Faster R-CNN: FPN in region proposal better recognize low level features, common between domains}
 \end{frame}
 
 \begin{frame}{Results}
